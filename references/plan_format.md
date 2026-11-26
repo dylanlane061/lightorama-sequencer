@@ -79,6 +79,26 @@ use `preset`. With only one given, pixel targets get `wash` and channel props ge
 | `"rows_by_target": {"Pixel Tree 1": "Effects 03", ...}` | A per-target row (for example the top rows, so a wave rides over the base looks). |
 | `"cycle_colors": true` | Each step uses the next colour of the palette, for any preset. |
 | `"preset": "fireworks"` | Bursts (option string from LOR's own NYE sequence). |
+| `"preset": "blend_left"` / `"blend_right"` | Always-lit colour bands travelling along a prop (blended bars). |
+
+**Phase is song-wide.** Steps count on the song's beat/bar grid (or the whole mark
+list), not from each cue's start. So separate cues stay in unison: snowflakes that join
+one at a time still show the same spoke, and a chase that resumes after a break carries on
+where the song is.
+
+**Moving trim instead of blinking trim:** `blend_left` / `blend_right` (blended bars) keep
+a prop fully lit while colour bands travel along it. Direction follows each prop's pixel
+order, so two rooflines drawn in opposite directions need opposite presets to move the same
+way across the house. Check `lor_layout.py draw` or the viewer.
+
+**Crossfades:** to flow from one look into the next on the same prop, alternate two rows
+(for example Effects 01 / Effects 02). Overlap each look by about a bar, and ramp the
+outgoing one `[100, 0]` and the incoming one `[0, 100]`. A picture (GIF) restarts if split,
+so keep it as one effect and fade the other row around it.
+
+**Pixel art on a tree:** a Tree 180 / matrix buffer is strands × lights per strand (for
+example 16×75). Draw the GIF at exactly that size, with column = strand and the top row =
+the top of the tree, and use a `"picture"` cue. The viewer shows it as the tree will.
 
 **Layering:** put base looks on the first row ("Effects 01" or a snowflake's "All") and
 accents (whistles, waves, shout flashes) on later rows. Later rows draw on top. Give

@@ -68,6 +68,12 @@ PRESETS: dict[str, tuple[str, str]] = {
     "garland_across": ("garland", "0,0,once_fit_to_duration,12,left_to_right"),
     # seen in LOR's own "New Years Eve Countdown" sequence (S6 6.3)
     "fireworks": ("fireworks", "25,60,2,30,normal,continuous"),
+    # blended bars that keep a prop fully lit while colour bands travel along it.
+    # "right,10,36,0" is quoted from a real LOR file in xLights' importer; "left" is the
+    # same field's opposite value (also mapped by that importer). Direction follows the
+    # prop's own pixel order, so pick per prop to move the same way physically.
+    "blend_right": ("blendedbars", "right,10,36,0"),
+    "blend_left": ("blendedbars", "left,10,36,0"),
 }
 
 # Picture option templates. {file} is replaced by the (encoded) file reference.

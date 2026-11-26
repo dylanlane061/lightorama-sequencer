@@ -50,6 +50,7 @@ from __future__ import annotations
 import argparse
 import fnmatch
 import json
+import math
 import random
 import re
 import shutil
@@ -167,34 +168,43 @@ class Compiler:
             return list(self.palettes.get(spec, [spec]))
         return list(spec)
 
-    def steps(self, a: float, b: float, every) -> list[tuple[float, float]]:
+    def steps(self, a: float, b: float, every) -> list[tuple[float, float, int]]:
+        """(start, end, phase) steps. `phase` counts on the song-wide grid (or the whole mark
+        set), not from the cue's start, so every cue using the same grid stays in step:
+        snowflake wheels that join at different times still show the same spoke."""
         if isinstance(every, str) and every in self.marks:   # a named mark set from the plan
-            ms = [t for t in self.marks[every] if a - 1e-3 <= t < b]
-            nxt = ms[1:] + [b]
-            return [(m, max(m + 0.05, min(n, b))) for m, n in zip(ms, nxt)]
+            allm = self.marks[every]
+            idx = [i for i, t in enumerate(allm) if a - 1e-3 <= t < b]
+            return [(allm[i], max(allm[i] + 0.05, min(allm[i + 1] if i + 1 < len(allm) else b, b)), i) for i in idx]
         if isinstance(every, list):
-            ms = sorted(t_of(x) for x in every if a - 1e-3 <= t_of(x) < b)
-            return [(m, max(m + 0.05, min(n, b))) for m, n in zip(ms, ms[1:] + [b])]
+            allm = sorted(t_of(x) for x in every)
+            idx = [i for i, t in enumerate(allm) if a - 1e-3 <= t < b]
+            return [(allm[i], max(allm[i] + 0.05, min(allm[i + 1] if i + 1 < len(allm) else b, b)), i) for i in idx]
         every = str(every or "beat").lower()
         beats = [t for t in self.analysis.get("beats", [])]
         bars = [t for t in self.analysis.get("downbeats", [])]
-        marks = None
+        grid = None
         if every in ("beat", "half", "2beats"):
-            marks = beats[::2] if every != "beat" else beats
+            grid = beats[::2] if every != "beat" else beats
         elif every in ("bar", "2bars"):
-            marks = bars[::2] if every == "2bars" else bars
-        if marks:
-            inside = [t for t in marks if a - 1e-3 <= t < b - 0.05]
-            if inside:
-                pts = inside + [b]
-                if pts[0] > a + 0.05:
-                    pts = [a] + pts
-                return list(zip(pts[:-1], pts[1:]))
+            grid = bars[::2] if every == "2bars" else bars
+        if grid:
+            idx = [i for i, t in enumerate(grid) if a - 1e-3 <= t < b - 0.05]
+            if idx:
+                out = []
+                if grid[idx[0]] > a + 0.05:                 # lead-in before the first grid point
+                    out.append((a, grid[idx[0]], idx[0] - 1))
+                for j, i in enumerate(idx):
+                    e = grid[idx[j + 1]] if j + 1 < len(idx) else b
+                    out.append((grid[i], min(e, b), i))
+                return out
         step = t_of(every) if re.match(r"^[\d.]+s?$", every) else (60 / self.analysis.get("tempo", 120)) * (4 if "bar" in every else 1)
-        out, t = [], a
-        while t < b - 0.05:
-            out.append((t, min(b, t + step)))
-            t += step
+        out = []
+        k = int(math.ceil(a / step - 1e-6))
+        while k * step < b - 0.05:
+            t = k * step
+            out.append((t, min(b, t + step), k))
+            k += 1
         return out
 
     def lit_len(self, cue, a, b):
@@ -332,7 +342,8 @@ class Compiler:
         steps = self.steps(a, b, cue.get("every", "beat"))
         ramp = cue.get("ramp")
         rows = cue.get("rows")
-        for k, (s0, s1) in enumerate(steps):
+        for s0, s1, k in steps:
+            k = max(k, 0)
             e1 = s0 + self.lit_len(cue, s0, s1)
             lvl = None
             if ramp:   # intensity grows (or fades) across the cue: e.g. a train getting started
