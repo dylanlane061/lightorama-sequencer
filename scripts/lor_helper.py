@@ -377,9 +377,10 @@ def pixel_count(pc) -> int | None:
         bits = part.split(",")
         if len(bits) >= 4:   # "Regular,<universe>,..." (E1.31/DMX) or "Aux A,<unit>,..." (LOR network)
             try:
-                total += (int(bits[3]) - int(bits[2]) + 1) // 3
+                first, last = int(bits[2]), int(bits[3])
             except ValueError:
                 continue
+            total += (last - first + 1) // 3 if last >= first else ((510 - first + 1) + last) // 3
     return total or None
 
 

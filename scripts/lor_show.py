@@ -282,6 +282,14 @@ def cmd_build(args):
     show = b.build()
     html = TEMPLATE.read_text(encoding="utf-8")
     bg = b.layout["background"]
+    if args.background:  # a house photo for layouts whose preview only points at a file on another PC
+        from PIL import Image
+        im = Image.open(args.background).convert("RGB")
+        im.thumbnail((2000, 2000))
+        buf = io.BytesIO()
+        im.save(buf, "JPEG", quality=85)
+        bg = base64.b64encode(buf.getvalue()).decode()
+        show["meta"]["bgSize"] = list(im.size)
     audio = ""
     if args.audio:
         ap = Path(args.audio)
@@ -289,7 +297,7 @@ def cmd_build(args):
         audio = f"data:{mime};base64," + base64.b64encode(ap.read_bytes()).decode()
     payload = json.dumps(show, separators=(",", ":"))
     html = (html.replace("/*__SHOW__*/null", payload)
-                .replace("__BG__", ("data:image/png;base64," + bg) if bg else "")
+                .replace("__BG__", (("data:image/jpeg;base64," if args.background else "data:image/png;base64,") + bg) if bg else "")
                 .replace("__AUDIO__", audio)
                 .replace("__TITLE__", (show["meta"]["name"] or "LOR show").replace("<", "")))
     Path(args.out).write_text(html, encoding="utf-8")
@@ -473,6 +481,7 @@ def main(argv=None):
     s.add_argument("sequence")
     s.add_argument("--preview", help="use this .lorprev instead of the copy inside the sequence")
     s.add_argument("--audio")
+    s.add_argument("--background", help="house photo, if the preview doesn't embed one (BackgroundFile points at the owner's PC)")
     s.add_argument("--out", required=True)
     s.set_defaults(fn=cmd_build)
     s = sub.add_parser("report")

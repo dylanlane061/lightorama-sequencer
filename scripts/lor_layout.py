@@ -91,9 +91,13 @@ def _pixel_count(pc) -> int:
     for bits in _grid_entries(pc):
         if len(bits) >= 4:
             try:
-                total += (int(bits[3]) - int(bits[2]) + 1) // 3
+                first, last = int(bits[2]), int(bits[3])
             except ValueError:
-                pass
+                continue
+            if last >= first:
+                total += (last - first + 1) // 3
+            else:   # range wraps into the next universe: first..510 here, then 1..last (seen in a real layout)
+                total += ((510 - first + 1) + last) // 3
     return total
 
 
@@ -190,9 +194,7 @@ def layout_prop(pc) -> Prop:
     if s.startswith("matrix") or s.startswith("tree"):
         strings = max(parms[0] if parms else 1, 1)
         per_string = parms[1] if len(parms) > 1 and parms[1] > 0 else 50
-        folds = parms[2] if len(parms) > 2 and s.startswith("matrix") else 0
-        if s.startswith("tree 360 wedges") and len(parms) > 2:
-            folds = parms[2]
+        folds = parms[2] if len(parms) > 2 and not s.startswith("tree 360 spiral") else 0
         strands, length = strings * (folds + 1), max(per_string // (folds + 1), 1)
         if s.startswith("matrix"):
             vertical = "horizontal" not in s
@@ -247,6 +249,17 @@ def layout_prop(pc) -> Prop:
             a = math.pi / 2 + math.pi * k / points
             verts.append(box(r * math.cos(a), r * math.sin(a)) if box else (r * math.cos(a), r * math.sin(a)))
         nodes = _bbox_uv(_along(verts, n, closed=True))
+    elif s == "window frame":
+        # perimeter: bottom Parm1, sides Parm2, top Parm3 lights (15/20/15 -> 70 = 210 ch in a real layout)
+        b_, side, t_ = (parms + [10, 10, 10])[:3]
+        corners = [(-1, -1), (1, -1), (1, 1), (-1, 1)]
+        counts = [b_, side, t_, side]
+        raw = []
+        for (a, b2), (c, d2), n in zip(corners, corners[1:] + corners[:1], counts):
+            for k in range(max(n, 1)):
+                t = (k + 0.5) / max(n, 1)
+                raw.append(box(a + (c - a) * t, b2 + (d2 - b2) * t) if box else (a, b2))
+        nodes = _bbox_uv(raw)
     elif s == "arch":
         n = n_default
         raw = []
@@ -294,9 +307,9 @@ def layout_prop(pc) -> Prop:
             per = max(n // max(len(pairs), 1), 2)
             raw = [q for a, b in pairs for q in _along([a, b], per)]
         else:
-            raw = _along(pts, n)
+            raw = _along(pts, n, closed="closed" in s)
         nodes = [[x, y, k / max(len(raw) - 1, 1), 0.5] for k, (x, y) in enumerate(raw)]
-        if s not in ("lines-connected", "lines-unconnected", "bulbs"):
+        if s not in ("lines-connected", "lines-unconnected", "bulbs", "lines-closed shape"):
             note = f"unknown shape {shape!r}: drawn along its points"
     elif box:
         nodes = _grid(5, 5, lambda a, b: box(-1 + 2 * a, -1 + 2 * b))
