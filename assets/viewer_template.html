@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>__TITLE__ · LOR show viewer</title>
+<style>
+  :root { --bg:#0b0d12; --panel:#141821; --line:#252b38; --text:#e7e9ee; --dim:#8a93a6; --accent:#ffc94d; }
+  * { box-sizing:border-box; }
+  body { margin:0; background:var(--bg); color:var(--text); font:13px/1.4 ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif; }
+  header { display:flex; flex-wrap:wrap; align-items:center; gap:10px 16px; padding:10px 14px; border-bottom:1px solid var(--line); background:var(--panel); }
+  header h1 { font-size:14px; margin:0; font-weight:600; letter-spacing:.2px; }
+  header .sub { color:var(--dim); }
+  button, select { background:#1d2330; color:var(--text); border:1px solid var(--line); border-radius:6px; padding:5px 10px; font:inherit; cursor:pointer; }
+  button:hover { border-color:#3a4356; }
+  button.primary { background:var(--accent); color:#1a1300; border-color:var(--accent); font-weight:600; min-width:74px; }
+  label { color:var(--dim); display:inline-flex; gap:6px; align-items:center; }
+  #time { font-variant-numeric:tabular-nums; min-width:120px; }
+  main { display:grid; grid-template-columns:minmax(0,1fr) 300px; gap:0; }
+  @media (max-width: 900px) { main { grid-template-columns:1fr; } }
+  #stagewrap { position:relative; padding:10px; }
+  #stage { display:block; width:100%; height:auto; background:#000; border-radius:6px; }
+  #scrub { width:100%; margin:8px 0 0; accent-color:var(--accent); }
+  #timeline { display:block; width:100%; height:38px; margin-top:4px; background:#10131a; border-radius:4px; cursor:pointer; }
+  aside { border-left:1px solid var(--line); padding:10px 12px; background:var(--panel); max-height:calc(100vh - 52px); overflow:auto; }
+  aside h2 { font-size:11px; text-transform:uppercase; letter-spacing:.08em; color:var(--dim); margin:12px 0 6px; font-weight:600; }
+  .row { display:flex; justify-content:space-between; gap:8px; padding:3px 0; border-bottom:1px dashed #1f2531; }
+  .tag { font-size:10px; padding:1px 6px; border-radius:9px; background:#232a38; color:var(--dim); white-space:nowrap; }
+  .tag.close { background:#183224; color:#7ee2a8; } .tag.approx { background:#332a14; color:#f3c969; } .tag.fallback { background:#3a1b1b; color:#ff8f8f; } .tag.exact { background:#14283a; color:#7cc4ff; }
+  #active .row span:first-child { overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .muted { color:var(--dim); }
+  body.snap header, body.snap aside, body.snap #scrub, body.snap #timeline { display:none; }
+  body.snap main { display:block; } body.snap #stagewrap { padding:0; } body.snap #stage { border-radius:0; }
+</style>
+</head>
+<body>
+<header>
+  <h1>__TITLE__</h1><span class="sub" id="previewName"></span>
+  <button class="primary" id="play">▶ Play</button>
+  <span id="time">0:00.00 / 0:00.00</span>
+  <select id="speed"><option value="0.25">0.25×</option><option value="0.5">0.5×</option><option value="1" selected>1×</option></select>
+  <label><input type="checkbox" id="unlit" checked> unlit bulbs</label>
+  <label><input type="checkbox" id="glow" checked> glow</label>
+  <label>house <input type="range" id="bgb" min="0" max="100" value="22" style="width:80px"></label>
+</header>
+<main>
+  <div id="stagewrap">
+    <canvas id="stage"></canvas>
+    <input type="range" id="scrub" min="0" max="1000" value="0" step="1">
+    <canvas id="timeline"></canvas>
+  </div>
+  <aside>
+    <h2>Active now</h2><div id="active" class="muted">nothing lit</div>
+    <h2>Effects in this show</h2><div id="legend"></div>
+    <h2>Notes</h2><div id="notes" class="muted"></div>
+  </aside>
+</main>
+<audio id="au" preload="auto" src="__AUDIO__"></audio>
+<script>
+"use strict";
+const SHOW = /*__SHOW__*/null;
+const BG_SRC = "__BG__";
+const Q = new URLSearchParams(location.search);
+if (Q.get("snap")) document.body.classList.add("snap");
+
+// ------------------------------------------------------------------ setup
+const stage = document.getElementById("stage"), ctx = stage.getContext("2d");
+const [BW, BH] = SHOW.meta.bgSize;
+const SCALE = Math.min(1, 1600 / BW);
+const W = Math.round(BW * SCALE), H = Math.round(BH * SCALE);
+stage.width = W; stage.height = H;
+const lights = document.createElement("canvas"); lights.width = W; lights.height = H;
+const lctx = lights.getContext("2d");
+const TOTAL = SHOW.meta.total / 100;
+
+const props = SHOW.props;
+let N = 0; const offs = [];
+for (const p of props) { offs.push(N); N += p.x.length; }
+const PX = new Float32Array(N), PY = new Float32Array(N), RAD = new Float32Array(N), DIMF = new Float32Array(N).fill(1);
+props.forEach((p, i) => {
+  const o = offs[i], r = Math.max(1.1, Math.min(3.2, (p.bulb || 2) * 0.75)) * (W / 1600 + 0.25);
+  for (let k = 0; k < p.x.length; k++) { PX[o + k] = (p.x[k] + 1) / 2 * W; PY[o + k] = (1 - p.y[k]) / 2 * H; RAD[o + k] = r; }
+  for (const k of p.back) DIMF[o + k] = 0.35;
+});
+const COL = new Float32Array(N * 3);
+
+// pictures -> pixel arrays
+const PICS = {}; let picsPending = 0;
+for (const [name, pic] of Object.entries(SHOW.pictures || {})) {
+  PICS[name] = { frames: [], durations: pic.durations, total: pic.durations.reduce((a, b) => a + b, 0) || 100 };
+  pic.frames.forEach((src, fi) => {
+    picsPending++;
+    const im = new Image();
+    im.onload = () => { const c = document.createElement("canvas"); c.width = im.width; c.height = im.height;
+      const cx = c.getContext("2d"); cx.drawImage(im, 0, 0);
+      PICS[name].frames[fi] = { w: im.width, h: im.height, d: cx.getImageData(0, 0, im.width, im.height).data };
+      if (--picsPending === 0) maybeReady(); };
+    im.src = src;
+  });
+}
+let bgImg = null, bgPending = !!BG_SRC;
+if (BG_SRC) { bgImg = new Image(); bgImg.onload = () => { bgPending = false; maybeReady(); }; bgImg.onerror = () => { bgPending = false; maybeReady(); }; bgImg.src = BG_SRC; }
+
+// ------------------------------------------------------------------ helpers
+function hash(a, b = 0) { let h = (a * 374761393 + b * 668265263) | 0; h = (h ^ (h >>> 13)) * 1274126177 | 0; return ((h ^ (h >>> 16)) >>> 0) / 4294967296; }
+const frac = x => x - Math.floor(x);
+function palAt(pal, f) { const n = pal.length; if (n === 1) return pal[0]; f = frac(f) * n; const i = Math.floor(f) % n, j = (i + 1) % n, t = f - Math.floor(f); const a = pal[i], b = pal[j]; return [a[0] + (b[0] - a[0]) * t, a[1] + (b[1] - a[1]) * t, a[2] + (b[2] - a[2]) * t]; }
+const num = (s, d) => { const v = parseFloat(s); return isFinite(v) ? v : d; };
+function findActive(fx, cs, getS, getE) { // fx sorted by start; return effect or null
+  let lo = 0, hi = fx.length - 1, best = -1;
+  while (lo <= hi) { const m = (lo + hi) >> 1; if (getS(fx[m]) <= cs) { best = m; lo = m + 1; } else hi = m - 1; }
+  if (best < 0) return null; const f = fx[best]; return cs < getE(f) ? f : null;
+}
+const countdownCache = {};
+function countdownImg(n, font) {
+  const key = n + "|" + font; if (countdownCache[key]) return countdownCache[key];
+  const c = document.createElement("canvas"); c.width = 64; c.height = 64; const x = c.getContext("2d");
+  x.fillStyle = "#fff"; x.textAlign = "center"; x.textBaseline = "middle"; x.font = `bold 52px "${font}", serif`;
+  x.fillText(String(n), 32, 35); return (countdownCache[key] = { w: 64, h: 64, d: x.getImageData(0, 0, 64, 64).data });
+}
+function sampleImg(img, u, v) { // u,v 0..1, v=0 bottom
+  if (!img) return null; const x = Math.min(img.w - 1, Math.max(0, Math.floor(u * img.w))), y = Math.min(img.h - 1, Math.max(0, Math.floor((1 - v) * img.h)));
+  const i = (y * img.w + x) * 4; if (img.d[i + 3] < 100) return null; return [img.d[i], img.d[i + 1], img.d[i + 2]];
+}
+
+// ------------------------------------------------------------------ motion effects
+// Each returns [r,g,b] (0-255) or null (transparent) for one light.
+// st = {p: 0..1 progress, t: seconds since effect start, dur: seconds, k: light seed}
+const DIR = s => (s || "").toLowerCase();
+const FX = {
+  colorwash(o, pal, u, v, st) { const m = DIR(o[2]);
+    if (m.includes("horizontal")) return palAt(pal, u * (pal.length - 1) / pal.length);
+    if (m.includes("vertical")) return palAt(pal, v * (pal.length - 1) / pal.length);
+    if (m.includes("dither")) return pal[Math.floor(hash(st.k, 7) * pal.length)];
+    return pal.length === 1 ? pal[0] : palAt(pal, st.p * (pal.length - 1) / pal.length); },
+  twinkle(o, pal, u, v, st) { const dens = num(o[0], 50) / 100, h = hash(st.k, 1); if (h > dens) return null;
+    const per = 0.5 + hash(st.k, 2) * 0.9, ph = frac(st.t / per + hash(st.k, 3)), b = ph < 0.5 ? ph * 2 : 2 - ph * 2;
+    const c = pal[Math.floor(hash(st.k, 4) * pal.length)]; return [c[0] * b, c[1] * b, c[2] * b]; },
+  bars(o, pal, u, v, st, soft) { const d = DIR(o[0]), reps = Math.max(1, num(o[1], 1)), sp = 0.6; let pos;
+    if (d.startsWith("up")) pos = v - st.t * sp; else if (d.startsWith("down")) pos = v + st.t * sp;
+    else if (d.startsWith("left")) pos = u + st.t * sp; else if (d.startsWith("right")) pos = u - st.t * sp;
+    else if (d.startsWith("h_expand")) pos = Math.abs(u - 0.5) * 2 - st.t * sp; else if (d.startsWith("h_compress")) pos = Math.abs(u - 0.5) * 2 + st.t * sp;
+    else if (d.startsWith("v_expand")) pos = Math.abs(v - 0.5) * 2 - st.t * sp; else if (d.startsWith("v_compress")) pos = Math.abs(v - 0.5) * 2 + st.t * sp;
+    else if (d.includes("right")) pos = (u + v) / 2 - st.t * sp; else if (d.includes("left")) pos = (1 - u + v) / 2 - st.t * sp; else pos = v;
+    const f = frac(pos * reps); return soft ? palAt(pal, f) : pal[Math.floor(f * pal.length) % pal.length]; },
+  blendedbars(o, pal, u, v, st) { return FX.bars(o, pal, u, v, st, true); },
+  meteors(o, pal, u, v, st) { const cnt = num(o[1], 20) / 100, len = num(o[2], 30) / 100, d = DIR(o[3]);
+    const horiz = d.startsWith("left") || d.startsWith("right"); const across = horiz ? v : u, along = horiz ? u : v;
+    const col = Math.floor(across * 40); if (hash(col, 11) > Math.max(cnt, 0.12)) return null;
+    const head = frac(st.t * (0.35 + hash(col, 12) * 0.5) + hash(col, 13)) * (1 + len);
+    const pos = (d.startsWith("down") || d.startsWith("left")) ? 1 - along : along, dist = head - pos;
+    if (dist < 0 || dist > len) return null; const b = 1 - dist / len, c = pal[col % pal.length]; return [c[0] * b, c[1] * b, c[2] * b]; },
+  spirals(o, pal, u, v, st) { const cnt = Math.max(1, num(o[0], 2)), rot = num(o[2], 100) / 100, thick = num(o[3], 18) / 100;
+    const f = frac((u + v * 0.6) * cnt + st.t * rot * 0.5), band = f * pal.length; if (frac(band) > 0.45 + thick) return null;
+    return pal[Math.floor(band) % pal.length]; },
+  straightlines(o, pal, u, v, st) { const d = DIR(o[0]), cnt = Math.max(1, num(o[1], 4)), pos = d.includes("left") ? u : v;
+    const f = frac(pos * cnt - st.t * 0.5); if (f > 0.22) return null; return pal[Math.floor(pos * cnt) % pal.length]; },
+  ripple(o, pal, u, v, st) { const r = Math.hypot(u - 0.5, v - 0.5) * 2, f = frac(r * 2.5 - st.t * 0.8); if (f > 0.3) return null;
+    return pal[Math.floor(r * 2.5 - st.t * 0.8 + 100) % pal.length]; },
+  garland(o, pal, u, v, st) { const d = DIR(o[4]); const pos = d.includes("top_to") ? 1 - v : d.includes("left") ? u : d.includes("right_to") ? 1 - u : v;
+    if (pos > st.p * 1.02) return null; return pal[Math.floor(pos * 8) % pal.length]; },
+  fireworks(o, pal, u, v, st) { const B = Math.max(3, Math.round(st.dur * 1.6)); let out = null, best = 0;
+    for (let b = 0; b < B; b++) { const t0 = hash(b, 21) * Math.max(0.1, st.dur - 0.6), age = st.t - t0; if (age < 0 || age > 1.3) continue;
+      const cx = 0.15 + hash(b, 22) * 0.7, cy = 0.35 + hash(b, 23) * 0.5, r = age * 0.42, dist = Math.hypot(u - cx, (v - cy) * 0.8);
+      const ring = Math.abs(dist - r); if (ring > 0.05 + age * 0.03) continue; const br = (1 - age / 1.3) * (hash(st.k, b) > 0.35 ? 1 : 0.4);
+      if (br > best) { best = br; const c = pal[b % pal.length]; out = [c[0] * br, c[1] * br, c[2] * br]; } }
+    return out; },
+  countdown(o, pal, u, v, st) { const n = Math.round(num(o[0], 10)) - Math.floor(st.t + 1e-6); if (n < 0) return null;
+    const px = sampleImg(countdownImg(n, decodeURIComponent(o[1] || "serif")), u, v); if (!px) return null; const c = pal[0];
+    return [c[0] * px[0] / 255, c[1] * px[1] / 255, c[2] * px[2] / 255]; },
+  picture(o, pal, u, v, st, img) { const pic = PICS[img]; if (!pic || !pic.frames.length) return null;
+    let ms = (st.t * 1000) % pic.total, fi = 0; while (fi < pic.durations.length - 1 && ms >= pic.durations[fi]) { ms -= pic.durations[fi]; fi++; }
+    const mv = DIR(o[2]); let uu = u, vv = v; const off = st.p * 2 - 1;
+    if (mv === "up") vv = v - off; else if (mv === "down") vv = v + off; else if (mv === "left") uu = u + off; else if (mv === "right") uu = u - off;
+    if (uu < 0 || uu > 1 || vv < 0 || vv > 1) return null; return sampleImg(pic.frames[fi] || pic.frames[0], uu, vv); },
+  picturexy(o, pal, u, v, st, img) { return FX.picture(["", "", "none"], pal, u, v, st, img); },
+  plasma(o, pal, u, v, st) { const f = Math.sin(u * 6 + st.t) + Math.sin(v * 7 - st.t * 1.3) + Math.sin((u + v) * 5 + st.t * 0.7); return palAt(pal, f / 6 + 0.5); },
+  butterfly(o, pal, u, v, st) { return FX.plasma(o, pal, u * 1.7, v * 1.7, st); },
+  fire(o, pal, u, v, st) { const h = (1 - v) * (0.7 + 0.3 * Math.sin(u * 13 + st.t * 9 + hash(Math.floor(u * 30), Math.floor(st.t * 12)) * 3));
+    if (h < 0.15) return null; return [255 * Math.min(1, h * 1.6), 200 * Math.max(0, h - 0.45), 0]; },
+  singleblock(o, pal, u, v, st) { return pal[Math.floor(st.t * 4) % pal.length]; },
+  curtain(o, pal, u, v, st) { return Math.abs(u - 0.5) * 2 <= st.p ? pal[0] : null; },
+  snowflakes(o, pal, u, v, st) { const col = Math.floor(u * 30); const y = 1 - frac(st.t * 0.25 + hash(col, 31)); return Math.abs(v - y) < 0.03 && hash(col, 32) < 0.5 ? pal[col % pal.length] : null; },
+  starfield(o, pal, u, v, st) { return hash(st.k, Math.floor(st.t * 3)) > 0.93 ? pal[Math.floor(hash(st.k, 9) * pal.length)] : null; },
+  pinwheel(o, pal, u, v, st) { const a = Math.atan2(v - 0.5, u - 0.5) / (Math.PI * 2) + 0.5, arms = Math.max(2, num(o[0], 4)); const f = frac(a * arms + st.t * 0.6);
+    return f < 0.5 ? pal[Math.floor(a * arms) % pal.length] : null; },
+  spinner(o, pal, u, v, st) { return FX.pinwheel(["6"], pal, u, v, st); },
+  spinfade(o, pal, u, v, st) { return FX.pinwheel(["3"], pal, u, v, st); },
+  marquee(o, pal, u, v, st) { return frac(u * 12 - st.t * 2) < 0.4 ? pal[0] : null; },
+  wave(o, pal, u, v, st) { const y = 0.5 + 0.35 * Math.sin(u * 6.28 * 1.5 + st.t * 3); return Math.abs(v - y) < 0.08 ? palAt(pal, u) : null; },
+  simpleshape(o, pal, u, v, st) { const r = Math.hypot(u - 0.5, v - 0.5), R = 0.15 + 0.3 * (0.5 + 0.5 * Math.sin(st.t * 3)); return Math.abs(r - R) < 0.06 ? pal[0] : null; },
+  movingshapes(o, pal, u, v, st) { return FX.simpleshape(o, pal, frac(u - st.t * 0.2), v, st); },
+  text(o, pal, u, v, st) { return null; },
+};
+const FALLBACK = (o, pal) => { const c = pal[0]; return [c[0] * 0.4, c[1] * 0.4, c[2] * 0.4]; };
+function sideColor(side, u, v, st) {
+  if (!side) return null; const f = FX[side.n];
+  return f ? f(side.opt, side.pal, u, v, st, side.img) : FALLBACK(side.opt, side.pal);
+}
+
+// ------------------------------------------------------------------ channel effects
+function channelLevel(f, cs, seed) { // returns 0..1 multiplier (or 0..1 for each rgb handled by caller)
+  const p = (cs - f[0]) / Math.max(1, f[1] - f[0]); return p;
+}
+
+// ------------------------------------------------------------------ render one frame
+function renderAt(tSec) {
+  const cs = tSec * 100; COL.fill(0); const active = [];
+  // channels
+  SHOW.channels.forEach((ch, ci) => {
+    const f = findActive(ch.fx, cs, x => x[0], x => x[1]); if (!f) return;
+    const p = (cs - f[0]) / Math.max(1, f[1] - f[0]); let gate = 1;
+    if (f[2] === 1) gate = (Math.floor(cs / 5) + ci) % 2 ? 1 : 0.15;                      // shimmer: fast flicker
+    else if (f[2] === 2) gate = hash(ci, Math.floor(cs / (18 + hash(ci, 5) * 25))) > 0.45 ? 1 : 0.08; // twinkle: random on/off
+    let r, g, b;
+    if (ch.color) { const lv = (f[3] + (f[4] - f[3]) * p) / 100 * gate; [r, g, b] = [ch.color[0] * lv, ch.color[1] * lv, ch.color[2] * lv]; }
+    else { r = (f[3] + (f[6] - f[3]) * p) * gate; g = (f[4] + (f[7] - f[4]) * p) * gate; b = (f[5] + (f[8] - f[5]) * p) * gate; }
+    if (r + g + b < 3) return;
+    const o = offs[ch.p], list = ch.nodes, n = list ? list.length : props[ch.p].x.length;
+    for (let i = 0; i < n; i++) { const j = (o + (list ? list[i] : i)) * 3;
+      if (r > COL[j]) COL[j] = r; if (g > COL[j + 1]) COL[j + 1] = g; if (b > COL[j + 2]) COL[j + 2] = b; }
+    if (active.length < 40) active.push({ who: props[ch.p].name, what: ["on/fade", "shimmer", "twinkle"][f[2]] || "on", fid: "exact" });
+  });
+  // motion rows (later rows draw on top of earlier ones)
+  for (const tg of SHOW.motion) {
+    for (const tr of tg.tracks) {
+      const f = findActive(tr.fx, cs, x => x.s, x => x.e); if (!f) continue;
+      const dur = (f.e - f.s) / 100, t = (cs - f.s) / 100, p = t / Math.max(0.01, dur);
+      const lv = (f.i0 + (f.i1 - f.i0) * p) / 100; if (lv <= 0.005) continue;
+      const both = f.L && f.R, mix = f.mix || "";
+      const n = tr.sel ? tr.sel.length : tg.pi.length;
+      const st = { p, t, dur, k: 0 };
+      for (let i = 0; i < n; i++) {
+        const idx = tr.sel ? tr.sel[i] : i, u = tr.sel ? tr.u[i] : tg.u[idx], v = tr.sel ? tr.v[i] : tg.v[idx];
+        st.k = idx * 7919 + tg.ni[idx];
+        let c = sideColor(f.L, u, v, st);
+        if (both) { const c2 = sideColor(f.R, u, v, st);
+          if (mix.startsWith("Mix_Average") && c && c2) c = [(c[0] + c2[0]) / 2, (c[1] + c2[1]) / 2, (c[2] + c2[2]) / 2];
+          else if (mix.startsWith("Mix_Maximum") && c && c2) c = [Math.max(c[0], c2[0]), Math.max(c[1], c2[1]), Math.max(c[2], c2[2])];
+          else if (c2) c = c2; }
+        else if (!f.L) c = sideColor(f.R, u, v, st);
+        if (!c) continue; const r = c[0] * lv, g = c[1] * lv, b = c[2] * lv; if (r + g + b < 4) continue;
+        const j = (offs[tg.pi[idx]] + tg.ni[idx]) * 3; COL[j] = r; COL[j + 1] = g; COL[j + 2] = b;
+      }
+      const side = f.L || f.R;
+      if (active.length < 40 && side) active.push({ who: tg.name + " · " + tr.name, what: side.n, fid: SHOW.meta.fidelity[side.n] || "fallback" });
+    }
+  }
+  draw();
+  let lit = 0; for (let i = 0; i < N; i++) if (COL[i * 3] + COL[i * 3 + 1] + COL[i * 3 + 2] > 30) lit++;
+  lastActive = active; showActive(active);
+  return { t: tSec, lit: N ? lit / N : 0, active: [...new Set(active.map(a => a.what + "@" + a.who))] };
+}
+
+// ------------------------------------------------------------------ drawing
+const opt = { unlit: true, glow: true, bg: 0.22 };
+function draw() {
+  ctx.globalCompositeOperation = "source-over"; ctx.globalAlpha = 1; ctx.fillStyle = "#000"; ctx.fillRect(0, 0, W, H);
+  if (bgImg && bgImg.complete && opt.bg > 0) { ctx.globalAlpha = opt.bg; ctx.drawImage(bgImg, 0, 0, W, H); ctx.globalAlpha = 1; }
+  lctx.clearRect(0, 0, W, H);
+  for (let i = 0; i < N; i++) {
+    const j = i * 3; let r = COL[j], g = COL[j + 1], b = COL[j + 2]; const d = DIMF[i];
+    if (r + g + b < 6) { if (opt.unlit) { lctx.fillStyle = "rgba(120,120,120,0.28)"; lctx.fillRect(PX[i] - 0.8, PY[i] - 0.8, 1.6, 1.6); } continue; }
+    r = Math.min(255, r * d) | 0; g = Math.min(255, g * d) | 0; b = Math.min(255, b * d) | 0;
+    lctx.fillStyle = `rgb(${r},${g},${b})`; const R = RAD[i]; lctx.fillRect(PX[i] - R, PY[i] - R, R * 2, R * 2);
+  }
+  if (opt.glow) { ctx.globalCompositeOperation = "lighter"; ctx.filter = `blur(${Math.max(2, W / 400)}px)`; ctx.drawImage(lights, 0, 0); ctx.filter = "none"; }
+  ctx.globalCompositeOperation = "lighter"; ctx.drawImage(lights, 0, 0); ctx.globalCompositeOperation = "source-over";
+}
+
+// ------------------------------------------------------------------ UI
+const au = document.getElementById("au"), hasAudio = !!au.getAttribute("src");
+const playBtn = document.getElementById("play"), timeEl = document.getElementById("time"), scrub = document.getElementById("scrub");
+let playing = false, clock0 = 0, clockT = 0, lastActive = [], speed = 1;
+const fmt = s => `${Math.floor(s / 60)}:${(s % 60).toFixed(2).padStart(5, "0")}`;
+function now() { return hasAudio ? au.currentTime : (playing ? clockT + (performance.now() - clock0) / 1000 * speed : clockT); }
+function seek(s) { s = Math.max(0, Math.min(TOTAL, s)); if (hasAudio) au.currentTime = s; clockT = s; clock0 = performance.now(); frame(true); }
+function setPlaying(on) { playing = on; playBtn.textContent = on ? "❚❚ Pause" : "▶ Play";
+  if (hasAudio) { on ? au.play().catch(() => {}) : au.pause(); } else { clockT = now(); clock0 = performance.now(); }
+  if (on) requestAnimationFrame(loop); }
+playBtn.onclick = () => setPlaying(!playing);
+document.addEventListener("keydown", e => { if (e.code === "Space") { e.preventDefault(); setPlaying(!playing); } if (e.code === "ArrowRight") seek(now() + 2); if (e.code === "ArrowLeft") seek(now() - 2); });
+document.getElementById("speed").onchange = e => { speed = +e.target.value; if (hasAudio) au.playbackRate = speed; else { clockT = now(); clock0 = performance.now(); } };
+document.getElementById("unlit").onchange = e => { opt.unlit = e.target.checked; frame(true); };
+document.getElementById("glow").onchange = e => { opt.glow = e.target.checked; frame(true); };
+document.getElementById("bgb").oninput = e => { opt.bg = e.target.value / 100; frame(true); };
+scrub.oninput = () => seek(scrub.value / 1000 * TOTAL);
+if (hasAudio) au.addEventListener("ended", () => setPlaying(false));
+function frame() { const t = now(); renderAt(t); timeEl.textContent = `${fmt(t)} / ${fmt(TOTAL)}`; scrub.value = Math.round(t / TOTAL * 1000); drawPlayhead(t); }
+function loop() { if (!playing) return; frame(); if (!hasAudio && now() >= TOTAL) { setPlaying(false); return; } requestAnimationFrame(loop); }
+
+const activeEl = document.getElementById("active");
+function showActive(list) { if (document.body.classList.contains("snap")) return;
+  if (!list.length) { activeEl.innerHTML = '<span class="muted">nothing lit</span>'; return; }
+  activeEl.innerHTML = list.slice(0, 30).map(a => `<div class="row"><span title="${a.who}">${a.who}</span><span class="tag ${a.fid}">${a.what}</span></div>`).join(""); }
+function legend() {
+  const st = SHOW.meta.stats; const rows = Object.entries(st).sort((a, b) => b[1] - a[1]).map(([k, v]) => {
+    const ch = k.startsWith("ch:"), name = ch ? k.slice(3) : k, fid = ch ? "exact" : (SHOW.meta.fidelity[k] || "fallback");
+    return `<div class="row"><span>${name} ×${v}</span><span class="tag ${fid}">${fid}</span></div>`; });
+  document.getElementById("legend").innerHTML = rows.join("") || '<span class="muted">no effects</span>';
+  const notes = [`${N.toLocaleString()} lights · ${props.length} props`, hasAudio ? "audio embedded" : "no audio (silent clock)",
+    "Exact: channel effects and timing. Close: pictures, colour wash. Approx: other motion effects are lookalikes, not LOR's renderer."]
+    .concat(SHOW.meta.warnings || []);
+  document.getElementById("notes").innerHTML = notes.map(n => `<div>${n}</div>`).join("");
+  document.getElementById("previewName").textContent = SHOW.meta.preview || "";
+}
+// timeline: activity per 0.5s + timing marks
+const tl = document.getElementById("timeline"), tctx = tl.getContext("2d"); let tlBase = null;
+function buildTimeline() {
+  tl.width = tl.clientWidth * devicePixelRatio || 1000; tl.height = 38 * devicePixelRatio; const w = tl.width, h = tl.height;
+  const bins = new Float32Array(Math.ceil(TOTAL * 2) + 1);
+  const add = (s, e, wgt) => { for (let b = Math.floor(s / 50); b <= Math.min(bins.length - 1, Math.floor(e / 50)); b++) bins[b] += wgt; };
+  SHOW.channels.forEach(c => c.fx.forEach(f => add(f[0], f[1], 1)));
+  SHOW.motion.forEach(m => m.tracks.forEach(t => t.fx.forEach(f => add(f.s, f.e, 4))));
+  const mx = Math.max(1, ...bins); tctx.fillStyle = "#10131a"; tctx.fillRect(0, 0, w, h);
+  tctx.fillStyle = "#3d4a63"; bins.forEach((v, i) => { const bh = (v / mx) * (h - 6); tctx.fillRect(i / bins.length * w, h - bh, Math.max(1, w / bins.length), bh); });
+  (SHOW.timing[0] || { marks: [] }).marks.forEach(m => { tctx.fillStyle = "rgba(255,201,77,.35)"; tctx.fillRect(m / 100 / TOTAL * w, 0, 1, 6); });
+  tlBase = tctx.getImageData(0, 0, w, h);
+}
+function drawPlayhead(t) { if (!tlBase) return; tctx.putImageData(tlBase, 0, 0); tctx.fillStyle = "#ffc94d"; tctx.fillRect(t / TOTAL * tl.width - 1, 0, 2, tl.height); }
+tl.onclick = e => { const r = tl.getBoundingClientRect(); seek((e.clientX - r.left) / r.width * TOTAL); };
+
+let readyDone = false;
+function maybeReady() { if (readyDone || picsPending > 0 || bgPending) return; readyDone = true;
+  legend(); buildTimeline(); seek(num(Q.get("t"), 0)); window.SHOW_READY = true; }
+window.renderAt = renderAt; window.SHOW = SHOW;
+if (!picsPending && !bgPending) maybeReady();
+window.addEventListener("resize", () => { buildTimeline(); frame(); });
+</script>
+</body>
+</html>

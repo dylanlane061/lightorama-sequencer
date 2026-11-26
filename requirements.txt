@@ -1,0 +1,11 @@
+# Core (needed)
+lxml>=4.9
+pillow>=9.0
+numpy>=1.22
+
+# Optional: viewer snapshots, so an agent can look at a show
+#   after installing, run:  python -m playwright install chromium
+#   (or it will use Chrome / Edge if they are installed)
+playwright>=1.40
+
+# Also needed for mp3/m4a songs: ffmpeg on PATH (Windows: winget install ffmpeg). WAV works without it.

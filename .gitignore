@@ -1,0 +1,10 @@
+__pycache__/
+*.pyc
+_lor_backups/
+*.tmp
+.DS_Store
+# keep LOR sequences, layouts and music out of the repo
+*.loredit
+*.lorprev
+*.mp3
+*.wav
