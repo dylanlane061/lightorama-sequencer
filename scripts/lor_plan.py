@@ -158,6 +158,7 @@ class Compiler:
         self.count = 0
         self.rng = random.Random(7)
         self.pictures: dict[str, str] = {}
+        self.marks = {k: sorted(t_of(x) for x in v) for k, v in plan.get("marks", {}).items()}
 
     def colors(self, spec):
         if spec is None:
@@ -167,6 +168,13 @@ class Compiler:
         return list(spec)
 
     def steps(self, a: float, b: float, every) -> list[tuple[float, float]]:
+        if isinstance(every, str) and every in self.marks:   # a named mark set from the plan
+            ms = [t for t in self.marks[every] if a - 1e-3 <= t < b]
+            nxt = ms[1:] + [b]
+            return [(m, max(m + 0.05, min(n, b))) for m, n in zip(ms, nxt)]
+        if isinstance(every, list):
+            ms = sorted(t_of(x) for x in every if a - 1e-3 <= t_of(x) < b)
+            return [(m, max(m + 0.05, min(n, b))) for m, n in zip(ms, ms[1:] + [b])]
         every = str(every or "beat").lower()
         beats = [t for t in self.analysis.get("beats", [])]
         bars = [t for t in self.analysis.get("downbeats", [])]
@@ -196,9 +204,10 @@ class Compiler:
         return max(0.05, (b - a) * float(ln))
 
     # -- one effect on one target ----------------------------------------------------------
-    def put(self, sid, cue, a, b, step_i=0, level=None):
+    def put(self, sid, cue, a, b, step_i=0, level=None, row=None):
         info = self.s.info[sid]
         doc = self.s.doc
+        row = row or cue.get("rows_by_target", {}).get(info["name"])
         cs0, cs1 = int(round(a * 100)), int(round(b * 100))
         if doc.total:
             cs1 = min(cs1, doc.total)
@@ -218,7 +227,7 @@ class Compiler:
                 if typ == "fade":
                     a_, b_ = cue.get("from", i0 if isinstance(lv, list) else 100), cue.get("to", i1 if isinstance(lv, list) else 0)
                 elif typ == "pulse":
-                    a_, b_ = cue.get("from", 100), cue.get("to", 0)
+                    a_, b_ = (level if level is not None else cue.get("from", 100)), cue.get("to", 0)
                 else:
                     a_, b_ = i0, i1
                 if info["kind"] == "dumb_rgb":
@@ -233,7 +242,7 @@ class Compiler:
                     lvl = H.level_attrs(None, a_, b_) if a_ != b_ else {"intensity": str(a_)}
                 self._place(ch, H.new_effect(cs0, cs1, settings, lvl), policy, info["name"])
         elif info["motion"]:
-            track = self._row(info, cue, cs0, cs1)
+            track = self._row(info, {**cue, "row": row} if row else cue, cs0, cs1)
             if track is None:
                 return
             if cue.get("picture"):
@@ -251,11 +260,12 @@ class Compiler:
                     self.warnings.append(f"unknown preset {preset!r} (cue on {info['name']}): skipped")
                     return
                 use = cols if len(cols) <= 5 else cols[:5]
-                if cue.get("rhythm", "hold") != "hold" and cue.get("cycle_colors", True) and len(cols) > 1 and preset in ("wash",):
+                cyc = cue.get("cycle_colors", preset == "wash")
+                if cue.get("rhythm", "hold") != "hold" and cyc and len(cols) > 1:
                     use = [cols[step_i % len(cols)]]
                 side = f"lightorama_{name}:{H.palette(use)}:{opts}"
             if cue.get("rhythm", "hold") != "hold" and not isinstance(lv, list) and cue.get("type") == "pulse":
-                i0, i1 = 100, 0
+                i0, i1 = (level if level is not None else cue.get("from", 100)), cue.get("to", 0)
             lvl = H.level_attrs(None, i0, i1) if i0 != i1 else {"intensity": str(i0)}
             eff = H.new_effect(cs0, cs1, f"{H.MIX_ONE_SIDED}|{side}|{H.NONE_SIDE}", lvl)
             self._place(track, eff, policy, f"{info['name']}/{track.get('name')}")
@@ -306,8 +316,32 @@ class Compiler:
             for sid in ids:
                 self.put(sid, cue, a, b)
             return
-        for k, (s0, s1) in enumerate(self.steps(a, b, cue.get("every", "beat"))):
+        if rhythm == "wave":   # sweep across the yard by real position: each target starts as the wave reaches it
+            sweep = t_of(cue.get("sweep", 60 / self.analysis.get("tempo", 120) * 4))
+            xs = [self.s.info[i]["x"] for i in ids]
+            lo, hi = min(xs), max(xs)
+            rev = str(cue.get("order", "left_to_right")).lower() == "right_to_left"
+            ln = t_of(cue.get("length", "0.6s"))
+            for sid in ids:
+                f = (self.s.info[sid]["x"] - lo) / ((hi - lo) or 1)
+                f = 1 - f if rev else f
+                st = a + f * sweep
+                if st < b:
+                    self.put(sid, cue, st, min(b, st + ln))
+            return
+        steps = self.steps(a, b, cue.get("every", "beat"))
+        ramp = cue.get("ramp")
+        rows = cue.get("rows")
+        for k, (s0, s1) in enumerate(steps):
             e1 = s0 + self.lit_len(cue, s0, s1)
+            lvl = None
+            if ramp:   # intensity grows (or fades) across the cue: e.g. a train getting started
+                f = (s0 - a) / max(1e-6, b - a)
+                lvl = int(round(ramp[0] + (ramp[1] - ramp[0]) * f))
+            if rhythm == "spin" and rows:   # every target lights the next row in turn (snowflake arms = wheel spokes)
+                for sid in ids:
+                    self.put(sid, cue, s0, e1, step_i=k, level=lvl, row=rows[k % len(rows)])
+                continue
             if rhythm == "pulse":
                 chosen = ids
             elif rhythm == "chase":
@@ -320,7 +354,7 @@ class Compiler:
             else:
                 raise H.LorError(f"unknown rhythm {rhythm!r}")
             for sid in chosen:
-                self.put(sid, cue, s0, e1, step_i=k)
+                self.put(sid, cue, s0, e1, step_i=k, level=lvl, row=(rows[k % len(rows)] if rows else None))
 
     def run(self):
         for sec in self.plan.get("sections", []):
@@ -518,6 +552,8 @@ def main(argv=None):
     a = p.parse_args(argv)
     try:
         return a.fn(a)
+    except BrokenPipeError:
+        return 0
     except H.LorError as exc:
         print(f"error: {exc}", file=sys.stderr)
         return 2

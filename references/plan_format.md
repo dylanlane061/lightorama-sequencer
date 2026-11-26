@@ -68,6 +68,22 @@ edit it to follow the creative direction and compile it.
 A cue can have both `type` and `preset`: channel targets use `type` and pixel targets
 use `preset`. With only one given, pixel targets get `wash` and channel props get `on`.
 
+## Signature moves (added for the first real show)
+
+| key / value | what it does |
+|---|---|
+| top-level `"marks": {"chugs": [0.05, 0.23, ...], "hothot": [...]}` | Named lists of times (seconds or `m:ss.cc`) taken from the audio. `"every": "chugs"` steps on exactly those moments: train chugs, vocal shouts, hits. An inline list works too. |
+| `"rhythm": "spin", "rows": ["Arm 1", ..., "Arm 6"]` | Each step lights the next motion row on every target. Snowflake arms become turning wheel spokes. `rows` also works with `chase`, `pulse` and the other rhythms. |
+| `"ramp": [30, 100]` | Intensity grows (or fades) across the steps of the cue. Use it for "the train gets going" builds. |
+| `"rhythm": "wave", "sweep": 1.4, "length": "0.7s", "order": "left_to_right"` | Starts each target when a wave crossing the yard reaches it, by real position. Use it for whole-house swells. |
+| `"rows_by_target": {"Pixel Tree 1": "Effects 03", ...}` | A per-target row (for example the top rows, so a wave rides over the base looks). |
+| `"cycle_colors": true` | Each step uses the next colour of the palette, for any preset. |
+| `"preset": "fireworks"` | Bursts (option string from LOR's own NYE sequence). |
+
+**Layering:** put base looks on the first row ("Effects 01" or a snowflake's "All") and
+accents (whistles, waves, shout flashes) on later rows. Later rows draw on top. Give
+accents `"on_overlap": "replace"` when they must win.
+
 ## Design tips that read well on real houses
 
 - **Contrast between sections** matters more than complexity. Keep quiet sections

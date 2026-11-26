@@ -66,6 +66,8 @@ PRESETS: dict[str, tuple[str, str]] = {
     "garland_up": ("garland", "0,0,once_fit_to_duration,12,bottom_to_top"),
     "garland_down": ("garland", "0,0,once_fit_to_duration,12,top_to_bottom"),
     "garland_across": ("garland", "0,0,once_fit_to_duration,12,left_to_right"),
+    # seen in LOR's own "New Years Eve Countdown" sequence (S6 6.3)
+    "fireworks": ("fireworks", "25,60,2,30,normal,continuous"),
 }
 
 # Picture option templates. {file} is replaced by the (encoded) file reference.
