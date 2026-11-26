@@ -72,8 +72,8 @@ PRESETS: dict[str, tuple[str, str]] = {
     # "right,10,36,0" is quoted from a real LOR file in xLights' importer; "left" is the
     # same field's opposite value (also mapped by that importer). Direction follows the
     # prop's own pixel order, so pick per prop to move the same way physically.
-    "blend_right": ("blendedbars", "right,10,36,0"),
-    "blend_left": ("blendedbars", "left,10,36,0"),
+    "blend_right": ("blendedbars", "right,10,10,0"),
+    "blend_left": ("blendedbars", "left,10,10,0"),
 }
 
 # Picture option templates. {file} is replaced by the (encoded) file reference.

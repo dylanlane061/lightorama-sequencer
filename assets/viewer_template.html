@@ -136,12 +136,15 @@ const FX = {
   twinkle(o, pal, u, v, st) { const dens = num(o[0], 50) / 100, h = hash(st.k, 1); if (h > dens) return null;
     const per = 0.5 + hash(st.k, 2) * 0.9, ph = frac(st.t / per + hash(st.k, 3)), b = ph < 0.5 ? ph * 2 : 2 - ph * 2;
     const c = pal[Math.floor(hash(st.k, 4) * pal.length)]; return [c[0] * b, c[1] * b, c[2] * b]; },
-  bars(o, pal, u, v, st, soft) { const d = DIR(o[0]), reps = Math.max(1, num(o[1], 1)), sp = 0.6; let pos;
-    if (d.startsWith("up")) pos = v - st.t * sp; else if (d.startsWith("down")) pos = v + st.t * sp;
-    else if (d.startsWith("left")) pos = u + st.t * sp; else if (d.startsWith("right")) pos = u - st.t * sp;
-    else if (d.startsWith("h_expand")) pos = Math.abs(u - 0.5) * 2 - st.t * sp; else if (d.startsWith("h_compress")) pos = Math.abs(u - 0.5) * 2 + st.t * sp;
-    else if (d.startsWith("v_expand")) pos = Math.abs(v - 0.5) * 2 - st.t * sp; else if (d.startsWith("v_compress")) pos = Math.abs(v - 0.5) * 2 + st.t * sp;
-    else if (d.includes("right")) pos = (u + v) / 2 - st.t * sp; else if (d.includes("left")) pos = (1 - u + v) / 2 - st.t * sp; else pos = v;
+  // Speed follows xLights' reading of LOR bars: "cycles" (x10) across the whole effect, not per second.
+  // bars: dir,count,highlight,3d,cycles,center   blendedbars: dir,?,cycles,center (2nd field unverified)
+  bars(o, pal, u, v, st, soft) { const d = DIR(o[0]);
+    const reps = soft ? 1 : Math.max(1, num(o[1], 1)), cyc = num(soft ? o[2] : o[4], 10) / 10, sh = cyc * st.p; let pos;
+    if (d.startsWith("up")) pos = v - sh; else if (d.startsWith("down")) pos = v + sh;
+    else if (d.startsWith("left")) pos = u + sh; else if (d.startsWith("right")) pos = u - sh;
+    else if (d.startsWith("h_expand")) pos = Math.abs(u - 0.5) * 2 - sh; else if (d.startsWith("h_compress")) pos = Math.abs(u - 0.5) * 2 + sh;
+    else if (d.startsWith("v_expand")) pos = Math.abs(v - 0.5) * 2 - sh; else if (d.startsWith("v_compress")) pos = Math.abs(v - 0.5) * 2 + sh;
+    else if (d.includes("right")) pos = (u + v) / 2 - sh; else if (d.includes("left")) pos = (1 - u + v) / 2 - sh; else pos = v;
     const f = frac(pos * reps); return soft ? palAt(pal, f) : pal[Math.floor(f * pal.length) % pal.length]; },
   blendedbars(o, pal, u, v, st) { return FX.bars(o, pal, u, v, st, true); },
   meteors(o, pal, u, v, st) { const cnt = num(o[1], 20) / 100, len = num(o[2], 30) / 100, d = DIR(o[3]);

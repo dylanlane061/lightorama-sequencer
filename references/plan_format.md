@@ -79,12 +79,25 @@ use `preset`. With only one given, pixel targets get `wash` and channel props ge
 | `"rows_by_target": {"Pixel Tree 1": "Effects 03", ...}` | A per-target row (for example the top rows, so a wave rides over the base looks). |
 | `"cycle_colors": true` | Each step uses the next colour of the palette, for any preset. |
 | `"preset": "fireworks"` | Bursts (option string from LOR's own NYE sequence). |
-| `"preset": "blend_left"` / `"blend_right"` | Always-lit colour bands travelling along a prop (blended bars). |
+| `"preset": "blend_left"` / `"blend_right"` | Always-lit colour bands travelling along a prop (blended bars; same option form as LOR's observed `up,10,10,0`). |
 
 **Phase is song-wide.** Steps count on the song's beat/bar grid (or the whole mark
 list), not from each cue's start. So separate cues stay in unison: snowflakes that join
 one at a time still show the same spoke, and a chase that resumes after a break carries on
 where the song is.
+
+**Speed changes:** `every` accepts `8th` and `16th` (beat subdivisions on the song-wide
+grid) and any named mark set, so a mark set with growing gaps makes something slow to a
+stop (snowflake wheels, a chase) while the phase stays shared across props.
+
+**Groups of rows per step:** `rows` entries may be lists, e.g. opposite arms
+`[["Arm 1","Arm 4"],["Arm 2","Arm 5"],["Arm 3","Arm 6"]]` (a propeller) or
+`[["Arm 1","Arm 3","Arm 5"],["Arm 2","Arm 4","Arm 6"]]` (a star that flips).
+
+**Own option string:** a cue can keep a preset's effect and set `"options"` itself, e.g.
+`"preset": "blend_left", "options": "left,10,15,0"`. For bars and blended bars the speed
+field is read as cycles x10 across the whole effect (xLights' reading; unverified in S6),
+so a long effect with a small number moves slowly.
 
 **Moving trim instead of blinking trim:** `blend_left` / `blend_right` (blended bars) keep
 a prop fully lit while colour bands travel along it. Direction follows each prop's pixel

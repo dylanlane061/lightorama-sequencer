@@ -39,7 +39,7 @@ Cue keys
   colors    palette name or list (dumb RGB uses colors[0], cycling per step; motion uses all)
   intensity number or [from, to]; from/to for fades (channel)
   rhythm    hold (default: one effect for the whole span) | pulse | chase | alternate | random
-  every     beat | bar | half (2 beats) | 2bars | <seconds>s   (for non-hold rhythms)
+  every     8th | 16th | beat | half (= every 2 beats) | bar | 2bars | <seconds>s | <mark set name>
   length    fraction of each step that is lit (default 0.85) or "<sec>s"
   order     file | left_to_right | right_to_left | bottom_to_top | top_to_bottom (chase order)
   row       motion row name for pixel targets (default: first free whole-prop row)
@@ -184,7 +184,10 @@ class Compiler:
         beats = [t for t in self.analysis.get("beats", [])]
         bars = [t for t in self.analysis.get("downbeats", [])]
         grid = None
-        if every in ("beat", "half", "2beats"):
+        if every in ("8th", "16th") and len(beats) > 1:   # subdivisions of the beat, still song-wide
+            n = 2 if every == "8th" else 4
+            grid = [beats[i] + (beats[i + 1] - beats[i]) * j / n for i in range(len(beats) - 1) for j in range(n)]
+        elif every in ("beat", "half", "2beats"):
             grid = beats[::2] if every != "beat" else beats
         elif every in ("bar", "2bars"):
             grid = bars[::2] if every == "2bars" else bars
@@ -262,7 +265,10 @@ class Compiler:
             else:
                 preset = cue.get("preset") or "wash"
                 learned = H.load_templates().get("presets", {})
-                if preset in learned:
+                if cue.get("options") is not None:   # same effect as the preset, own option string
+                    name = cue.get("effect") or (learned.get(preset, {}).get("effect") or H.PRESETS.get(preset, (preset,))[0])
+                    opts = cue["options"]
+                elif preset in learned:
                     name, opts = learned[preset]["effect"], learned[preset]["options"]
                 elif preset in H.PRESETS:
                     name, opts = H.PRESETS[preset]
@@ -350,8 +356,10 @@ class Compiler:
                 f = (s0 - a) / max(1e-6, b - a)
                 lvl = int(round(ramp[0] + (ramp[1] - ramp[0]) * f))
             if rhythm == "spin" and rows:   # every target lights the next row in turn (snowflake arms = wheel spokes)
+                step_rows = rows[k % len(rows)]
                 for sid in ids:
-                    self.put(sid, cue, s0, e1, step_i=k, level=lvl, row=rows[k % len(rows)])
+                    for rw in (step_rows if isinstance(step_rows, list) else [step_rows]):
+                        self.put(sid, cue, s0, e1, step_i=k, level=lvl, row=rw)
                 continue
             if rhythm == "pulse":
                 chosen = ids
