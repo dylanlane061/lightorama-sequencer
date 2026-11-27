@@ -1,0 +1,258 @@
+<title>Papa Russ Workshop Directions</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Ultra&family=Alegreya+Sans:wght@400;500;700&family=Special+Elite&family=Shrikhand&family=Karla:wght@400;600;700&family=Syncopate:wght@400;700&family=IBM+Plex+Sans+Condensed:wght@400;500;600&family=Literata:opsz,wght@7..72,400;7..72,600&display=swap">
+<style>
+/* Layout: a quiet review frame, then three full-width "specimen" boards, each committed to its own world. */
+:root{
+  --frame-bg:#f3f0ea; --frame-ink:#2a2622; --frame-soft:#6d655c; --frame-line:#d9d2c6; --frame-card:#fffdf9;
+  --f-frame:"Literata", Georgia, serif;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --frame-bg:#1b1916; --frame-ink:#ece6dc; --frame-soft:#a79e92; --frame-line:#38332d; --frame-card:#24211d; color-scheme:dark}}
+:root[data-theme="dark"]{--frame-bg:#1b1916; --frame-ink:#ece6dc; --frame-soft:#a79e92; --frame-line:#38332d; --frame-card:#24211d; color-scheme:dark}
+
+*{box-sizing:border-box}
+body{background:var(--frame-bg);color:var(--frame-ink);font:16px/1.6 var(--f-frame);
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:40px 64px}
+.wrap{max-width:1120px;margin:0 auto;display:grid;gap:56px}
+.intro{max-width:66ch;display:grid;gap:14px}
+.intro h1{font-size:clamp(28px,4vw,40px);line-height:1.15;margin:0;text-wrap:balance;font-weight:600}
+.intro p{margin:0;color:var(--frame-soft)}
+.tells{background:var(--frame-card);border:1px solid var(--frame-line);border-radius:6px;padding:20px 24px}
+.tells h2{font-size:18px;margin:0 0 8px}
+.tells ul{margin:0;padding-left:20px;color:var(--frame-soft);display:grid;gap:4px}
+.tells strong{color:var(--frame-ink);font-weight:600}
+
+.dir{display:grid;gap:16px}
+.dir-head{display:flex;flex-wrap:wrap;align-items:baseline;gap:8px 20px;justify-content:space-between}
+.dir-head h2{margin:0;font-size:26px;font-weight:600}
+.dir-head p{margin:0;color:var(--frame-soft);max-width:60ch}
+.swatches{display:flex;gap:6px;flex-wrap:wrap}
+.sw{width:28px;height:28px;border-radius:50%;border:1px solid var(--frame-line)}
+.board{border-radius:10px;overflow:hidden;display:grid;grid-template-columns:1.25fr 1fr;min-height:440px}
+.board > *{min-width:0}
+.notes{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;font-size:15px;color:var(--frame-soft)}
+.notes b{color:var(--frame-ink);display:block;font-weight:600}
+@media (max-width:820px){.board{grid-template-columns:1fr}.notes{grid-template-columns:1fr}}
+
+.house{width:100%;height:auto;display:block}
+
+/* ============ A. Toymaker's Bench ============ */
+.a{--wood:#6b4126;--wood-dk:#4a2b18;--paper:#f2e6cc;--ink:#2b1d12;--brass:#c9973f;--holly:#1f5a3a;--berry:#a3262a;color:var(--ink)}
+.a .hero{background:
+   repeating-linear-gradient(92deg,rgba(0,0,0,.08) 0 2px,transparent 2px 9px),
+   repeating-linear-gradient(88deg,rgba(255,220,170,.06) 0 1px,transparent 1px 23px),
+   linear-gradient(180deg,var(--wood),var(--wood-dk));color:var(--paper);padding:40px 36px;display:grid;gap:18px;align-content:start;position:relative}
+.a .plate{justify-self:start;font:13px/1 "Special Elite",monospace;color:var(--ink);background:linear-gradient(180deg,#e2b964,var(--brass));padding:7px 12px;border-radius:3px;box-shadow:inset 0 1px 0 rgba(255,255,255,.5),0 2px 0 rgba(0,0,0,.35)}
+.a .plate::before,.a .plate::after{content:"";display:inline-block;width:5px;height:5px;border-radius:50%;background:#7a5a22;margin:0 8px 1px 0;vertical-align:middle}
+.a .plate::after{margin:0 0 1px 8px}
+.a h3{font:400 clamp(30px,4.4vw,48px)/1.05 "Ultra",Georgia,serif;margin:0;text-wrap:balance;text-shadow:0 2px 0 rgba(0,0,0,.35)}
+.a .lede{font:17px/1.55 "Alegreya Sans",sans-serif;margin:0;max-width:44ch;color:#f6ead2}
+.a .btns{display:flex;gap:12px;flex-wrap:wrap}
+.a .btn{font:700 16px/1 "Alegreya Sans",sans-serif;padding:13px 20px;border-radius:4px;border:0;cursor:pointer}
+.a .btn.primary{background:var(--berry);color:#fff4e2;box-shadow:0 3px 0 #5e1517}
+.a .btn.ghost{background:transparent;color:var(--paper);border:2px dashed rgba(242,230,204,.6)}
+.a .btn:focus-visible{outline:3px solid var(--brass);outline-offset:3px}
+.a .bench{background:var(--paper);padding:32px 28px;display:grid;gap:14px;align-content:start;
+  background-image:radial-gradient(rgba(120,90,50,.08) 1px,transparent 1px);background-size:5px 5px}
+.a .ticket{background:#fbf4e3;border:1px solid #d8c59d;padding:20px 18px 18px;position:relative;box-shadow:2px 3px 0 rgba(75,45,20,.15);transform:rotate(-.6deg)}
+.a .ticket::before{content:"";position:absolute;top:-9px;left:50%;width:18px;height:18px;margin-left:-9px;border-radius:50%;background:radial-gradient(circle at 40% 35%,#e9c477,#9a6f2a);box-shadow:0 1px 2px rgba(0,0,0,.4)}
+.a .ticket h4{margin:0 0 2px;font:400 22px/1.2 "Ultra",Georgia,serif}
+.a .ticket .no{font:13px "Special Elite",monospace;color:#7a6346}
+.a .ticket ul{list-style:none;margin:14px 0 0;padding:0;display:grid;gap:8px;font:16px/1.4 "Alegreya Sans",sans-serif}
+.a .ticket li{display:flex;gap:10px;align-items:baseline;border-bottom:1px dotted #c9b48a;padding-bottom:6px}
+.a .box{flex:none;width:15px;height:15px;border:2px solid var(--ink);border-radius:2px;transform:translateY(2px)}
+.a .box.on{background:var(--holly);border-color:var(--holly);box-shadow:inset 0 0 0 2px #fbf4e3}
+.a .ticket li span:last-child{margin-left:auto;font:13px "Special Elite",monospace;color:#7a6346}
+.a .sig{font:15px "Special Elite",monospace;color:#7a6346}
+
+/* ============ B. Vintage Holiday Print ============ */
+.b{--card:#efe4cf;--red:#c8322f;--green:#2f6b4f;--ink:#23312b;--gold:#e1a93b;color:var(--ink)}
+.b .hero{background:var(--card);padding:40px 36px;display:grid;gap:16px;align-content:start;position:relative;overflow:hidden;
+  background-image:radial-gradient(rgba(35,49,43,.10) 1.2px,transparent 1.4px);background-size:7px 7px}
+.b .hero::after{content:"";position:absolute;right:-60px;top:-60px;width:220px;height:220px;border-radius:50%;
+  background:radial-gradient(var(--red) 1.6px,transparent 1.8px) 0 0/9px 9px;opacity:.35}
+.b h3{font:400 clamp(34px,5vw,58px)/1 "Shrikhand",Georgia,serif;margin:0;color:var(--red);text-wrap:balance;
+  text-shadow:3px 3px 0 var(--green);letter-spacing:.5px;position:relative;z-index:1}
+.b .lede{font:17px/1.55 "Karla",sans-serif;margin:0;max-width:44ch;position:relative;z-index:1}
+.b .btns{display:flex;gap:12px;flex-wrap:wrap;position:relative;z-index:1}
+.b .btn{font:700 16px/1 "Karla",sans-serif;padding:13px 22px;border-radius:999px;cursor:pointer;border:3px solid var(--ink)}
+.b .btn.primary{background:var(--green);color:var(--card)}
+.b .btn.ghost{background:var(--card);color:var(--ink)}
+.b .btn:focus-visible{outline:3px solid var(--red);outline-offset:3px}
+.b .tag{position:relative;z-index:1;justify-self:start;font:700 14px/1 "Karla",sans-serif;background:var(--gold);padding:8px 14px;border-radius:2px;transform:rotate(-2deg);box-shadow:3px 3px 0 var(--ink)}
+.b .side{background:var(--green);color:var(--card);padding:32px 28px;display:grid;gap:16px;align-content:start}
+.b .side h4{font:400 30px/1.05 "Shrikhand",Georgia,serif;margin:0;color:var(--card);text-shadow:2px 2px 0 var(--red)}
+.b .stamps{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.b .stamp{background:var(--card);color:var(--ink);padding:12px 10px;font:15px/1.35 "Karla",sans-serif;position:relative;
+  border:5px dotted var(--green);outline:2px solid var(--card);outline-offset:-7px;min-height:84px}
+.b .stamp b{display:block;font:400 19px/1.15 "Shrikhand",Georgia,serif;color:var(--red);margin-bottom:2px}
+.b .stamp.req::after{content:"Required";position:absolute;right:8px;bottom:8px;font:700 11px "Karla",sans-serif;color:var(--red);border:2px solid var(--red);padding:1px 5px;transform:rotate(-8deg)}
+.b .drop{font:15px/1.4 "Karla",sans-serif;opacity:.92}
+
+/* ============ C. North Pole Control Room ============ */
+.c{--panel:#1f3a33;--panel-dk:#142722;--bake:#7a1f1c;--cream:#e9dfc6;--brass:#c49a4a;--glow:#ffb547;--amber-dim:#5b4320;color:var(--cream)}
+.c .hero{background:linear-gradient(180deg,#264840,var(--panel));padding:36px 34px;display:grid;gap:18px;align-content:start;
+  box-shadow:inset 0 0 0 10px var(--panel-dk),inset 0 0 0 12px #3a5c53}
+.c .label{justify-self:start;font:700 11px/1 "Syncopate",sans-serif;letter-spacing:.18em;color:var(--panel-dk);background:var(--cream);padding:7px 12px;border-radius:2px;box-shadow:inset 0 -2px 0 rgba(0,0,0,.2)}
+.c h3{font:700 clamp(24px,3.4vw,38px)/1.15 "Syncopate",sans-serif;margin:0;letter-spacing:.02em;text-wrap:balance}
+.c .lede{font:17px/1.55 "IBM Plex Sans Condensed",sans-serif;margin:0;max-width:46ch;color:#d6ccb2}
+.c .bulbs{display:flex;gap:14px;flex-wrap:wrap}
+.c .bulb{display:grid;justify-items:center;gap:6px;font:600 11px/1 "IBM Plex Sans Condensed",sans-serif;letter-spacing:.06em;color:#bfb497}
+.c .bulb i{width:22px;height:22px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#fff3cf,var(--glow) 45%,#a3601a);box-shadow:0 0 14px 3px rgba(255,181,71,.55),inset 0 -2px 3px rgba(0,0,0,.3);border:3px solid var(--brass)}
+.c .bulb.off i{background:radial-gradient(circle at 35% 30%,#8a7550,var(--amber-dim));box-shadow:inset 0 -2px 3px rgba(0,0,0,.4)}
+.c .bulb.red i{background:radial-gradient(circle at 35% 30%,#ffd0c8,#e0453a 45%,#7a1712);box-shadow:0 0 14px 3px rgba(224,69,58,.5),inset 0 -2px 3px rgba(0,0,0,.3)}
+.c .bulb.grn i{background:radial-gradient(circle at 35% 30%,#d6ffd9,#3fbf5f 45%,#14532a);box-shadow:0 0 14px 3px rgba(63,191,95,.45),inset 0 -2px 3px rgba(0,0,0,.3)}
+@media (prefers-reduced-motion:no-preference){.c .bulb.blink i{animation:blink 1.6s steps(1) infinite}}
+@keyframes blink{50%{background:radial-gradient(circle at 35% 30%,#8a7550,var(--amber-dim));box-shadow:inset 0 -2px 3px rgba(0,0,0,.4)}}
+.c .btns{display:flex;gap:14px;flex-wrap:wrap;align-items:center}
+.c .btn{font:700 12px/1 "Syncopate",sans-serif;letter-spacing:.12em;padding:15px 20px;border-radius:6px;cursor:pointer;border:0}
+.c .btn.primary{background:radial-gradient(circle at 50% 30%,#a52b26,var(--bake));color:var(--cream);box-shadow:0 4px 0 #3e0d0b,inset 0 1px 0 rgba(255,255,255,.25)}
+.c .btn.primary:active{transform:translateY(3px);box-shadow:0 1px 0 #3e0d0b}
+.c .btn.ghost{background:#2c4f46;color:var(--cream);box-shadow:0 4px 0 var(--panel-dk)}
+.c .btn:focus-visible{outline:3px solid var(--glow);outline-offset:3px}
+.c .rack{background:#2a2a26;padding:28px 24px;display:grid;gap:12px;align-content:start;
+  background-image:linear-gradient(180deg,rgba(255,255,255,.05),transparent 40%)}
+.c .slot{display:grid;grid-template-columns:auto 1fr auto;gap:12px;align-items:center;background:#1c1c19;border-radius:6px;padding:12px 14px;box-shadow:inset 0 2px 4px rgba(0,0,0,.6)}
+.c .slot .name{font:700 11px/1.2 "Syncopate",sans-serif;letter-spacing:.12em}
+.c .slot .hint{font:14px/1.3 "IBM Plex Sans Condensed",sans-serif;color:#a99f86;grid-column:2}
+.c .toggle{width:20px;height:36px;border-radius:10px;background:#0d0d0b;position:relative;box-shadow:inset 0 0 0 2px #444}
+.c .toggle::after{content:"";position:absolute;left:3px;width:14px;height:16px;border-radius:7px;background:linear-gradient(180deg,#e9e2cf,#9a927c);top:3px}
+.c .toggle.down::after{top:17px}
+.c .slot .bulb i{width:16px;height:16px;border-width:2px}
+.c .readout{font:600 15px "IBM Plex Sans Condensed",sans-serif;color:var(--glow);background:#120d05;border-radius:4px;padding:10px 12px;letter-spacing:.04em;box-shadow:inset 0 0 12px rgba(255,181,71,.15)}
+</style>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="house" viewBox="0 0 320 150">
+    <g fill="none" stroke="currentColor" stroke-width="2" opacity=".55">
+      <path d="M20 140V80L90 30l70 50v60M160 140V95l55-38 55 38v45M20 140h250"/>
+      <path d="M290 140V40" /></g>
+    <g fill="currentColor">
+      <circle cx="30" cy="73" r="3"/><circle cx="44" cy="63" r="3"/><circle cx="58" cy="53" r="3"/><circle cx="72" cy="43" r="3"/><circle cx="90" cy="31" r="3"/>
+      <circle cx="108" cy="43" r="3"/><circle cx="122" cy="53" r="3"/><circle cx="136" cy="63" r="3"/><circle cx="150" cy="73" r="3"/>
+      <circle cx="172" cy="87" r="3"/><circle cx="186" cy="77" r="3"/><circle cx="200" cy="67" r="3"/><circle cx="215" cy="58" r="3"/><circle cx="230" cy="67" r="3"/><circle cx="244" cy="77" r="3"/><circle cx="258" cy="87" r="3"/>
+      <path d="M290 30l-14 110h28z" opacity=".85"/></g>
+  </symbol>
+</svg>
+
+<main class="wrap">
+  <header class="intro">
+    <h1>Three workshop looks for Papa Russ Light Co.</h1>
+    <p>Each board shows the same two screens: the top of the website, and the app's "Open a show" screen. They're mockups, so the buttons don't do anything yet. Pick the one that feels most like Papa Russ, or tell me which pieces to mix.</p>
+    <div class="tells">
+      <h2>Why the current site feels like every other site</h2>
+      <ul>
+        <li><strong>Small all-caps labels above every heading</strong> ("HOW IT WORKS", "WHAT IT CAN DO"). Most generated pages have them.</li>
+        <li><strong>One gold word in a white headline</strong> ("Watch your show <em>before</em> the neighbors do").</li>
+        <li><strong>Matching rounded cards and a near-black navy page</strong>, the standard SaaS kit.</li>
+        <li><strong>Inter-style sans and monospace labels</strong>, with nothing that could only belong to a Christmas light show.</li>
+      </ul>
+      <p style="margin:10px 0 0;color:var(--frame-soft)">The string of bulbs under the hero is the one piece with real personality, and all three directions build on it.</p>
+    </div>
+  </header>
+
+  <!-- A -->
+  <section class="dir" aria-labelledby="a-h">
+    <div class="dir-head">
+      <h2 id="a-h">A. Toymaker's bench</h2>
+      <p>Grandpa's garage workbench: a wood-grain hero, a brass name plate, and the app as a work order pinned to the bench.</p>
+      <div class="swatches" aria-hidden="true"><span class="sw" style="background:#6b4126"></span><span class="sw" style="background:#f2e6cc"></span><span class="sw" style="background:#c9973f"></span><span class="sw" style="background:#a3262a"></span><span class="sw" style="background:#1f5a3a"></span></div>
+    </div>
+    <div class="board a">
+      <div class="hero">
+        <span class="plate">Papa Russ Light Co.</span>
+        <h3>Watch your show before the neighbors do.</h3>
+        <p class="lede">Play any S6 sequence in your browser with your house, your lights and your music. Leave notes on what you'd change, and the assistant builds the next version.</p>
+        <div class="btns"><button class="btn primary">Open the app</button><button class="btn ghost">Download for offline</button></div>
+        <svg class="house" style="color:#ffd27a;max-width:360px"><use href="#house"/></svg>
+      </div>
+      <div class="bench">
+        <div class="ticket">
+          <h4>Open a show</h4>
+          <div class="no">Work order · drop your files on the bench</div>
+          <ul>
+            <li><span class="box on"></span><span>Sequence</span><span>.loredit</span></li>
+            <li><span class="box"></span><span>Song</span><span>.mp3 .wav .m4a</span></li>
+            <li><span class="box"></span><span>Layout, if not inside</span><span>.lorprev</span></li>
+            <li><span class="box"></span><span>Photo of the house</span><span>.jpg .png</span></li>
+          </ul>
+        </div>
+        <div class="btns"><button class="btn primary">Open show</button><button class="btn ghost" style="color:#2b1d12;border-color:#a8926a">Try the demo show</button></div>
+        <div class="sig">Read right here in your browser. Nothing is uploaded.</div>
+      </div>
+    </div>
+    <div class="notes">
+      <p><b>The memorable thing</b>The paper work order. Checkboxes fill in as each file lands.</p>
+      <p><b>Type</b>A heavy slab face for headings, a warm humanist sans for reading, and typewriter for little tags.</p>
+      <p><b>Risk</b>Wood can get heavy. It works best kept to the hero and the top bar.</p>
+    </div>
+  </section>
+
+  <!-- B -->
+  <section class="dir" aria-labelledby="b-h">
+    <div class="dir-head">
+      <h2 id="b-h">B. Vintage holiday card</h2>
+      <p>A 1950s Christmas card: halftone dots, off-register red and green ink, and file slots drawn as postage stamps.</p>
+      <div class="swatches" aria-hidden="true"><span class="sw" style="background:#efe4cf"></span><span class="sw" style="background:#c8322f"></span><span class="sw" style="background:#2f6b4f"></span><span class="sw" style="background:#e1a93b"></span><span class="sw" style="background:#23312b"></span></div>
+    </div>
+    <div class="board b">
+      <div class="hero">
+        <span class="tag">Free for Light-O-Rama S6</span>
+        <h3>Watch your show before the neighbors do.</h3>
+        <p class="lede">Play any S6 sequence in your browser with your house, your lights and your music. Leave notes on what you'd change, and the assistant builds the next version.</p>
+        <div class="btns"><button class="btn primary">Open the app</button><button class="btn ghost">Download for offline</button></div>
+        <svg class="house" style="color:#c8322f;max-width:360px;position:relative;z-index:1"><use href="#house"/></svg>
+      </div>
+      <div class="side">
+        <h4>Open a show</h4>
+        <div class="stamps">
+          <div class="stamp req"><b>Sequence</b>.loredit</div>
+          <div class="stamp"><b>Song</b>.mp3, .wav or .m4a</div>
+          <div class="stamp"><b>Layout</b>.lorprev, if needed</div>
+          <div class="stamp"><b>House photo</b>.jpg or .png</div>
+        </div>
+        <p class="drop">Drop them all on this card at once. They're read in your browser and never uploaded.</p>
+        <div class="btns"><button class="btn primary" style="background:#c8322f;border-color:#efe4cf">Open show</button><button class="btn ghost">Try the demo show</button></div>
+      </div>
+    </div>
+    <div class="notes">
+      <p><b>The memorable thing</b>The headline set in a fat retro script with a green ink shadow, like a printed card.</p>
+      <p><b>Type</b>A bouncy 50s display face for headings and a plain, friendly sans for everything else.</p>
+      <p><b>Risk</b>It's the most "cute." It suits the website more than a tool you work in for an hour.</p>
+    </div>
+  </section>
+
+  <!-- C -->
+  <section class="dir" aria-labelledby="c-h">
+    <div class="dir-head">
+      <h2 id="c-h">C. North Pole control room</h2>
+      <p>A painted steel control panel with brass-rimmed bulbs, toggle switches and an amber readout, made for a tool that runs lights.</p>
+      <div class="swatches" aria-hidden="true"><span class="sw" style="background:#1f3a33"></span><span class="sw" style="background:#e9dfc6"></span><span class="sw" style="background:#7a1f1c"></span><span class="sw" style="background:#c49a4a"></span><span class="sw" style="background:#ffb547"></span></div>
+    </div>
+    <div class="board c">
+      <div class="hero">
+        <span class="label">Papa Russ Light Co.</span>
+        <h3>Watch your show before the neighbors do.</h3>
+        <p class="lede">Play any S6 sequence in your browser with your house, your lights and your music. Leave notes on what you'd change, and the assistant builds the next version.</p>
+        <div class="bulbs" aria-hidden="true">
+          <span class="bulb red"><i></i>Roof</span><span class="bulb blink"><i></i>Tree</span><span class="bulb grn"><i></i>Arches</span><span class="bulb off"><i></i>Yard</span><span class="bulb"><i></i>Wreath</span>
+        </div>
+        <div class="btns"><button class="btn primary">Open the app</button><button class="btn ghost">Download</button></div>
+      </div>
+      <div class="rack">
+        <div class="readout">Open a show: drop your files on the panel</div>
+        <div class="slot"><span class="toggle down"></span><span class="name">Sequence</span><span class="bulb"><i></i></span><span class="hint">Jingle Bell Rock.loredit loaded</span></div>
+        <div class="slot"><span class="toggle"></span><span class="name">Song</span><span class="bulb off"><i></i></span><span class="hint">.mp3, .wav or .m4a</span></div>
+        <div class="slot"><span class="toggle"></span><span class="name">Layout</span><span class="bulb off"><i></i></span><span class="hint">.lorprev, only if the sequence lacks one</span></div>
+        <div class="slot"><span class="toggle"></span><span class="name">House photo</span><span class="bulb off"><i></i></span><span class="hint">.jpg or .png backdrop</span></div>
+        <div class="btns"><button class="btn primary">Open show</button><button class="btn ghost">Demo show</button></div>
+      </div>
+    </div>
+    <div class="notes">
+      <p><b>The memorable thing</b>Each file slot is a switch with a bulb that lights when the file is loaded. The app's controls would carry the same feel.</p>
+      <p><b>Type</b>A wide engraved-plate face for labels and a condensed sans for reading.</p>
+      <p><b>Risk</b>The least "Christmas card" of the three. It leans on red, green and warm bulbs to stay festive.</p>
+    </div>
+  </section>
+</main>
