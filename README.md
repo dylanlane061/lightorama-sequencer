@@ -13,7 +13,7 @@ and they check every file before saving it.
 
 ## Just want to watch a show? Use the app
 
-**Papa Russ's** also runs on its own, no assistant needed:
+The **Papa Russ** app (from Papa Russ Light Co.) also runs on its own, no assistant needed:
 [open it in your browser](https://dylanlane061.github.io/lightorama-sequencer/app/), or
 download `papa-russ.html` from the [latest release](https://github.com/dylanlane061/lightorama-sequencer/releases/latest)
 to use offline. Drop in any S6 sequence (`.loredit`, plus the `.lorprev` if the sequence

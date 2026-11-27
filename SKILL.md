@@ -165,7 +165,7 @@ Work through every open note. If a note conflicts with the written direction, as
 before changing anything. Rebuild the viewer with the next `--version` so new notes stay
 separate from old ones; the viewer's "All versions" filter shows the history.
 
-## Workflow 5: a message from the Papa Russ's app
+## Workflow 5: a message from the Papa Russ app
 
 The viewer is also a standalone app (the hosted `docs/app/`, or `papa-russ.html` from a
 release; `scripts/build_app.py` makes it). People open any existing show in it, leave notes

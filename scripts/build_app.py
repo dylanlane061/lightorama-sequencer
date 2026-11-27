@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""build_app.py: make the standalone Papa Russ's app from the viewer template.
+"""build_app.py: make the standalone Papa Russ app from the viewer template.
 
 The viewer template is also the app: with no show embedded it opens on a start screen
 and reads .loredit / .lorprev files right in the browser. This copies it with the
@@ -20,8 +20,8 @@ HOSTED = ROOT / "docs" / "app" / "index.html"
 
 def render() -> str:
     html = TEMPLATE.read_text(encoding="utf-8")
-    html = html.replace("<title>__TITLE__ · Papa Russ's preview</title>", "<title>Papa Russ's</title>", 1)
-    return html.replace("__TITLE__", "Papa Russ's")
+    html = html.replace("<title>__TITLE__ · Papa Russ Light Co.</title>", "<title>Papa Russ Light Co.</title>", 1)
+    return html.replace("__TITLE__", "Papa Russ Light Co.")
 
 
 def main(argv=None):
