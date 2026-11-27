@@ -165,23 +165,61 @@ Work through every open note. If a note conflicts with the written direction, as
 before changing anything. Rebuild the viewer with the next `--version` so new notes stay
 separate from old ones; the viewer's "All versions" filter shows the history.
 
-## Workflow 5: a message from the Papa Russ app
+## Workflow 5: messages from the Papa Russ app
 
 The viewer is also a standalone app (the hosted `docs/app/`, or `papa-russ.html` from a
-release; `scripts/build_app.py` makes it). People open any existing show in it, leave notes
-and press **Send to assistant**. You then get a message that starts "Use the
-lightorama-sequencer skill. I reviewed my show …", lists the notes as
-`[m:ss.cc] scene {tagged props}: note` and may add wishes "For the whole show". The
-`.loredit` (and maybe a `.lorprev`, a song, a notes JSON) is attached.
+release; `scripts/build_app.py` makes it). It never calls an AI itself: wherever one would
+help, it writes a message for the user to paste into a chat with you, lists the files to
+attach, and tells them what you will ask and hand back. Every message starts "Use the
+lightorama-sequencer skill". The app then waits for your files to be opened in it, so
+**always end a job with the files as downloads, named exactly as the message asks.**
+
+**"I reviewed my show …" (fix notes).** Lists the notes as
+`[m:ss.cc] scene {tagged props}: note`, may add wishes "For the whole show", and names the
+next version ("Build v2 as a new file, "Song v2.loredit""). The `.loredit` (and maybe a
+`.lorprev`, a song, `plan.json`) is attached.
 
 1. The show may not be one you built: there may be no `plan.json`. Don't rebuild it from
-   scratch. Copy the sequence to a new file (`Song v2.loredit`), inspect it, and fix each
+   scratch. Copy the sequence to the new file the message names, inspect it, and fix each
    note there with Workflow 2's commands; keep everything the notes don't mention.
-2. If you did build it and still have its `plan.json`, edit the plan and recompile instead.
+2. If `plan.json` is attached (or you built it), edit the plan and recompile instead.
 3. Wishes without notes ("more sparkle in the chorus"): propose two or three concrete
    changes with times and props, and make the ones the user agrees to.
 4. Validate, build the next preview with `--version` (Workflow 4), look at snapshots, and
-   hand back the new `.loredit` and preview. Say which notes are fixed and which aren't.
+   hand back the new `.loredit`, the preview and `plan.json`.
+5. When the message asks for it, also hand back **`notes-reply.json`**, one entry per note.
+   The app matches each entry to the note (by time and text) and shows your answer on it:
+   ```json
+   {"show": "Carol of the Bells", "from": "v1", "to": "v2",
+    "replies": [
+      {"t": 42.1, "note": "Snowflakes should spin like train wheels here.",
+       "status": "fixed", "reply": "The snowflakes now spin on every beat from 0:40 to 0:52."},
+      {"t": 151.5, "note": "Less purple in the chorus.",
+       "status": "not changed", "reply": "There's no purple there; the blue arches look purple over the photo. Say if you want white instead."}]}
+   ```
+   `t` is the note's time in seconds (`[2:31.50]` is 151.5); `note` is its text as sent;
+   `status` is `fixed`, `not changed` or `question`; `reply` is one plain sentence a
+   non-technical person understands. Copy `from` from the message ("(v1)"), and use the new
+   version for `to`.
+
+**"… build a new show."** Layout and song attached, with the feel, colours (and colours to
+never use), props to feature, big moments, must-haves and things to avoid. Run Workflow 1.
+The message asks you to report the tempo and sections and wait for an OK: do that, because the
+app has told the user to expect it. Name the files as asked (`Song.loredit`, v1).
+
+**"Start a new show from my old sequence …".** Workflow 1's "Starting from an existing
+sequence" (`lor_new.py from-sequence`), then the same tempo and section check.
+
+**"Make an animated picture for my matrix …".** Workflow 3. Show the preview image and wait
+for a yes before placing it. Write the result as the new file the message names.
+
+**"I played … in Light-O-Rama S6 and it looked different."** Explain in plain words which
+part of the preview is a lookalike (see below) and what S6 does. If something in the
+sequence is wrong, fix it in the next version as named.
+
+**Setup and updates.** "Install the attached lightorama-sequencer.zip as a skill …" or
+"Replace the lightorama-sequencer skill …": install it (keep the whole folder), run Step 0
+and answer in one line whether everything passed, because the app asks the user exactly that.
 
 ## What the viewer can and can't promise
 

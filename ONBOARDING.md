@@ -7,6 +7,10 @@ assistant then picks it up whenever you ask for a light show, with no prompt pas
 The assistant needs to be able to run code (Python) and, ideally, use a browser so it can
 look at its own preview. ChatGPT's Work mode can do both.
 
+**Easiest:** open the [Papa Russ app](https://dylanlane061.github.io/lightorama-sequencer/app/)
+and click **Set it up**. It walks through these steps for your assistant and writes the
+message to paste. The steps below are the same thing by hand.
+
 **Get the latest version:** [lightorama-sequencer.zip](https://github.com/dylanlane061/lightorama-sequencer/releases/latest/download/lightorama-sequencer.zip). This link always
 downloads the newest release; past versions are on the [Releases page](https://github.com/dylanlane061/lightorama-sequencer/releases).
 

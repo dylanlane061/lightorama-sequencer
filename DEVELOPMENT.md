@@ -18,6 +18,7 @@ For a new working session, human or agent. Read this after `SKILL.md`.
 | Viewer | `assets/viewer_template.html` (review notes: N key; db when published as a Claude artifact) |
 | Website | `docs/index.html`, served by GitHub Pages from `main` `/docs` |
 | Standalone app | the viewer template with no show embedded. `python scripts/build_app.py` copies it to `docs/app/index.html` (selftest fails if you forget). Its JS show reader mirrors `lor_layout.py` + `lor_show.py`'s Builder: change both, then run `check_app_reader.py` |
+| Assistant hand-offs | the app never calls an AI: it shows a hand-off card (message to paste, files, what happens, the way back). The messages are in the viewer template's "assistant hand-offs" section; `SKILL.md` Workflow 5 says how the skill answers each one, including `notes-reply.json`. Change both together |
 | Releases | `.github/workflows/release.yml` + `release-notes/<tag>.md` |
 
 ## Releasing

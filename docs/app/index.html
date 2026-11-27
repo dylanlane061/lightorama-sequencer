@@ -208,9 +208,9 @@
   #start { min-height: calc(100% - var(--bar-h)); padding: 48px 24px 64px; overflow: auto;
            background: radial-gradient(70% 60% at 85% 0%, #17284a, transparent 70%), var(--surface); }
   .start-wrap { max-width: 1080px; margin: 0 auto; display: grid; grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr); gap: 40px; align-items: start; }
-  .eyebrow { font: 700 12px/1.3 var(--font-mono); letter-spacing: .06em; text-transform: uppercase; color: var(--gold); margin: 0 0 10px; }
-  #start h2 { font: 700 clamp(34px, 5vw, 52px)/1.02 var(--font-display); letter-spacing: -.03em; margin: 0; }
-  .lede { color: var(--ink-muted); font-size: 16.5px; max-width: 52ch; margin: 12px 0 26px; }
+  #start h2 { font: 700 clamp(30px, 4.4vw, 46px)/1.04 var(--font-display); letter-spacing: -.03em; margin: 0; }
+  .start-main .tasks { margin-top: 22px; }
+  .lede { color: var(--ink-muted); font-size: 16px; max-width: 56ch; margin: 10px 0 22px; }
   .drop { position: relative; border: 1.5px dashed var(--line-strong); border-radius: var(--radius-lg); padding: 16px; background: rgba(19,31,54,.55); display: flex; flex-direction: column; gap: 14px; }
   .slots { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
   .slot { display: flex; align-items: center; gap: 12px; padding: 12px 12px 12px 14px; border-radius: 12px; background: var(--surface); border: 1px solid var(--line); min-width: 0; }
@@ -243,11 +243,6 @@
   .recent-open span { color: var(--ink-muted); font-size: 12.5px; }
   .recent .slot-x { margin-right: 8px; }
   .recents-empty { color: var(--ink-muted); font-size: 14px; padding: 14px; border: 1px dashed var(--line); border-radius: 12px; }
-  .assist-card { display: flex; gap: 14px; padding: 18px; border-radius: 14px; background: linear-gradient(160deg, #17284a, #131f36); border: 1px solid var(--line-strong); }
-  .assist-card svg { width: 34px; height: 34px; flex: none; filter: drop-shadow(0 0 8px rgba(255,195,90,.5)); }
-  .assist-card b { font: 650 16px/1.3 var(--font-display); }
-  .assist-card p { color: var(--ink-muted); font-size: 13.5px; margin: 6px 0 8px; }
-  .assist-card a { color: var(--gold); font-weight: 700; font-size: 14px; }
   @media (max-width: 860px) { .start-wrap { grid-template-columns: 1fr; } .slots { grid-template-columns: 1fr; } #start { padding: 28px 14px 48px; } }
 
   /* props panel */
@@ -290,6 +285,212 @@
   .dlg-foot a { color: var(--gold); }
   @media (max-width: 560px) { #openShowBtn .lbl { display: none; } }
 
+
+  /* ---------------------------------------------------------------- assistant hand-offs: home views, setup, the hand-off card */
+  .view > h2, .formcol h2, .wait h2 { font: 700 clamp(30px, 4.4vw, 46px)/1.04 var(--font-display); letter-spacing: -.03em; margin: 0; }
+  .view { max-width: 1120px; margin: 0 auto; }
+  .back-home { display: inline-flex; align-items: center; gap: 4px; border: 0; background: none; color: var(--ink-muted); cursor: pointer; padding: 4px 0; margin: -18px 0 14px; font-size: 13.5px; }
+  .back-home:hover { color: var(--ink); }
+  .back-home svg { width: 15px; height: 15px; }
+  .linkbtn { border: 0; background: none; padding: 0; color: var(--gold); cursor: pointer; text-decoration: underline; text-underline-offset: 3px; font-size: 14px; }
+  .home-links { margin: 18px 0 0; font-size: 14px; display: flex; flex-wrap: wrap; gap: 6px; align-items: baseline; }
+  .dotsep { color: var(--line-strong); margin: 0 4px; }
+  .small { font-size: 13.5px; margin: 0; }
+  .ink { color: var(--ink); }
+  .asst-chip { display: inline-flex; align-items: center; gap: 8px; height: 34px; padding: 0 12px; border-radius: var(--radius-pill); border: 1px solid var(--line); background: none; cursor: pointer; font-size: 13px; white-space: nowrap; }
+  .asst-chip:hover { border-color: var(--line-strong); background: var(--surface-raised); }
+  .asst-chip .d { width: 8px; height: 8px; border-radius: 50%; background: var(--ink-muted); }
+  .asst-chip.ready .d { background: var(--bulb-green); box-shadow: 0 0 8px var(--bulb-green); }
+  .asst-chip:not(.ready) { border-color: rgba(255,195,90,.5); color: var(--gold); }
+  .setup-banner { display: flex; gap: 16px; align-items: center; flex-wrap: wrap; padding: 16px 18px; border-radius: 14px; border: 1px solid var(--gold); background: rgba(255,195,90,.08); margin: 0 auto 28px; max-width: 1080px; }
+  .setup-banner .bulb { width: 34px; height: 34px; flex: none; filter: drop-shadow(0 0 8px rgba(255,195,90,.6)); }
+  .setup-banner div { flex: 1; min-width: 220px; }
+  .setup-banner b { font: 700 17px/1.25 var(--font-display); }
+  .setup-banner p { margin: 3px 0 0; color: var(--ink-muted); }
+  .tasks { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+  .task { text-align: left; display: flex; flex-direction: column; gap: 6px; padding: 16px; border-radius: 14px; border: 1px solid var(--line); background: var(--surface); cursor: pointer; }
+  .task:hover { border-color: var(--line-strong); background: var(--surface-raised); }
+  .task.main { border-color: rgba(255,195,90,.55); background: rgba(255,195,90,.07); }
+  .task svg { width: 28px; height: 28px; color: var(--gold); }
+  .task b { font: 700 17px/1.2 var(--font-display); }
+  .task > span { color: var(--ink-muted); font-size: 13.5px; }
+  .task .uses { margin-top: auto; padding-top: 4px; font-size: 12.5px; }
+  .task .uses i { font-style: normal; color: var(--gold); }
+  .turn { align-self: flex-start; display: inline-block; font-size: 12px; font-weight: 700; padding: 3px 9px; border-radius: 99px; margin-bottom: 2px; }
+  .turn::before { content: ""; display: inline-block; width: 7px; height: 7px; margin-right: 6px; vertical-align: 1px; border-radius: 50%; background: currentColor; }
+  .turn.yours { color: var(--gold); background: rgba(255,195,90,.14); }
+  .turn.theirs { color: var(--bulb-blue); background: rgba(140,200,255,.12); }
+  .turn.theirs::before { animation: blink 1.6s ease-in-out infinite; }
+  @keyframes blink { 50% { opacity: .25; } }
+  .recent-open .turn { font-family: var(--font-body); }
+  .tip-card { padding: 16px; border-radius: 14px; border: 1px solid var(--line); background: var(--surface-raised); margin-bottom: 12px; }
+  .tip-card b { font: 650 15px/1.3 var(--font-display); }
+  .tip-card p { margin: 6px 0 0; color: var(--ink-muted); font-size: 13.5px; }
+  .slot.wide { grid-column: 1 / -1; }
+
+  /* the card */
+  .handoff { border: 1px solid rgba(255,195,90,.55); border-radius: 16px; background: linear-gradient(170deg, #1a2a48, var(--surface-raised) 60%); box-shadow: 0 0 0 4px rgba(255,195,90,.07);
+             display: flex; flex-direction: column; min-width: 0; }
+  .handoff.flat { border: 0; box-shadow: none; background: none; }
+  .ho-head { display: flex; align-items: center; gap: 12px; padding: 16px 18px 12px; }
+  .handoff.flat .ho-head { padding-right: 44px; }
+  .ho-head .av { width: 36px; height: 36px; border-radius: 10px; display: grid; place-items: center; background: var(--gold); color: var(--on-gold); flex: none; }
+  .ho-head .av svg { width: 20px; height: 20px; }
+  .ho-head h3 { margin: 0; font: 700 18px/1.2 var(--font-display); letter-spacing: -.01em; }
+  .ho-head p { margin: 2px 0 0; color: var(--ink-muted); font-size: 13.5px; }
+  .ho-extra { padding: 0 18px 12px; display: flex; flex-direction: column; gap: 6px; }
+  .ho-extra label { font-weight: 700; font-size: 14px; }
+  .ho-extra label .muted { font-weight: 400; font-size: 12.5px; }
+  .ho-steps { list-style: none; margin: 0; padding: 0 18px 4px; display: flex; flex-direction: column; }
+  .dlg .ho-steps { padding: 0; }
+  .ho-steps > li { display: grid; grid-template-columns: 28px minmax(0, 1fr); gap: 4px 12px; padding: 12px 0; border-top: 1px solid rgba(58,77,114,.55); }
+  .ho-steps > li.first { border-top: 0; }
+  .ho-steps .n { width: 24px; height: 24px; border-radius: 50%; display: grid; place-items: center; font: 700 12px var(--font-mono); border: 1px solid var(--gold); color: var(--gold); }
+  .ho-steps b.t { font-size: 14.5px; }
+  .ho-steps .body { grid-column: 2; min-width: 0; display: flex; flex-direction: column; gap: 8px; }
+  .ho-steps .body > p { margin: 0; color: var(--ink-muted); font-size: 13.5px; }
+  .ho-msg pre { margin: 0; white-space: pre-wrap; word-break: break-word; font: 12.5px/1.55 var(--font-mono); color: var(--ink-muted); background: var(--surface-sunken); border: 1px solid var(--line-strong);
+                border-radius: var(--radius-md); padding: 10px 12px; max-height: 118px; overflow: hidden; }
+  .ho-msg.open pre { max-height: 520px; overflow: auto; }
+  .ho-msg:not(.open) pre { -webkit-mask-image: linear-gradient(#000 55%, transparent); mask-image: linear-gradient(#000 55%, transparent); }
+  .ho-msg .row-actions { margin-top: 8px; }
+  .peek { font-size: 12.5px; color: var(--ink-muted); background: none; border: 0; padding: 4px 0; cursor: pointer; text-decoration: underline; text-underline-offset: 3px; }
+  .ho-status { font-size: 13px; color: var(--bulb-green); }
+  .ho-status:empty { display: none; }
+  .ho-status .linkbtn { font-size: 13px; margin-left: 4px; }
+  .ho-block { font-size: 13px; color: var(--gold); }
+  .ho-block:empty { display: none; }
+  a.btn[aria-disabled="true"], .btn[aria-disabled="true"] { opacity: .45; pointer-events: none; box-shadow: none; }
+  .files { display: flex; flex-direction: column; gap: 6px; }
+  .file { display: grid; grid-template-columns: 20px minmax(0, 1fr); gap: 2px 10px; align-items: start; padding: 8px 10px; border-radius: 10px; background: var(--surface-sunken); border: 1px solid var(--line); }
+  .file svg { width: 18px; height: 18px; color: var(--gold); margin-top: 1px; }
+  .file b { font: 700 13px/1.35 var(--font-mono); word-break: break-word; }
+  .file.missing b { color: var(--ink-muted); font-family: var(--font-body); font-weight: 400; }
+  .file span { grid-column: 2; font-size: 12.5px; color: var(--ink-muted); }
+  .expect { margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: 6px; font-size: 13.5px; color: var(--ink-muted); }
+  .expect li { display: flex; gap: 8px; }
+  .expect li::before { content: ""; width: 6px; height: 6px; margin-top: 7px; border-radius: 50%; background: var(--line-strong); flex: none; }
+  .back-drop { border: 1.5px dashed var(--line-strong); border-radius: 12px; padding: 12px 14px; display: flex; gap: 12px; align-items: center; justify-content: space-between; flex-wrap: wrap; font-size: 13.5px; }
+  .ho-foot { padding: 12px 18px 14px; border-top: 1px solid rgba(58,77,114,.55); font-size: 12.5px; color: var(--ink-muted); display: flex; gap: 8px 16px; flex-wrap: wrap; align-items: baseline; }
+  .ho-foot .linkbtn { font-size: 12.5px; }
+  .ho-dlg { position: relative; width: min(660px, 100%); padding: 10px 6px 4px; }
+  .dlg-x { position: absolute; top: 12px; right: 12px; }
+  .pick { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
+  .pick button { display: flex; flex-direction: column; gap: 3px; align-items: flex-start; text-align: left; padding: 12px; border-radius: 12px; border: 1px solid var(--line); background: var(--surface); cursor: pointer; }
+  .pick button:hover { border-color: var(--line-strong); }
+  .pick button[aria-pressed="true"] { border-color: var(--gold); background: rgba(255,195,90,.08); }
+  .pick b { font: 700 15px var(--font-display); }
+  .pick span { font-size: 12.5px; color: var(--ink-muted); }
+  .done-card { padding: 12px 14px; border-radius: 12px; background: rgba(67,196,122,.12); border: 1px solid rgba(67,196,122,.45); font-size: 14px; }
+  .fail-card { padding: 12px 14px; border-radius: 12px; background: rgba(255,90,78,.1); border: 1px solid rgba(255,90,78,.4); display: flex; flex-direction: column; gap: 8px; font-size: 14px; }
+  .toast { position: fixed; left: 50%; bottom: 22px; transform: translateX(-50%); background: var(--surface-raised); border: 1px solid var(--gold); padding: 10px 16px; border-radius: 99px;
+           font-size: 14px; box-shadow: var(--shadow-raised); z-index: 40; max-width: calc(100% - 32px); }
+
+  /* new show */
+  .two { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 410px); gap: 32px; align-items: start; }
+  .formcol { display: flex; flex-direction: column; gap: 22px; min-width: 0; }
+  .stickycol { position: sticky; top: 16px; }
+  .nslots { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+  .nslot { display: flex; gap: 12px; align-items: center; padding: 12px 14px; border-radius: 12px; border: 1px dashed var(--line-strong); background: var(--surface); min-width: 0; cursor: pointer; text-align: left; }
+  .nslot:hover { border-color: var(--gold); }
+  .nslot.filled { border-style: solid; border-color: rgba(255,195,90,.55); background: rgba(255,195,90,.06); }
+  .nslot .ic { width: 34px; height: 34px; border-radius: 9px; display: grid; place-items: center; background: var(--surface-raised); color: var(--gold); flex: none; }
+  .nslot.filled .ic { background: var(--gold); color: var(--on-gold); }
+  .nslot .ic svg { width: 20px; height: 20px; }
+  .nslot .nt { min-width: 0; display: flex; flex-direction: column; }
+  .nslot .nt b { font-size: 14px; }
+  .nslot .nt span { font-size: 12.5px; color: var(--ink-muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .nslot.filled .nt span { color: var(--ink); font: 12px var(--font-mono); }
+  .readout { font-size: 13px; color: var(--ink-muted); margin: 8px 0 0; }
+  .readout b { color: var(--ink); }
+  .readout.err { color: var(--bulb-red); }
+  fieldset { border: 0; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 8px; min-width: 0; }
+  legend { padding: 0; font: 700 15px/1.3 var(--font-display); margin-bottom: 8px; }
+  legend .muted { font: 400 13px var(--font-body); margin-left: 4px; }
+  .pks { display: flex; flex-wrap: wrap; gap: 6px; }
+  .pk { display: inline-flex; align-items: center; gap: 7px; height: 32px; padding: 0 12px; border-radius: 99px; border: 1px solid var(--line); background: var(--surface); cursor: pointer; font-size: 13.5px; }
+  .pk:hover { border-color: var(--line-strong); }
+  .pk[aria-pressed="true"] { border-color: var(--gold); background: rgba(255,195,90,.15); }
+  .pk.no { border-color: var(--bulb-red); background: rgba(255,90,78,.12); text-decoration: line-through; }
+  .pk .sw { width: 12px; height: 12px; border-radius: 50%; background: var(--sw); box-shadow: 0 0 6px var(--sw); }
+  .pk .n { font: 11px var(--font-mono); color: var(--ink-muted); }
+  .txt { width: 100%; background: var(--surface-sunken); border: 1px solid var(--line-strong); border-radius: var(--radius-md); padding: 9px 11px; line-height: 1.45; }
+  textarea.txt { min-height: 64px; resize: vertical; }
+  .txt:focus { outline: none; border-color: var(--gold); }
+  .moment { display: grid; grid-template-columns: 82px minmax(0, 1fr) 32px; gap: 8px; margin-bottom: 8px; }
+  .moment .t { font-family: var(--font-mono); text-align: center; }
+  .moment .slot-x { width: 32px; height: 38px; }
+  .grid2 { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 10px; }
+  .assist-note { display: flex; gap: 10px; padding: 12px 14px; border-radius: 12px; background: rgba(140,200,255,.1); border: 1px solid rgba(140,200,255,.3); font-size: 13.5px; }
+  .assist-note svg { width: 18px; height: 18px; color: var(--bulb-blue); flex: none; margin-top: 1px; }
+
+  /* waiting */
+  .wait { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 360px); gap: 32px; align-items: start; }
+  .wait h2 { margin-top: 10px; }
+  .side-stack { display: flex; flex-direction: column; gap: 14px; }
+  .tl { list-style: none; margin: 20px 0 0; padding: 0; display: flex; flex-direction: column; }
+  .tl > li { display: grid; grid-template-columns: 30px minmax(0, 1fr); gap: 4px 14px; position: relative; padding-bottom: 20px; }
+  .tl > li::before { content: ""; position: absolute; left: 11px; top: 26px; bottom: 0; width: 2px; background: var(--line); }
+  .tl > li:last-child::before { display: none; }
+  .tl .dot { width: 24px; height: 24px; border-radius: 50%; border: 2px solid var(--line-strong); background: var(--surface); display: grid; place-items: center; font: 700 11px var(--font-mono); color: var(--ink-muted); }
+  .tl li.done .dot { border-color: var(--bulb-green); color: var(--bulb-green); }
+  .tl li.them .dot { border-color: var(--bulb-blue); color: var(--bulb-blue); }
+  .tl li.you .dot { border-color: var(--gold); color: var(--gold); }
+  .tl b.h { font-size: 15px; }
+  .tl .body { grid-column: 2; display: flex; flex-direction: column; gap: 8px; color: var(--ink-muted); font-size: 13.5px; min-width: 0; }
+  .tl .body p { margin: 0; }
+  .who-tag { font-size: 11.5px; font-weight: 700; padding: 2px 7px; border-radius: 99px; margin-left: 6px; vertical-align: 2px; }
+  .who-tag.a { color: var(--bulb-blue); background: rgba(140,200,255,.12); }
+  .who-tag.y { color: var(--gold); background: rgba(255,195,90,.14); }
+  .replies { display: flex; flex-direction: column; gap: 6px; }
+  .reply-row { display: flex; gap: 10px; align-items: center; justify-content: space-between; padding: 8px 8px 8px 12px; border-radius: 10px; border: 1px solid var(--line); background: var(--surface-sunken); color: var(--ink); font-size: 13.5px; }
+  .reply-row span { min-width: 0; }
+  .waitcard { padding: 18px; border-radius: 16px; border: 1px solid rgba(140,200,255,.35); background: linear-gradient(170deg, #142744, var(--surface-raised)); display: flex; flex-direction: column; gap: 10px; }
+  .waitcard h3 { margin: 0; font: 700 18px/1.2 var(--font-display); }
+  .waitcard p { margin: 0; color: var(--ink-muted); font-size: 13.5px; }
+  .bigdrop { border: 2px dashed var(--gold); border-radius: 14px; padding: 22px 16px; text-align: center; display: flex; flex-direction: column; align-items: center; gap: 8px; background: rgba(255,195,90,.07); cursor: pointer; }
+  .bigdrop:hover { background: rgba(255,195,90,.12); }
+  .bigdrop svg { width: 30px; height: 30px; color: var(--gold); }
+  .bigdrop b { font: 700 16px var(--font-display); }
+  .bigdrop .muted { font-size: 13.5px; }
+  .linklist { display: flex; flex-direction: column; }
+  .linklist button { text-align: left; background: none; border: 0; padding: 6px 0; color: var(--gold); cursor: pointer; font-size: 13.5px; }
+
+  /* other jobs + help */
+  .jobs { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px; margin-top: 22px; align-items: start; }
+  .handoff.mini { padding: 16px 18px; gap: 10px; }
+  .handoff.mini .ho-head { padding: 0; }
+  .handoff.mini .f { display: flex; flex-direction: column; gap: 5px; min-width: 0; }
+  .handoff.mini .f label { font-size: 13px; font-weight: 700; }
+  .help { display: flex; flex-direction: column; gap: 10px; margin-top: 22px; max-width: 780px; }
+  details.stuck { border: 1px solid var(--line); border-radius: 12px; background: var(--surface); }
+  details.stuck[open] { border-color: var(--line-strong); background: var(--surface-raised); }
+  details.stuck summary { list-style: none; cursor: pointer; padding: 14px 16px; display: flex; gap: 10px; align-items: center; font: 700 15.5px/1.3 var(--font-display); }
+  details.stuck summary::-webkit-details-marker { display: none; }
+  details.stuck summary::after { content: "+"; margin-left: auto; color: var(--ink-muted); font: 400 20px var(--font-body); }
+  details.stuck[open] summary::after { content: "−"; }
+  details.stuck .body { padding: 0 16px 16px; display: flex; flex-direction: column; gap: 10px; }
+  details.stuck .body > p { margin: 0; color: var(--ink-muted); }
+
+  /* answers from the assistant, in the notes panel */
+  .answers { border: 1px solid rgba(140,200,255,.35); border-radius: 14px; padding: 12px; margin-bottom: 12px; background: rgba(140,200,255,.06); display: flex; flex-direction: column; gap: 4px; }
+  .answers > b { font: 700 14px/1.3 var(--font-display); }
+  .answers > span { color: var(--ink-muted); font-size: 12.5px; }
+  .answer { padding: 10px 0 2px; border-top: 1px solid rgba(58,77,114,.6); display: flex; flex-direction: column; gap: 6px; }
+  .answer:first-of-type { border-top: 0; }
+  .answer .orig { font-size: 13px; }
+  .answer .orig .when { margin-right: 6px; }
+  .answer .acts { display: flex; gap: 6px; flex-wrap: wrap; }
+
+  @media (max-width: 960px) { .two, .wait { grid-template-columns: 1fr; } .stickycol { position: static; } }
+  @media (max-width: 860px) { .jobs { grid-template-columns: 1fr; } }
+  @media (max-width: 560px) { .tasks, .pick, .grid2, .nslots { grid-template-columns: 1fr; } .asst-chip .lbl { display: none; } .asst-chip { padding: 0 11px; } }
+  body.snap .asst-chip, body.snap .toast { display: none; }
+  a.btn { text-decoration: none; color: inherit; }
+  a.btn.gold { color: var(--on-gold); }
+  .answers .reply { color: var(--bulb-blue); white-space: pre-wrap; padding-left: 10px; border-left: 2px solid rgba(140,200,255,.35); font-size: 13px; }
+  .answers .when { color: var(--gold); cursor: pointer; font: 700 12.5px/1 var(--font-mono); background: rgba(255,195,90,.1); border: 0; padding: 4px 6px; border-radius: 6px; }
+
   /* snapshot mode: just the stage, used by lor_show.py snapshots */
   body.snap .appbar, body.snap aside, body.snap .transport, body.snap .stage-hint, body.snap #start, body.snap .dlg-back { display: none; }
   body.snap main { display: block; height: auto; } body.snap .theatre { padding: 0; }
@@ -306,39 +507,176 @@
   <span class="sep" aria-hidden="true"></span>
   <div class="showname" id="showname"><h1 id="showTitle">Papa Russ Light Co.</h1><span class="sub" id="previewName"></span></div>
   <span class="grow"></span>
-  <button class="btn" id="openShowBtn" title="Open another show"><svg class="i" viewBox="0 0 20 20" aria-hidden="true"><path d="M2.8 6.2a1.6 1.6 0 0 1 1.6-1.6h3.4l1.7 1.8h6.1a1.6 1.6 0 0 1 1.6 1.6v6.6a1.6 1.6 0 0 1-1.6 1.6H4.4a1.6 1.6 0 0 1-1.6-1.6z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg><span class="lbl">Open show</span></button>
+  <button class="asst-chip" id="asstChip"><span class="d" aria-hidden="true"></span><span class="lbl" id="asstLbl">Set up your assistant</span></button>
+  <button class="btn" id="openShowBtn" title="Home: open or make another show"><svg class="i" viewBox="0 0 20 20" aria-hidden="true"><path d="M3.5 9.2 10 3.8l6.5 5.4V16a.8.8 0 0 1-.8.8H4.3a.8.8 0 0 1-.8-.8z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><path d="M8 16.8v-4.6h4v4.6" fill="none" stroke="currentColor" stroke-width="1.6"/></svg><span class="lbl">Home</span></button>
 </header>
 <section id="start" aria-labelledby="startTitle" hidden>
-  <div class="start-wrap">
-    <div class="start-main">
-      <p class="eyebrow">Papa Russ Light Co.</p>
-      <h2 id="startTitle">Open a show</h2>
-      <p class="lede">Drop your S6 files anywhere on this page. They're read right here in your browser and never uploaded.</p>
-      <div class="drop" id="drop">
-        <div class="slots">
-          <div class="slot" data-slot="seq"><span class="slot-ico" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2.5" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M6 9h5M6 12h8M6 15h3M14 9h4M16 15h2" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg></span><span class="slot-txt"><b>Sequence</b><span class="slot-file" data-empty=".loredit · required">.loredit · required</span></span><button class="slot-x" data-x="seq" aria-label="Remove sequence" title="Remove" hidden><svg viewBox="0 0 14 14" aria-hidden="true"><path d="m3.5 3.5 7 7m0-7-7 7" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg></button></div>
-          <div class="slot" data-slot="layout"><span class="slot-ico" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 18 9.5 10l4 5 2.5-3L20 18z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><circle cx="8" cy="6.5" r="1.4" fill="currentColor"/><circle cx="12" cy="6.5" r="1.4" fill="currentColor"/><circle cx="16" cy="6.5" r="1.4" fill="currentColor"/></svg></span><span class="slot-txt"><b>Layout</b><span class="slot-file" data-empty=".lorprev · only if the sequence doesn't include it">.lorprev · only if the sequence doesn't include it</span></span><button class="slot-x" data-x="layout" aria-label="Remove layout" title="Remove" hidden><svg viewBox="0 0 14 14" aria-hidden="true"><path d="m3.5 3.5 7 7m0-7-7 7" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg></button></div>
-          <div class="slot" data-slot="song"><span class="slot-ico" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M9 17.5V6l10-2v11.5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><circle cx="6.5" cy="17.5" r="2.5" fill="none" stroke="currentColor" stroke-width="1.6"/><circle cx="16.5" cy="15.5" r="2.5" fill="none" stroke="currentColor" stroke-width="1.6"/></svg></span><span class="slot-txt"><b>Song</b><span class="slot-file" data-empty=".mp3, .wav or .m4a · for the music">.mp3, .wav or .m4a · for the music</span></span><button class="slot-x" data-x="song" aria-label="Remove song" title="Remove" hidden><svg viewBox="0 0 14 14" aria-hidden="true"><path d="m3.5 3.5 7 7m0-7-7 7" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg></button></div>
-          <div class="slot" data-slot="photo"><span class="slot-ico" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 19V10l8-5.5 8 5.5v9z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><path d="M10 19v-5h4v5" fill="none" stroke="currentColor" stroke-width="1.6"/></svg></span><span class="slot-txt"><b>House photo</b><span class="slot-file" data-empty=".jpg or .png · optional backdrop">.jpg or .png · optional backdrop</span></span><button class="slot-x" data-x="photo" aria-label="Remove house photo" title="Remove" hidden><svg viewBox="0 0 14 14" aria-hidden="true"><path d="m3.5 3.5 7 7m0-7-7 7" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg></button></div>
+  <!-- home: what would you like to do? -->
+  <div class="view" data-view="home">
+    <div class="setup-banner" id="setupBanner" hidden>
+      <svg class="bulb" viewBox="0 0 64 64" aria-hidden="true"><path d="M32 6C39 15 45 24 45 32.5 45 39.5 39.5 43 32 43S19 39.5 19 32.5C19 24 25 15 32 6Z" fill="#ffc35a"/><rect x="25" y="45" width="14" height="8" rx="2.5" fill="#5b6f92"/></svg>
+      <div><b>First, connect your AI assistant</b><p>One time, about five minutes. After that, the app tells you exactly what to paste whenever the assistant can help.</p></div>
+      <button class="btn gold" data-setup>Set it up</button>
+    </div>
+    <div class="start-wrap">
+      <div class="start-main">
+        <h2 id="startTitle">What would you like to do?</h2>
+        <p class="lede">Watching and leaving notes happens right here. Building and fixing shows is <span class="a-name">your assistant</span>'s job, and the app tells you exactly what to send it.</p>
+        <div class="tasks">
+          <button class="task main" data-go="new"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v4M12 17v4M3 12h4M17 12h4M6 6l2.5 2.5M15.5 15.5 18 18M18 6l-2.5 2.5M8.5 15.5 6 18" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>
+            <b>Make a new show</b><span>Pick your layout and a song, and say what you want. The assistant builds it.</span><span class="uses">Uses <i class="a-name">your assistant</i></span></button>
+          <button class="task" data-go="open"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16v10H4z" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/><path d="m10 9 4 2-4 2z" fill="currentColor"/><path d="M8 20h8" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>
+            <b>Watch and fix a show</b><span>Open any S6 sequence, play it over your house and leave notes.</span><span class="uses">Fixes use <i class="a-name">your assistant</i></span></button>
+          <button class="task" data-go="jobs" data-job="reuse"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 18V6l10-2v12" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/><circle cx="6.5" cy="18" r="2.5" fill="none" stroke="currentColor" stroke-width="1.7"/><circle cx="16.5" cy="16" r="2.5" fill="none" stroke="currentColor" stroke-width="1.7"/></svg>
+            <b>Old show, new song</b><span>Keep a show's setup and build fresh effects for a different song.</span><span class="uses">Uses <i class="a-name">your assistant</i></span></button>
+          <button class="task" data-go="jobs" data-job="picture"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="5" width="16" height="14" rx="2" fill="none" stroke="currentColor" stroke-width="1.7"/><path d="M4 12h16M12 5v14" stroke="currentColor" stroke-width="1.2" opacity=".5"/><circle cx="9" cy="9.5" r="1.6" fill="currentColor"/></svg>
+            <b>Picture on the matrix</b><span>A little scene or animation drawn at your matrix's exact size.</span><span class="uses">Uses <i class="a-name">your assistant</i></span></button>
         </div>
-        <div class="drop-actions"><label class="btn" for="filePick"><svg class="i" viewBox="0 0 20 20" aria-hidden="true"><path d="M2.8 6.2a1.6 1.6 0 0 1 1.6-1.6h3.4l1.7 1.8h6.1a1.6 1.6 0 0 1 1.6 1.6v6.6a1.6 1.6 0 0 1-1.6 1.6H4.4a1.6 1.6 0 0 1-1.6-1.6z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg>Choose files</label><span class="muted">or drag them here, all at once is fine</span>
-          <input type="file" id="filePick" multiple accept=".loredit,.lorprev,.mp3,.wav,.m4a,.ogg,.jpg,.jpeg,.png,.webp" hidden></div>
-        <div class="drop-veil" aria-hidden="true"><b>Drop to add</b></div>
+        <p class="home-links"><button class="linkbtn" id="demoBtn">Try the demo show</button> <span class="muted">· no files needed</span>
+          <span class="dotsep" aria-hidden="true">·</span><button class="linkbtn" data-go="jobs">Other jobs</button><span class="dotsep" aria-hidden="true">·</span><button class="linkbtn" data-go="help">Stuck in the chat?</button></p>
       </div>
-      <p id="openError" class="open-error" role="alert"></p>
-      <div class="start-go"><button class="btn gold lg" id="openBtn" disabled>Open show</button><button class="btn ghost lg" id="demoBtn">Try the demo show</button>
-        <span id="openBusy" class="muted" hidden>Reading the show…</span></div>
-    </div>
-    <div class="start-side">
-      <h3 class="side-h">Recent shows</h3>
-      <div id="recents"></div>
-      <div class="assist-card">
-        <svg viewBox="0 0 64 64" aria-hidden="true"><path d="M32 6C39 15 45 24 45 32.5 45 39.5 39.5 43 32 43S19 39.5 19 32.5C19 24 25 15 32 6Z" fill="#ffc35a"/><rect x="25" y="45" width="14" height="7" rx="2.5" fill="#5b6f92"/></svg>
-        <div><b>Want the AI to build or improve a show?</b>
-          <p>The Papa Russ assistant add-on works with ChatGPT, Claude and Codex. Leave notes here, then send them over with one click.</p>
-          <a href="https://dylanlane061.github.io/lightorama-sequencer/#assistant" target="_blank" rel="noopener">Get the assistant add-on</a></div>
+      <div class="start-side">
+        <h3 class="side-h">Your shows</h3>
+        <div id="recents"></div>
       </div>
     </div>
+  </div>
+
+  <!-- open a show (watch and fix) -->
+  <div class="view" data-view="open" hidden>
+    <button class="back-home" data-go="home"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M10 3 5 8l5 5" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>Home</button>
+    <div class="start-wrap">
+      <div class="start-main">
+        <h2>Open a show</h2>
+        <p class="lede">Drop your S6 files anywhere on this page. They're read right here in your browser and never uploaded.</p>
+        <div class="drop" id="drop">
+          <div class="slots">
+            <div class="slot" data-slot="seq"><span class="slot-ico" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2.5" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M6 9h5M6 12h8M6 15h3M14 9h4M16 15h2" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg></span><span class="slot-txt"><b>Sequence</b><span class="slot-file" data-empty=".loredit · required">.loredit · required</span></span><button class="slot-x" data-x="seq" aria-label="Remove sequence" title="Remove" hidden><svg viewBox="0 0 14 14" aria-hidden="true"><path d="m3.5 3.5 7 7m0-7-7 7" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg></button></div>
+            <div class="slot" data-slot="layout"><span class="slot-ico" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 18 9.5 10l4 5 2.5-3L20 18z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><circle cx="8" cy="6.5" r="1.4" fill="currentColor"/><circle cx="12" cy="6.5" r="1.4" fill="currentColor"/><circle cx="16" cy="6.5" r="1.4" fill="currentColor"/></svg></span><span class="slot-txt"><b>Layout</b><span class="slot-file" data-empty=".lorprev · only if the sequence doesn't include it">.lorprev · only if the sequence doesn't include it</span></span><button class="slot-x" data-x="layout" aria-label="Remove layout" title="Remove" hidden><svg viewBox="0 0 14 14" aria-hidden="true"><path d="m3.5 3.5 7 7m0-7-7 7" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg></button></div>
+            <div class="slot" data-slot="song"><span class="slot-ico" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M9 17.5V6l10-2v11.5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><circle cx="6.5" cy="17.5" r="2.5" fill="none" stroke="currentColor" stroke-width="1.6"/><circle cx="16.5" cy="15.5" r="2.5" fill="none" stroke="currentColor" stroke-width="1.6"/></svg></span><span class="slot-txt"><b>Song</b><span class="slot-file" data-empty=".mp3, .wav or .m4a · for the music">.mp3, .wav or .m4a · for the music</span></span><button class="slot-x" data-x="song" aria-label="Remove song" title="Remove" hidden><svg viewBox="0 0 14 14" aria-hidden="true"><path d="m3.5 3.5 7 7m0-7-7 7" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg></button></div>
+            <div class="slot" data-slot="photo"><span class="slot-ico" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 19V10l8-5.5 8 5.5v9z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><path d="M10 19v-5h4v5" fill="none" stroke="currentColor" stroke-width="1.6"/></svg></span><span class="slot-txt"><b>House photo</b><span class="slot-file" data-empty=".jpg or .png · optional backdrop">.jpg or .png · optional backdrop</span></span><button class="slot-x" data-x="photo" aria-label="Remove house photo" title="Remove" hidden><svg viewBox="0 0 14 14" aria-hidden="true"><path d="m3.5 3.5 7 7m0-7-7 7" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg></button></div>
+            <div class="slot wide" data-slot="reply" hidden><span class="slot-ico" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M5 5h14v10H10l-4 3.5V15H5z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg></span><span class="slot-txt"><b>Answers to your notes</b><span class="slot-file" data-empty="notes-reply.json">notes-reply.json</span></span><button class="slot-x" data-x="reply" aria-label="Remove answers" title="Remove" hidden><svg viewBox="0 0 14 14" aria-hidden="true"><path d="m3.5 3.5 7 7m0-7-7 7" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg></button></div>
+          </div>
+          <div class="drop-actions"><label class="btn" for="filePick"><svg class="i" viewBox="0 0 20 20" aria-hidden="true"><path d="M2.8 6.2a1.6 1.6 0 0 1 1.6-1.6h3.4l1.7 1.8h6.1a1.6 1.6 0 0 1 1.6 1.6v6.6a1.6 1.6 0 0 1-1.6 1.6H4.4a1.6 1.6 0 0 1-1.6-1.6z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg>Choose files</label><span class="muted">or drag them here, all at once is fine</span>
+            <input type="file" id="filePick" multiple accept=".loredit,.lorprev,.mp3,.wav,.m4a,.ogg,.jpg,.jpeg,.png,.webp,.json" hidden></div>
+          <div class="drop-veil" aria-hidden="true"><b>Drop to add</b></div>
+        </div>
+        <p id="openError" class="open-error" role="alert"></p>
+        <div class="start-go"><button class="btn gold lg" id="openBtn" disabled>Open show</button>
+          <span id="openBusy" class="muted" hidden>Reading the show…</span></div>
+      </div>
+      <div class="start-side">
+        <div class="tip-card"><b>Got a new version back?</b><p>Drop everything <span class="a-name">your assistant</span> gave you: the .loredit, and notes-reply.json if there is one. The app shows its answer to each of your notes.</p></div>
+        <div class="tip-card"><b>Leave notes as you watch</b><p>Press <kbd>N</kbd> at any moment. When you're done, <b>Send to <span class="a-name">your assistant</span></b> writes the message for you.</p></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- new show -->
+  <div class="view" data-view="new" hidden>
+    <button class="back-home" data-go="home"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M10 3 5 8l5 5" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>Home</button>
+    <div class="two">
+      <div class="formcol">
+        <div><h2>Make a new show</h2><p class="lede">Tell the assistant what you want. The app writes it up with your layout and song.</p></div>
+        <div>
+          <div class="nslots">
+            <button class="nslot" data-nslot="layout"><span class="ic"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 19V10l8-5.5 8 5.5v9z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg></span><span class="nt"><b>Layout</b><span data-empty="Choose your .lorprev">Choose your .lorprev</span></span></button>
+            <button class="nslot" data-nslot="song"><span class="ic"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 18V6l10-2v12" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><circle cx="6.5" cy="18" r="2.5" fill="none" stroke="currentColor" stroke-width="1.8"/></svg></span><span class="nt"><b>Song</b><span data-empty="Choose the mp3 or wav">Choose the mp3 or wav</span></span></button>
+          </div>
+          <input type="file" id="newPick" accept=".lorprev,.loredit,.mp3,.wav,.m4a,.ogg" multiple hidden>
+          <p class="readout" id="newReadout">Export the layout from S6's Previews panel (Export) to get a .lorprev. Or drop both files on this page.</p>
+        </div>
+        <fieldset><legend>How should it feel?</legend>
+          <div class="pks" id="nfFeel" data-single>
+            <button class="pk" aria-pressed="false">Elegant and warm</button><button class="pk" aria-pressed="false">High-energy party</button><button class="pk" aria-pressed="false">Calm and magical</button><button class="pk" aria-pressed="false">Moody and dramatic</button><button class="pk" aria-pressed="false">Silly and fun</button>
+          </div>
+          <input class="txt" id="nfFeelOwn" placeholder="Or in your own words" aria-label="How it should feel, in your own words"></fieldset>
+        <fieldset><legend>Colours <span class="muted">tap once to use, twice to never use</span></legend>
+          <div class="pks" id="nfColours">
+            <button class="pk" data-c="red" aria-pressed="false"><span class="sw" style="--sw:#ff4a3d"></span>Red</button>
+            <button class="pk" data-c="green" aria-pressed="false"><span class="sw" style="--sw:#3fd17a"></span>Green</button>
+            <button class="pk" data-c="white" aria-pressed="false"><span class="sw" style="--sw:#f4f8ff"></span>White</button>
+            <button class="pk" data-c="warm white" aria-pressed="false"><span class="sw" style="--sw:#ffd9a0"></span>Warm white</button>
+            <button class="pk" data-c="gold" aria-pressed="false"><span class="sw" style="--sw:#ffc35a"></span>Gold</button>
+            <button class="pk" data-c="blue" aria-pressed="false"><span class="sw" style="--sw:#4b8cff"></span>Blue</button>
+            <button class="pk" data-c="ice blue" aria-pressed="false"><span class="sw" style="--sw:#9fe0ff"></span>Ice blue</button>
+            <button class="pk" data-c="purple" aria-pressed="false"><span class="sw" style="--sw:#a46bff"></span>Purple</button>
+            <button class="pk" data-c="pink" aria-pressed="false"><span class="sw" style="--sw:#ff7ab8"></span>Pink</button>
+          </div></fieldset>
+        <fieldset><legend>Props to feature <span class="muted" id="nfPropsHint">from your layout</span></legend>
+          <div class="pks" id="nfProps"><span class="muted">Add your layout to pick from your props.</span></div></fieldset>
+        <fieldset><legend>Big moments <span class="muted">optional</span></legend>
+          <div id="nfMoments"></div>
+          <button class="btn sm ghost" id="nfAddMoment" style="align-self:flex-start">+ Add a moment</button></fieldset>
+        <div class="grid2">
+          <fieldset><legend>Must-haves</legend><textarea class="txt" id="nfMust" placeholder="Keep the star on the whole song. Flash the rooflines on the big hits."></textarea></fieldset>
+          <fieldset><legend>Avoid</legend><textarea class="txt" id="nfAvoid" placeholder="Strobing. Anything on the singing faces."></textarea></fieldset>
+        </div>
+        <div class="assist-note"><svg viewBox="0 0 20 20" aria-hidden="true"><circle cx="10" cy="10" r="7.5" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M10 9v5M10 6.2v.1" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+          <span>No need to know the song's sections. <span class="a-cap">Your assistant</span> listens to the song, tells you the sections it hears, and waits for your OK before it builds.</span></div>
+      </div>
+      <div class="stickycol"><div class="handoff" id="newCard"></div></div>
+    </div>
+  </div>
+
+  <!-- waiting on the assistant -->
+  <div class="view" data-view="wait" hidden>
+    <button class="back-home" data-go="home"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M10 3 5 8l5 5" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>Home</button>
+    <div class="wait">
+      <div id="waitMain"></div>
+      <div class="stickycol side-stack">
+        <label class="bigdrop" for="backPick"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4v11m0 0-4-4m4 4 4-4M5 19h14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          <b>Drop what it gave you here</b><span class="muted" id="waitDropHint">The .loredit, plus notes-reply.json if there is one. The app opens the new version and it's your turn again.</span>
+          <span class="btn sm gold">Choose files</span></label>
+        <input type="file" id="backPick" multiple accept=".loredit,.lorprev,.mp3,.wav,.m4a,.ogg,.jpg,.jpeg,.png,.webp,.json" hidden>
+        <div class="waitcard"><h3>While you wait</h3>
+          <p>Keep the chat open. Fixes later go faster in the same chat.</p>
+          <div class="linklist"><button id="waitCopyAgain">Copy the message again</button><button id="waitOpenSent" hidden>Watch the version you sent</button><button data-go="help">It's stuck, or asking something odd</button><button id="waitForget">I didn't send it: forget this</button></div>
+          <span class="ho-status" id="waitStatus" role="status"></span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- other jobs -->
+  <div class="view" data-view="jobs" hidden>
+    <button class="back-home" data-go="home"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M10 3 5 8l5 5" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>Home</button>
+    <h2>Other jobs for <span class="a-name">your assistant</span></h2>
+    <p class="lede">A few details, then a message to paste and the files to attach.</p>
+    <datalist id="showList"></datalist>
+    <div class="jobs">
+      <div class="handoff mini" id="job-reuse">
+        <div class="ho-head"><span class="av"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M4 4.5h12a1.5 1.5 0 0 1 1.5 1.5v7a1.5 1.5 0 0 1-1.5 1.5H9l-3.5 3v-3H4A1.5 1.5 0 0 1 2.5 13V6A1.5 1.5 0 0 1 4 4.5z" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/><path d="M6.5 9.5h.01M10 9.5h.01M13.5 9.5h.01" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg></span><div><h3>Old show, new song</h3><p>Keeps the props and setup, builds fresh effects</p></div></div>
+        <div class="grid2"><div class="f"><label for="jrFrom">Start from</label><input class="txt" id="jrFrom" list="showList" placeholder="Polar Express v4.loredit"></div>
+          <div class="f"><label for="jrSong">New song</label><input class="txt" id="jrSong" placeholder="Jingle Bell Rock.mp3"></div></div>
+        <div class="f"><label for="jrFeel">Feel and colours</label><input class="txt" id="jrFeel" placeholder="High-energy party, red, green and white"></div>
+        <div data-ho-slot="reuse"></div></div>
+      <div class="handoff mini" id="job-picture">
+        <div class="ho-head"><span class="av"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M4 4.5h12a1.5 1.5 0 0 1 1.5 1.5v7a1.5 1.5 0 0 1-1.5 1.5H9l-3.5 3v-3H4A1.5 1.5 0 0 1 2.5 13V6A1.5 1.5 0 0 1 4 4.5z" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/><path d="M6.5 9.5h.01M10 9.5h.01M13.5 9.5h.01" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg></span><div><h3>Picture on the matrix</h3><p>Drawn at your matrix's exact size</p></div></div>
+        <div class="grid2"><div class="f"><label for="jpShow">Show</label><input class="txt" id="jpShow" list="showList" placeholder="Polar Express v4.loredit"></div>
+          <div class="f"><label for="jpWhen">When</label><input class="txt" id="jpWhen" placeholder="1:12 to 1:20"></div></div>
+        <div class="grid2"><div class="f"><label for="jpMatrix">Matrix</label><input class="txt" id="jpMatrix" placeholder="RGB Matrix 20x40"></div>
+          <div class="f"><label for="jpWhat">What should it show?</label><input class="txt" id="jpWhat" placeholder="A steam train puffing smoke"></div></div>
+        <div data-ho-slot="picture"></div></div>
+      <div class="handoff mini" id="job-s6">
+        <div class="ho-head"><span class="av"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M4 4.5h12a1.5 1.5 0 0 1 1.5 1.5v7a1.5 1.5 0 0 1-1.5 1.5H9l-3.5 3v-3H4A1.5 1.5 0 0 1 2.5 13V6A1.5 1.5 0 0 1 4 4.5z" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/><path d="M6.5 9.5h.01M10 9.5h.01M13.5 9.5h.01" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg></span><div><h3>Something looked different in S6</h3><p>The preview is a close guess; S6 is the real thing</p></div></div>
+        <div class="grid2"><div class="f"><label for="jsShow">Show</label><input class="txt" id="jsShow" list="showList" placeholder="Carol of the Bells v2.loredit"></div>
+          <div class="f"><label for="jsWhen">Around</label><input class="txt" id="jsWhen" placeholder="1:10"></div></div>
+        <div class="f"><label for="jsWhat">What did S6 do?</label><input class="txt" id="jsWhat" placeholder="The mega tree spiral goes the other way"></div>
+        <div data-ho-slot="s6"></div></div>
+      <div class="handoff mini" id="job-update">
+        <div class="ho-head"><span class="av"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M4 4.5h12a1.5 1.5 0 0 1 1.5 1.5v7a1.5 1.5 0 0 1-1.5 1.5H9l-3.5 3v-3H4A1.5 1.5 0 0 1 2.5 13V6A1.5 1.5 0 0 1 4 4.5z" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/><path d="M6.5 9.5h.01M10 9.5h.01M13.5 9.5h.01" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg></span><div><h3>Update the add-on</h3><p>When a new version comes out</p></div></div>
+        <p class="muted small">Download the newest zip, start a new chat, attach it, and paste this.</p>
+        <div class="row-actions"><a class="btn sm" href="https://github.com/dylanlane061/lightorama-sequencer/releases/latest/download/lightorama-sequencer.zip" target="_blank" rel="noopener">Download the newest add-on</a><a class="btn sm ghost" href="https://github.com/dylanlane061/lightorama-sequencer/releases/latest" target="_blank" rel="noopener">What's new</a></div>
+        <div data-ho-slot="update"></div></div>
+    </div>
+  </div>
+
+  <!-- stuck -->
+  <div class="view" data-view="help" hidden>
+    <button class="back-home" data-go="home"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M10 3 5 8l5 5" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>Home</button>
+    <h2>Stuck in the chat?</h2>
+    <p class="lede">Pick what's happening. Each one has a message to paste into the same chat.</p>
+    <div class="help" id="helpList"></div>
   </div>
 </section>
 <main>
@@ -387,7 +725,7 @@
           <div class="bar"><button class="btn sm gold" id="noteSave">Save note</button><button class="btn sm" id="noteCancel">Cancel</button>
             <span class="hint"><kbd>Ctrl</kbd> <kbd>Enter</kbd> saves</span></div>
         </div>
-        <button class="btn gold send" id="sendBtn"><svg class="i" viewBox="0 0 20 20" aria-hidden="true"><path d="M3.5 10 16.5 4l-4.2 12.5-2.6-5.2z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><path d="m9.7 11.3 6.8-7.3" stroke="currentColor" stroke-width="1.6"/></svg>Send to assistant</button>
+        <button class="btn gold send" id="sendBtn"><svg class="i" viewBox="0 0 20 20" aria-hidden="true"><path d="M3.5 10 16.5 4l-4.2 12.5-2.6-5.2z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><path d="m9.7 11.3 6.8-7.3" stroke="currentColor" stroke-width="1.6"/></svg><span id="sendLbl">Send to assistant</span></button>
         <div id="noteTools"><select id="noteFilter" aria-label="Which notes to show"><option value="this">This version</option><option value="all">All versions</option></select>
           <button class="btn sm" id="noteCopy">Copy as text</button><button class="btn sm icon" id="noteDownload" aria-label="Download notes as JSON" title="Download notes as JSON" style="width:30px"><svg class="i" viewBox="0 0 20 20" aria-hidden="true" style="width:16px;height:16px"><path d="M10 3v9m0 0-3.5-3.5M10 12l3.5-3.5M4 15.5h12" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"/></svg></button></div>
         <div id="noteStatus" role="status"></div>
@@ -417,22 +755,38 @@
   </aside>
 </main>
 
-<div class="dlg-back" id="sendDlg" hidden>
-  <div class="dlg" role="dialog" aria-modal="true" aria-labelledby="sendTitle">
-    <div class="dlg-head"><h2 id="sendTitle">Send to your assistant</h2><button class="btn icon ghost" id="sendClose" aria-label="Close"><svg class="i" viewBox="0 0 14 14" aria-hidden="true"><path d="m3.5 3.5 7 7m0-7-7 7" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg></button></div>
-    <p class="muted">Your notes go to ChatGPT, Claude or Codex with the Papa Russ assistant add-on. It fixes each one and sends back a new version to open here.</p>
-    <label class="field-l" for="wish">Anything else you'd like changed? <span class="muted">Optional</span></label>
-    <textarea id="wish" placeholder="More sparkle in the chorus, slower snowflakes, a big finish on the mega tree…"></textarea>
-    <ol class="send-steps">
-      <li><b>Copy this message.</b> It already includes your <span id="sendCount">notes</span>.
-        <textarea id="sendMsg" readonly aria-label="Message for your assistant"></textarea>
-        <div class="row-actions"><button class="btn sm gold" id="sendCopy">Copy message</button><button class="btn sm" id="sendFile">Download notes file</button><span id="sendStatus" class="muted" role="status"></span></div></li>
-      <li><b>Attach your show files</b> in the chat: <span id="sendFiles"></span></li>
-      <li><b>Paste the message and send.</b> Open the new version here when it's ready.</li>
-    </ol>
-    <p class="dlg-foot muted">No add-on yet? <a href="https://dylanlane061.github.io/lightorama-sequencer/#assistant" target="_blank" rel="noopener">Get it free</a>. It installs in a minute.</p>
+<div class="dlg-back" id="hoDlg" hidden>
+  <div class="dlg ho-dlg" role="dialog" aria-modal="true" aria-label="Hand-off to your assistant">
+    <button class="btn icon ghost dlg-x" id="hoClose" aria-label="Close"><svg class="i" viewBox="0 0 14 14" aria-hidden="true"><path d="m3.5 3.5 7 7m0-7-7 7" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg></button>
+    <div class="handoff flat" id="hoBody"></div>
   </div>
 </div>
+<div class="dlg-back" id="setupDlg" hidden>
+  <div class="dlg" role="dialog" aria-modal="true" aria-labelledby="setupTitle">
+    <div class="dlg-head"><div><h2 id="setupTitle">Connect your AI assistant</h2><p class="muted">One time. The app remembers your choice and opens the right assistant from then on.</p></div>
+      <button class="btn icon ghost" id="setupClose" aria-label="Close"><svg class="i" viewBox="0 0 14 14" aria-hidden="true"><path d="m3.5 3.5 7 7m0-7-7 7" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg></button></div>
+    <ol class="ho-steps">
+      <li class="first"><span class="n">1</span><b class="t">Which assistant do you use?</b>
+        <div class="body"><div class="pick" id="setupPick">
+          <button data-a="ChatGPT" aria-pressed="false"><b>ChatGPT</b><span>Desktop app or chatgpt.com</span></button>
+          <button data-a="Claude" aria-pressed="false"><b>Claude</b><span>Desktop app or claude.ai</span></button>
+          <button data-a="Codex" aria-pressed="false"><b>Codex</b><span>On your PC</span></button></div>
+          <p>It needs to accept files and run code. If you're not sure yours can, step 4 will tell you.</p></div></li>
+      <li><span class="n">2</span><b class="t">Download the add-on</b>
+        <div class="body"><p>It goes to your Downloads folder as <b class="ink">lightorama-sequencer.zip</b>. Keep it: you'll attach it again if the assistant ever forgets it.</p>
+          <div class="row-actions"><a class="btn sm" href="https://github.com/dylanlane061/lightorama-sequencer/releases/latest/download/lightorama-sequencer.zip" target="_blank" rel="noopener"><svg class="i" viewBox="0 0 20 20" aria-hidden="true"><path d="M10 3v9m0 0-3.5-3.5M10 12l3.5-3.5M4 15.5h12" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"/></svg>Download lightorama-sequencer.zip</a></div></div></li>
+      <li><span class="n">3</span><b class="t">Start a new chat, attach the zip, paste this</b>
+        <div class="body"><p id="setupWhere">Pick your assistant first.</p><div data-ho-slot="setup"></div></div></li>
+      <li><span class="n">4</span><b class="t">What did it say?</b>
+        <div class="body"><p>It runs a quick check and answers in a line or two.</p>
+          <div class="row-actions"><button class="btn sm" id="setupOk">It said everything passed</button><button class="btn sm" id="setupBad">Something failed, or it can't</button></div>
+          <div class="done-card" id="setupDone" hidden><b>You're set.</b> The app will write messages for <span class="a-name">your assistant</span> from now on.</div>
+          <div class="fail-card" id="setupFail" hidden><b>No problem. Paste this into the same chat.</b><div data-ho-slot="setupFail"></div>
+            <span class="muted">If it says it can't run code at all, a different assistant or plan may be needed. Ask it which.</span></div></div></li>
+    </ol>
+  </div>
+</div>
+<div class="toast" id="toast" role="status" hidden></div>
 <audio id="au" preload="auto" data-src="__AUDIO__"></audio>
 <script>
 "use strict";
@@ -1035,7 +1389,7 @@ function setPlaying(on) { playing = on; document.body.classList.toggle("playing"
 playBtn.onclick = () => setPlaying(!playing);
 document.getElementById("back2").onclick = () => seek(now() - 2);
 document.getElementById("fwd2").onclick = () => seek(now() + 2);
-document.addEventListener("keydown", e => { if (/^(TEXTAREA|INPUT|SELECT)$/.test(e.target.tagName) || !readyDone || !sendDlg.hidden) return;
+document.addEventListener("keydown", e => { if (/^(TEXTAREA|INPUT|SELECT)$/.test(e.target.tagName) || !readyDone || !hoDlg.hidden || !setupDlg.hidden) return;
   if (e.key === "Escape" && !viewMenu.hidden) { toggleMenu(false); viewBtn.focus(); return; }
   if (e.code === "KeyN" && !e.metaKey && !e.ctrlKey) { e.preventDefault(); openNote(); return; }
   if (e.code === "Space" && e.target.tagName !== "BUTTON") { e.preventDefault(); setPlaying(!playing); }
@@ -1175,13 +1529,13 @@ function visibleNotes() {
 const X_ICON = '<svg viewBox="0 0 14 14" aria-hidden="true"><path d="m3.5 3.5 7 7m0-7-7 7" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>';
 let confirmId = null;
 function renderNotes() {
-  const list = visibleNotes();
+  const list = visibleNotes(), ans = typeof answersHTML === "function" ? answersHTML() : "";
   noteCountEl.hidden = !list.length; noteCountEl.textContent = list.length;
   if (!list.length) {
-    noteListEl.innerHTML = `<div class="empty-card"><svg viewBox="0 0 64 64" aria-hidden="true"><path d="M32 8C38 16 43 24 43 31.5 43 37.5 38.5 41 32 41S21 37.5 21 31.5C21 24 26 16 32 8Z" fill="none" stroke="currentColor" stroke-width="2.4"/><rect x="26" y="43" width="12" height="7" rx="2" fill="none" stroke="currentColor" stroke-width="2.4"/></svg>
+    noteListEl.innerHTML = ans + `<div class="empty-card"><svg viewBox="0 0 64 64" aria-hidden="true"><path d="M32 8C38 16 43 24 43 31.5 43 37.5 38.5 41 32 41S21 37.5 21 31.5C21 24 26 16 32 8Z" fill="none" stroke="currentColor" stroke-width="2.4"/><rect x="26" y="43" width="12" height="7" rx="2" fill="none" stroke="currentColor" stroke-width="2.4"/></svg>
       <b>No notes yet</b><span>Press <kbd>N</kbd> at any moment to pause and say what you saw. Your notes go back to the assistant for the next version.</span></div>`;
     drawPlayhead(now()); return; }
-  noteListEl.innerHTML = list.map(n => `<div class="note${n.status === "addressed" ? " addressed" : ""}" data-id="${esc(n.id)}">
+  noteListEl.innerHTML = ans + list.map(n => `<div class="note${n.status === "addressed" ? " addressed" : ""}" data-id="${esc(n.id)}">
     <div class="head"><button class="when" data-t="${Number(n.t) || 0}" title="Jump to this moment">${fmt(Number(n.t) || 0)}</button>
       ${n.scene ? `<span class="scene">${esc(n.scene)}</span>` : ""}
       ${n.version && n.version !== VERSION ? `<span class="tag">${esc(n.version)}</span>` : ""}
@@ -1195,6 +1549,7 @@ function renderNotes() {
 }
 noteListEl.addEventListener("click", e => {
   const w = e.target.closest(".when"); if (w) { setPlaying(false); seek(+w.dataset.t); return; }
+  const an = e.target.closest("[data-ans]"); if (an) { reviewAnswer(an.closest(".answer").dataset.id, an.dataset.ans === "ok"); return; }
   const id = (e.target.closest(".note") || {}).dataset?.id;
   if (e.target.closest(".del")) { confirmId = id; renderNotes(); return; }
   const act = e.target.closest("[data-act]"); if (act) { const yes = act.dataset.act === "yes"; confirmId = null; if (yes) notesStore.remove(id); else renderNotes(); }
@@ -1295,21 +1650,22 @@ function propAt(e) { const r = stage.getBoundingClientRect(), x = (e.clientX - r
 
 // ------------------------------------------------------------------ opening shows from files (the app)
 const startEl = document.getElementById("start"), openBtn = document.getElementById("openBtn"), openErr = document.getElementById("openError");
-const PICKED = { seq: null, layout: null, song: null, photo: null };
+const PICKED = { seq: null, layout: null, song: null, photo: null, reply: null };
 let CURRENT = { files: {}, urls: [] };
 function slotFor(file) { const n = file.name.toLowerCase();
   if (n.endsWith(".loredit")) return "seq"; if (n.endsWith(".lorprev")) return "layout";
   if (/\.(mp3|wav|m4a|ogg|aac|flac)$/.test(n) || (file.type || "").startsWith("audio/")) return "song";
-  if (/\.(jpe?g|png|webp|gif|bmp)$/.test(n) || (file.type || "").startsWith("image/")) return "photo"; return null; }
+  if (/\.(jpe?g|png|webp|gif|bmp)$/.test(n) || (file.type || "").startsWith("image/")) return "photo";
+  if (n.endsWith(".json")) return "reply"; return null; }
 async function addFiles(list) {
   const odd = [];
   for (const f of list) { const k = slotFor(f); if (k) PICKED[k] = f; else odd.push(f.name); }
-  openErr.textContent = odd.length ? `Not a show file: ${odd.join(", ")}. Use a .loredit, .lorprev, a song or a photo.` : "";
+  openErr.textContent = odd.length ? `Not a show file: ${odd.join(", ")}. Use a .loredit, .lorprev, a song, a photo or notes-reply.json.` : "";
   await renderSlots();
 }
 async function renderSlots() {
-  for (const el of document.querySelectorAll(".slot")) { const k = el.dataset.slot, f = PICKED[k], fileEl = el.querySelector(".slot-file");
-    el.classList.toggle("filled", !!f); el.querySelector(".slot-x").hidden = !f; fileEl.textContent = f ? f.name : fileEl.dataset.empty; }
+  for (const el of document.querySelectorAll("#drop .slot")) { const k = el.dataset.slot, f = PICKED[k], fileEl = el.querySelector(".slot-file");
+    el.classList.toggle("filled", !!f); if (k === "reply") el.hidden = !f; el.querySelector(".slot-x").hidden = !f; fileEl.textContent = f ? f.name : fileEl.dataset.empty; }
   openBtn.disabled = !PICKED.seq;
   // name the song the sequence expects, so the right file gets picked
   const songEl = document.querySelector('.slot[data-slot="song"] .slot-file');
@@ -1323,10 +1679,14 @@ window.addEventListener("dragenter", e => { if (![...(e.dataTransfer?.types || [
 window.addEventListener("dragleave", () => { if (--dragDepth <= 0) { dragDepth = 0; document.body.classList.remove("dragging"); } });
 window.addEventListener("dragover", e => { if ([...(e.dataTransfer?.types || [])].includes("Files")) e.preventDefault(); });
 window.addEventListener("drop", e => { if (!e.dataTransfer?.files?.length) return; e.preventDefault(); dragDepth = 0; document.body.classList.remove("dragging");
-  if (!document.body.classList.contains("home")) goHome(); addFiles([...e.dataTransfer.files]); });
+  const files = [...e.dataTransfer.files];
+  if (document.body.classList.contains("home") && VIEW === "new") { addNewFiles(files); return; }
+  if (!document.body.classList.contains("home")) goHome();
+  if (VIEW === "wait") { bringBack(files); return; }
+  showView("open"); addFiles(files); });
 openBtn.onclick = () => openFiles({ ...PICKED }, true);
 document.getElementById("demoBtn").onclick = () => { const d = demoShow(); loadShow(d, "", "", { files: { seq: "Jingle Bell Rock (demo).loredit" } }); };
-document.getElementById("openShowBtn").onclick = goHome;
+document.getElementById("openShowBtn").onclick = () => { goHome(); showView("home"); };
 function goHome() { setPlaying(false); closeNote(); document.body.classList.add("home"); startEl.hidden = false; renderRecents(); }
 
 const stemOf = name => name.replace(/\.[^.]+$/, "");
@@ -1342,6 +1702,12 @@ async function openFiles(files, remember) {
     const sec = show.timing.find(g => /^sections?$/i.test(g.name || ""));   // lor_audio.py writes a "Sections" grid
     if (sec) { const t = [...new Set(sec.marks)].map(m => m / 100).sort((a, b) => a - b).filter(x => x < show.meta.total / 100);
       show.meta.scenes = t.map((s, i) => ({ start: s, end: i + 1 < t.length ? t[i + 1] : show.meta.total / 100, name: `Section ${i + 1}` })); }
+    let replyNote = "";
+    if (files.reply) { let data = null; try { data = JSON.parse(await files.reply.text()); } catch (e) { data = null; }
+      const res = data ? applyReplies(show.meta.showKey, data) : null;
+      replyNote = !res ? `${files.reply.name} isn't readable, so its answers weren't added.`
+        : res.matched ? `${aTitle()} answered ${res.matched} of your notes. They're at the top of Review notes.`
+        : "The answers file didn't match any notes saved in this browser."; }
     let bgSrc = r.bgSrc;
     const urls = [];
     if (files.photo) { const u = URL.createObjectURL(files.photo); urls.push(u);
@@ -1351,6 +1717,8 @@ async function openFiles(files, remember) {
     if (!files.song && r.music) show.meta.warnings.unshift(`No song added; this show plays with a silent clock. It uses ${r.music.split(/[\\/]/).pop()}.`);
     loadShow(show, bgSrc, audioSrc, { files: Object.fromEntries(Object.entries(files).filter(([, f]) => f).map(([k, f]) => [k, f.name])), urls, music: r.music });
     if (remember) saveRecent(show, files);
+    const turn = turns.get(show.meta.showKey); if (turn && turn.version !== show.meta.version) turns.clear(show.meta.showKey);
+    if (replyNote) setTimeout(() => setNoteStatus(replyNote, true), 400);
   } catch (err) {
     openErr.textContent = err && err.message ? err.message : "That show couldn't be read.";
   } finally { busy.hidden = true; openBtn.disabled = !PICKED.seq; }
@@ -1382,48 +1750,452 @@ async function saveRecent(show, files) {
   } catch (e) { /* recents are a convenience: a private window or full disk just skips them */ }
 }
 const recentsEl = document.getElementById("recents");
+function openNoteCount(key, version) { try { return JSON.parse(localStorage.getItem("lor-notes:" + key) || "[]").filter(n => n.version === version && n.status !== "addressed").length; } catch (e) { return 0; } }
 async function renderRecents() {
   let list = []; try { list = (await recentsDB.all()).sort((a, b) => b.opened - a.opened); } catch (e) { list = null; }
-  if (!list || !list.length) { recentsEl.innerHTML = `<div class="recents-empty">${list ? "Shows you open will appear here, ready to reopen. They're kept only in this browser." : "This browser can't keep recent shows."}</div>`; return; }
+  const T = turns.all(), seen = new Set(), rows = [];
+  for (const r of list || []) { const k = r.key.split("|")[0]; rows.push({ r, k, first: !seen.has(k) }); seen.add(k); }
+  const waiting = Object.values(T).filter(t => !seen.has(t.key)).sort((a, b) => b.sent - a.sent);
+  if (!rows.length && !waiting.length) { recentsEl.innerHTML = `<div class="recents-empty">${list ? "Shows you open or send to the assistant will appear here. They're kept only in this browser." : "This browser can't keep recent shows."}</div>`; recentsEl._list = []; return; }
   const when = t => { const d = (Date.now() - t) / 86400000; return d < 1 ? "today" : d < 2 ? "yesterday" : new Date(t).toLocaleDateString(undefined, { month: "short", day: "numeric" }); };
-  recentsEl.innerHTML = list.map(r => `<div class="recent" data-key="${esc(r.key)}"><button class="recent-open"><b>${esc(r.name)}</b>
-      <span>${esc(r.version)} · ${r.files.song ? "with music" : "no music"} · opened ${when(r.opened)}</span></button>
-      <button class="slot-x forget" aria-label="Forget ${esc(r.name)}" title="Forget this show"><svg viewBox="0 0 14 14" aria-hidden="true"><path d="m3.5 3.5 7 7m0-7-7 7" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg></button></div>`).join("");
-  recentsEl._list = list;
+  const X = `<svg viewBox="0 0 14 14" aria-hidden="true"><path d="m3.5 3.5 7 7m0-7-7 7" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>`;
+  const theirs = t => `<span class="turn theirs">${esc(t.assistant || aName())}'s turn</span>`;
+  recentsEl.innerHTML = waiting.map(t => `<div class="recent" data-wait="${esc(t.key)}"><button class="recent-open">${theirs(t)}<b>${esc(t.name)}</b>
+      <span>${t.job === "new" || t.job === "reuse" ? "New show" : esc(t.next || "")} · sent ${esc(whenAgo(t.sent))}</span></button>
+      <button class="slot-x forget" aria-label="Forget ${esc(t.name)}" title="Forget this">${X}</button></div>`).join("")
+    + rows.map(({ r, k, first }) => { const t = first ? T[k] : null, n = first && !t ? openNoteCount(k, r.version) : 0;
+      return `<div class="recent" data-key="${esc(r.key)}"${t ? ` data-wait="${esc(k)}"` : ""}><button class="recent-open">${t ? theirs(t) : n ? `<span class="turn yours">Your turn: ${n} note${n > 1 ? "s" : ""} not sent</span>` : ""}<b>${esc(r.name)}</b>
+      <span>${esc(r.version)} · ${t ? `sent ${esc(whenAgo(t.sent))}` : `${r.files.song ? "with music" : "no music"} · opened ${when(r.opened)}`}</span></button>
+      <button class="slot-x forget" aria-label="Forget ${esc(r.name)}" title="Forget this show">${X}</button></div>`; }).join("");
+  recentsEl._list = list || [];
 }
-recentsEl.addEventListener("click", async e => { const row = e.target.closest(".recent"); if (!row) return; const r = (recentsEl._list || []).find(x => x.key === row.dataset.key); if (!r) return;
+recentsEl.addEventListener("click", async e => { const row = e.target.closest(".recent"); if (!row) return;
+  if (row.dataset.wait && !row.dataset.key) { if (e.target.closest(".forget")) { turns.clear(row.dataset.wait); renderRecents(); } else showView("wait", row.dataset.wait); return; }
+  if (row.dataset.wait && !e.target.closest(".forget")) { showView("wait", row.dataset.wait); return; }
+  const r = (recentsEl._list || []).find(x => x.key === row.dataset.key); if (!r) return;
   if (e.target.closest(".forget")) { try { await recentsDB.del(r.key); } catch (err) { /* ignore */ } renderRecents(); return; }
-  Object.assign(PICKED, { seq: null, layout: null, song: null, photo: null }, r.files); renderSlots(); openFiles(r.files, true); });
+  Object.assign(PICKED, { seq: null, layout: null, song: null, photo: null, reply: null }, r.files); renderSlots(); openFiles(r.files, true); });
+
+// ------------------------------------------------------------------ assistant hand-offs
+// Wherever a built-in AI would run, the app shows a hand-off card instead: a message it writes, the files
+// to attach, what happens in the chat, and the way back. The assistant choice and which shows are waiting
+// on it ("whose turn") are kept in this browser's storage.
+const ZIP_URL = "https://github.com/dylanlane061/lightorama-sequencer/releases/latest/download/lightorama-sequencer.zip";
+const ASSISTANTS = {
+  ChatGPT: { url: "https://chatgpt.com/", where: "Open ChatGPT (the desktop app works best) and start a new chat. Attach the zip with the paperclip, then paste this." },
+  Claude: { url: "https://claude.ai/new", where: "Open Claude and start a new chat (or a Project for your shows). Attach the zip with the paperclip, then paste this." },
+  Codex: { url: "", where: "Open Codex on your PC and start a new task in a folder that has the zip in it, then paste this." },
+};
+const BUBBLE = '<svg viewBox="0 0 20 20" aria-hidden="true"><path d="M4 4.5h12a1.5 1.5 0 0 1 1.5 1.5v7a1.5 1.5 0 0 1-1.5 1.5H9l-3.5 3v-3H4A1.5 1.5 0 0 1 2.5 13V6A1.5 1.5 0 0 1 4 4.5z" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/><path d="M6.5 9.5h.01M10 9.5h.01M13.5 9.5h.01" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg>';
+const COPY_ICON = '<svg class="i" viewBox="0 0 20 20" aria-hidden="true" style="width:16px;height:16px"><rect x="7" y="7" width="9.5" height="9.5" rx="2" fill="none" stroke="currentColor" stroke-width="1.75"/><path d="M13 4.5H5.5a1 1 0 0 0-1 1V13" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round"/></svg>';
+const FILE_ICON = '<svg viewBox="0 0 20 20" aria-hidden="true"><path d="M5 2.5h6.5L15 6v11.5H5z" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/><path d="M11.5 2.5V6H15" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/></svg>';
+const kv = {
+  get(k, d) { try { const v = localStorage.getItem(k); return v == null ? d : JSON.parse(v); } catch (e) { return d; } },
+  set(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); return true; } catch (e) { return false; } },
+};
+let ASSIST = kv.get("pr-assistant", null);                  // { name: "ChatGPT", ready: true }
+if (ASSIST && !ASSISTANTS[ASSIST.name]) ASSIST = null;
+const aName = () => ASSIST ? ASSIST.name : "your assistant";
+const aTitle = () => ASSIST ? ASSIST.name : "Your assistant";
+const keyOf = name => String(name || "").replace(/[^A-Za-z0-9_-]+/g, "-").replace(/^-+|-+$/g, "").toLowerCase().slice(0, 60) || "show";
+const turns = {
+  all: () => kv.get("pr-turns", {}),
+  get: key => turns.all()[key] || null,
+  set(key, t) { const a = turns.all(); a[key] = Object.assign({ key, sent: Date.now(), assistant: aName() }, t); kv.set("pr-turns", a); },
+  clear(key) { const a = turns.all(); if (a[key]) { delete a[key]; kv.set("pr-turns", a); } },
+};
+const whenAgo = t => { const d = new Date(t), days = (Date.now() - t) / 86400000;
+  const hm = d.toLocaleTimeString(undefined, { hour: "numeric", minute: "2-digit" });
+  return days < 1 && d.getDate() === new Date().getDate() ? `today ${hm}` : days < 7 ? `${d.toLocaleDateString(undefined, { weekday: "long" })} ${hm}` : d.toLocaleDateString(undefined, { month: "short", day: "numeric" }); };
+
+// copying: the clipboard API, then the old execCommand route, then select the text so Ctrl+C works
+let toastTimer = 0;
+function toast(msg) { const el = document.getElementById("toast"); el.textContent = msg; el.hidden = false; clearTimeout(toastTimer); toastTimer = setTimeout(() => { el.hidden = true; }, 3200); }
+async function copyText(text, pre) {
+  try { await navigator.clipboard.writeText(text); return true; } catch (e) { /* try the older route */ }
+  try { const ta = document.createElement("textarea"); ta.value = text; ta.style.cssText = "position:fixed;opacity:0;top:0"; document.body.appendChild(ta); ta.select();
+    const ok = document.execCommand("copy"); ta.remove(); if (ok) return true; } catch (e) { /* fall through */ }
+  if (pre) { const r = document.createRange(); r.selectNodeContents(pre); const s = getSelection(); s.removeAllRanges(); s.addRange(r); }
+  return false;
+}
+
+// The card. cfg: { id, title, sub, msg(), files() -> [[name, where, missing?]], expect[], back, foot, extra, blocked() -> reason, onCopy(text), next: {label, fn} }
+const HANDOFFS = new Map();
+function msgBlock(cfg, primary) {
+  const a = ASSIST && ASSISTANTS[ASSIST.name], open = primary && a && a.url;
+  return `<div class="ho-msg${cfg.open ? " open" : ""}" data-ho-id="${cfg.id}"><pre></pre>
+    <div class="row-actions">${open ? `<a class="btn gold" href="${a.url}" target="_blank" rel="noopener" data-ho="${cfg.id}">${COPY_ICON}Copy and open ${aName()}</a><button class="btn sm ghost" data-ho="${cfg.id}">Just copy</button>`
+      : `<button class="btn ${primary ? "gold" : "sm"}" data-ho="${cfg.id}">${COPY_ICON}${primary && ASSIST ? `Copy for ${aName()}` : "Copy message"}</button>`}
+      ${cfg.noPeek ? "" : `<button class="peek" data-peek>${cfg.open ? "Fold the message" : "Read the message"}</button>`}</div>
+    <span class="ho-block"></span><span class="ho-status" role="status"></span></div>`;
+}
+function handoffHTML(cfg) {
+  HANDOFFS.set(cfg.id, cfg);
+  return `<div class="ho-head"><span class="av">${BUBBLE}</span><div><h3>${cfg.title}</h3><p>${cfg.sub || ""}</p></div></div>${cfg.extra || ""}
+    <ol class="ho-steps">
+      <li class="first"><span class="n">1</span><b class="t">Copy this message</b><div class="body">${msgBlock(cfg, true)}</div></li>
+      <li><span class="n">2</span><b class="t">Attach these files in the chat</b><div class="body"><div class="files" data-ho-files="${cfg.id}"></div></div></li>
+      <li><span class="n">3</span><b class="t">What happens in ${esc(aName())}</b><div class="body"><ul class="expect">${cfg.expect.map(e => `<li>${e}</li>`).join("")}</ul></div></li>
+      <li><span class="n">4</span><b class="t">Bring it back</b><div class="body"><div class="back-drop"><span>${cfg.back}</span><button class="btn sm" data-go="open">Open what you got</button></div></div></li>
+    </ol>${cfg.foot !== false ? `<div class="ho-foot"><span>${cfg.foot || ""}</span><button class="linkbtn" data-go="help">Stuck?</button></div>` : ""}`;
+}
+function refreshHandoffs() {
+  for (const el of document.querySelectorAll(".ho-msg[data-ho-id]")) { const cfg = HANDOFFS.get(el.dataset.hoId); if (!cfg) continue;
+    el.querySelector("pre").textContent = cfg.msg();
+    const why = cfg.blocked ? cfg.blocked() : "";
+    el.querySelectorAll("[data-ho]").forEach(b => b.setAttribute("aria-disabled", String(!!why)));
+    el.querySelector(".ho-block").textContent = why || ""; }
+  for (const el of document.querySelectorAll("[data-ho-files]")) { const cfg = HANDOFFS.get(el.dataset.hoFiles); if (!cfg) continue;
+    el.innerHTML = cfg.files().map(([name, where, missing]) => `<div class="file${missing ? " missing" : ""}">${FILE_ICON}<b>${esc(name)}</b><span>${where}</span></div>`).join(""); }
+}
+function mountMsg(slotName, cfg, primary) { const slot = document.querySelector(`[data-ho-slot="${slotName}"]`); if (!slot) return;
+  HANDOFFS.set(cfg.id, cfg); slot.innerHTML = msgBlock(cfg, primary); }
+document.addEventListener("click", async e => {
+  const b = e.target.closest("[data-ho]");
+  if (b) { const cfg = HANDOFFS.get(b.dataset.ho); if (!cfg) return;
+    if (b.getAttribute("aria-disabled") === "true") { e.preventDefault(); return; }
+    const box = b.closest(".ho-msg"), text = cfg.msg(), ok = await copyText(text, box && box.querySelector("pre"));
+    const st = box && box.querySelector(".ho-status");
+    if (ok) { if (cfg.onCopy) cfg.onCopy(text);
+      const where = b.tagName === "A" ? `Copied. Paste it into ${aName()} with Ctrl+V.` : "Copied. Paste it into the chat with Ctrl+V.";
+      toast(where); if (st) { st.innerHTML = esc(where) + (cfg.next ? ` <button class="linkbtn" data-next="${cfg.id}">${cfg.next.label}</button>` : ""); } }
+    else { toast("Copy was blocked here. The message is selected: press Ctrl+C."); if (box) box.classList.add("open"); }
+    return; }
+  const nx = e.target.closest("[data-next]"); if (nx) { const cfg = HANDOFFS.get(nx.dataset.next); if (cfg && cfg.next) cfg.next.fn(); return; }
+  const p = e.target.closest("[data-peek]");
+  if (p) { const m = p.closest(".ho-msg"); m.classList.toggle("open"); p.textContent = m.classList.contains("open") ? "Fold the message" : "Read the message"; return; }
+  const g = e.target.closest("[data-go]");
+  if (g) { closeHandoff(); closeSetup(); if (!document.body.classList.contains("home")) goHome(); showView(g.dataset.go, g.dataset.job); return; }
+  if (e.target.closest("[data-setup]")) { openSetup(); return; }
+});
+
+// the card as a dialog (used by Send to assistant)
+const hoDlg = document.getElementById("hoDlg"), hoBody = document.getElementById("hoBody");
+function openHandoff(cfg) { setPlaying(false); hoBody.innerHTML = handoffHTML(cfg); refreshHandoffs(); hoDlg.hidden = false;
+  (hoBody.querySelector("textarea, [data-ho]") || hoBody).focus(); }
+function closeHandoff() { hoDlg.hidden = true; }
+document.getElementById("hoClose").onclick = closeHandoff;
+hoDlg.addEventListener("click", e => { if (e.target === hoDlg) closeHandoff(); });
+hoDlg.addEventListener("keydown", e => { if (e.key === "Escape") { e.stopPropagation(); closeHandoff(); } });
+
+// ------------------------------------------------------------------ first-time setup
+const setupDlg = document.getElementById("setupDlg");
+const SETUP_MSG = {
+  ChatGPT: `Install the attached lightorama-sequencer.zip as a skill. Keep the whole folder (SKILL.md, scripts, assets, references).
+
+Then use the skill to run its self-test, and tell me in one line whether everything passed.`,
+  Claude: `lightorama-sequencer.zip is an Agent Skill for building Light-O-Rama S6 light shows. If you can install skills, install it as one and keep the whole folder (SKILL.md, scripts, assets, references). If you can't, unzip it and read lightorama-sequencer/SKILL.md completely: it is your operating manual for my light shows.
+
+Then run its self-test and tell me in one line whether everything passed.`,
+  Codex: `Install the attached lightorama-sequencer.zip as a skill with your skill installer. Keep the whole folder (SKILL.md, scripts, assets, references).
+
+Then run its self-test (python scripts/selftest.py) and tell me in one line whether everything passed.`,
+};
+function setAssistant(name, ready) { ASSIST = { name, ready: !!ready }; kv.set("pr-assistant", ASSIST); applyAssistant(); }
+function openSetup() { setPlaying(false); document.getElementById("setupDone").hidden = true; document.getElementById("setupFail").hidden = true; renderSetup(); setupDlg.hidden = false; }
+function closeSetup() { setupDlg.hidden = true; }
+function renderSetup() {
+  setupDlg.querySelectorAll("#setupPick button").forEach(b => b.setAttribute("aria-pressed", String(!!ASSIST && b.dataset.a === ASSIST.name)));
+  document.getElementById("setupWhere").textContent = ASSIST ? ASSISTANTS[ASSIST.name].where : "Pick your assistant first.";
+  mountMsg("setup", { id: "setup", open: true, msg: () => SETUP_MSG[ASSIST ? ASSIST.name : "ChatGPT"], blocked: () => ASSIST ? "" : "Pick your assistant in step 1." }, true);
+  mountMsg("setupFail", { id: "setupFail", open: true, noPeek: true, msg: () => "The lightorama-sequencer self-test didn't pass. Tell me in plain words what's missing, then walk me through fixing it one step at a time. I'm on a Windows PC and I'm not a programmer." });
+  refreshHandoffs();
+}
+document.getElementById("setupPick").addEventListener("click", e => { const b = e.target.closest("[data-a]"); if (b) { setAssistant(b.dataset.a, false); renderSetup(); } });
+document.getElementById("setupOk").onclick = () => { if (!ASSIST) { renderSetup(); return; } setAssistant(ASSIST.name, true);
+  document.getElementById("setupDone").hidden = false; document.getElementById("setupFail").hidden = true; renderSetup(); };
+document.getElementById("setupBad").onclick = () => { document.getElementById("setupFail").hidden = false; document.getElementById("setupDone").hidden = true; };
+document.getElementById("setupClose").onclick = closeSetup;
+setupDlg.addEventListener("click", e => { if (e.target === setupDlg) closeSetup(); });
+setupDlg.addEventListener("keydown", e => { if (e.key === "Escape") { e.stopPropagation(); closeSetup(); } });
+document.getElementById("asstChip").onclick = openSetup;
+
+function applyAssistant() {
+  document.querySelectorAll(".a-name").forEach(s => { s.textContent = aName(); });
+  document.querySelectorAll(".a-cap").forEach(s => { s.textContent = aTitle(); });
+  const chip = document.getElementById("asstChip"), ready = !!(ASSIST && ASSIST.ready);
+  chip.classList.toggle("ready", ready);
+  document.getElementById("asstLbl").textContent = ready ? ASSIST.name : "Set up your assistant";
+  chip.title = ready ? `${ASSIST.name} is set up. Click to change.` : "Connect your AI assistant";
+  document.getElementById("setupBanner").hidden = ready;
+  document.getElementById("sendLbl").textContent = `Send to ${aName()}`;
+  renderViewCards();
+}
+
+// ------------------------------------------------------------------ home views
+let VIEW = "home";
+function showView(name, focus) {
+  if (!document.querySelector(`.view[data-view="${name}"]`)) name = "home";
+  VIEW = name;
+  document.querySelectorAll(".view").forEach(v => { v.hidden = v.dataset.view !== name; });
+  if (name === "home") renderRecents();
+  if (name === "jobs") { fillShowList(); if (focus) { const el = document.getElementById("job-" + focus); if (el) setTimeout(() => el.scrollIntoView({ block: "start", behavior: "smooth" }), 30); } }
+  if (name === "wait") renderWait(focus || WAIT_KEY);
+  startEl.scrollTop = 0; window.scrollTo(0, 0);
+}
 
 // ------------------------------------------------------------------ send to assistant: notes + wishes as one message
-const sendDlg = document.getElementById("sendDlg"), sendMsg = document.getElementById("sendMsg"), wish = document.getElementById("wish");
 function seqFileName() { return CURRENT.files.seq || SHOW.meta.sequenceFile || (VERSION || SHOW.meta.name) + ".loredit"; }
+function versionInfo() {   // this version's label and the next version's file name
+  const v = VERSION || "", m = v.match(/^(.*?)[\s_-]*v(\d+)$/i), name = SHOW.meta.name;
+  if (m) { const n = +m[2] + 1, base = m[1] || name; return { label: "v" + m[2], next: "v" + n, file: `${base} v${n}.loredit` }; }
+  return { label: "v1", next: "v2", file: `${name} v2.loredit` };
+}
+function openNotes() { return visibleNotes().filter(n => n.status !== "addressed"); }
 function buildMessage() {
-  const notes = visibleNotes().filter(n => n.status !== "addressed"), w = wish.value.trim();
-  const lines = [`Use the lightorama-sequencer skill. I reviewed my show "${SHOW.meta.name}"${VERSION && VERSION !== SHOW.meta.name ? ` (${VERSION})` : ""} in the Papa Russ app.`,
-    `My files are attached: the sequence ${seqFileName()}${CURRENT.files.layout ? `, the layout ${CURRENT.files.layout}` : ""}${CURRENT.files.song || SHOW.meta.audioFile ? `, the song ${CURRENT.files.song || SHOW.meta.audioFile}` : ""}.`, ""];
+  const notes = openNotes(), w = (document.getElementById("wish") || {}).value || "", vi = versionInfo();
+  const files = [`the sequence "${seqFileName()}"`]; if (CURRENT.files.layout) files.push(`the layout "${CURRENT.files.layout}"`);
+  const song = CURRENT.files.song || SHOW.meta.audioFile; if (song) files.push(`the song "${song}"`);
+  const lines = [`Use the lightorama-sequencer skill. I reviewed my show "${SHOW.meta.name}" (${vi.label}) in the Papa Russ app.`,
+    `Attached: ${files.join(", ")}, and plan.json if I have it.`, ""];
   if (notes.length) { lines.push(notes.length > 1 ? `Please fix each of my ${notes.length} review notes (time, scene, props I tagged, note):` : "Please fix my review note (time, scene, props I tagged, note):");
     for (const n of notes) lines.push(`- [${fmt(Number(n.t) || 0)}]${n.scene ? " " + n.scene : ""}${(n.props || []).length ? " {" + n.props.join(", ") + "}" : ""}: ${n.text}`);
     lines.push(""); }
-  if (w) lines.push("For the whole show: " + w, "");
-  if (!notes.length && !w) lines.push("Please suggest a few ways to make this show better, then make the changes I agree to.", "");
-  lines.push("Keep everything I didn't mention as it is. Build the next version as a new file, and a new preview I can open in the Papa Russ app.");
+  if (w.trim()) lines.push("For the whole show: " + w.trim(), "");
+  if (!notes.length && !w.trim()) lines.push("Please suggest a few ways to make this show better, then make the changes I agree to.", "");
+  lines.push(`Keep everything I didn't mention as it is. Build ${vi.next} as a new file, "${vi.file}", with a new preview I can open in the Papa Russ app.`);
+  if (notes.length) lines.push(`Also give me notes-reply.json with one short line per note saying what you changed, so the Papa Russ app can show it.`);
+  lines.push("Give me all the files as downloads.");
   return lines.join("\n");
 }
-function refreshSend() { const n = visibleNotes().filter(x => x.status !== "addressed").length;
-  document.getElementById("sendCount").textContent = n ? `${n} note${n > 1 ? "s" : ""}` : "wishes (no notes yet)";
-  sendMsg.value = buildMessage();
-  const files = [seqFileName(), CURRENT.files.layout, CURRENT.files.song || SHOW.meta.audioFile].filter(Boolean);
-  document.getElementById("sendFiles").innerHTML = files.map(f => `<span class="tag prop">${esc(f)}</span>`).join(""); }
-document.getElementById("sendBtn").onclick = () => { setPlaying(false); refreshSend(); document.getElementById("sendStatus").textContent = ""; sendDlg.hidden = false; wish.focus(); };
-document.getElementById("sendClose").onclick = () => { sendDlg.hidden = true; };
-sendDlg.addEventListener("click", e => { if (e.target === sendDlg) sendDlg.hidden = true; });
-sendDlg.addEventListener("keydown", e => { if (e.key === "Escape") { e.stopPropagation(); sendDlg.hidden = true; } });
-wish.addEventListener("input", () => { sendMsg.value = buildMessage(); });
-document.getElementById("sendCopy").onclick = async () => { const st = document.getElementById("sendStatus");
-  try { await navigator.clipboard.writeText(sendMsg.value); st.textContent = "Copied. Paste it into your assistant's chat."; }
-  catch (e) { sendMsg.focus(); sendMsg.select(); st.textContent = "Copy was blocked here. The message is selected: copy it with Ctrl+C."; } };
-document.getElementById("sendFile").onclick = () => document.getElementById("noteDownload").click();
+function sendCard() {
+  const vi = versionInfo(), n = openNotes().length, song = CURRENT.files.song || SHOW.meta.audioFile;
+  return { id: "send", title: `Send to ${esc(aName())}`, sub: n ? `Your ${n} note${n > 1 ? "s are" : " is"} in the message. It fixes ${n > 1 ? "each one" : "it"} and sends back ${vi.next}.` : "No notes yet: add wishes below, or it will suggest improvements.",
+    extra: `<div class="ho-extra"><label for="wish">Anything for the whole show? <span class="muted">optional</span></label><textarea class="txt" id="wish" placeholder="More sparkle in the chorus, slower snowflakes, a big finish on the mega tree…"></textarea></div>`,
+    msg: buildMessage,
+    files: () => [[seqFileName(), `the show you're watching · ${vi.label}`]].concat(CURRENT.files.layout ? [[CURRENT.files.layout, "the layout"]] : [],
+      song ? [[song, "the song · usually in Documents\\Light-O-Rama\\Audio"]] : [], [["plan.json", `if ${esc(aName())} gave you one with ${vi.label} · it makes fixes faster`]]),
+    expect: ["It may ask about a note it isn't sure of. Answer in your own words.", `It builds ${vi.next} as a new file. Your ${vi.label} stays as it was.`,
+      `It gives you ${vi.next}${n ? ", notes-reply.json" : ""} and a preview to download.`],
+    back: `Open ${vi.next}${n ? " together with notes-reply.json" : ""} here. ${n ? "The app shows its answer to each note." : ""}`,
+    foot: `Use the same chat as ${vi.label} if you still have it.`,
+    onCopy: text => { turns.set(SHOW_KEY, { name: SHOW.meta.name, job: "fix", version: VERSION, next: vi.next, file: vi.file, notes: n, msg: text, files: [seqFileName(), song].filter(Boolean) }); },
+    next: { label: "What happens next →", fn: () => { closeHandoff(); goHome(); showView("wait", SHOW_KEY); } } };
+}
+document.getElementById("sendBtn").onclick = () => { openHandoff(sendCard()); const w = document.getElementById("wish"); w.addEventListener("input", refreshHandoffs); w.focus(); };
+
+// ------------------------------------------------------------------ new show
+const NEW = { layout: null, song: null, dur: 0, families: [], matrices: [], props: 0, err: "" };
+const newPick = document.getElementById("newPick");
+let newPickFor = null;
+document.querySelectorAll(".nslot").forEach(b => b.addEventListener("click", () => { newPickFor = b.dataset.nslot;
+  newPick.accept = newPickFor === "layout" ? ".lorprev,.loredit" : ".mp3,.wav,.m4a,.ogg,audio/*"; newPick.click(); }));
+newPick.addEventListener("change", e => { addNewFiles([...e.target.files]); e.target.value = ""; });
+function summarizeLayout(text) {   // prop families for the "Props to feature" chips
+  const d = new DOMParser().parseFromString(text, "application/xml"); let pv = d.documentElement;
+  if (d.getElementsByTagName("parsererror").length) throw new Error("That layout file isn't readable. Export it again from S6's Previews panel.");
+  if (pv.tagName === "sequence") pv = [...pv.children].find(c => c.tagName === "PreviewClass") || null;
+  if (!pv || pv.tagName !== "PreviewClass") throw new Error("That isn't an S6 layout (.lorprev). Export it from S6's Previews panel.");
+  const names = [...pv.getElementsByTagName("PropClass")].map(p => p.getAttribute("Name") || "").filter(Boolean);
+  const fam = new Map();
+  for (const n of names) { const f = n.replace(/^LOR\s+(Group-)?/i, "").replace(/[\s_-]*(#?\d+|[LR]|Left|Right)$/i, "").replace(/[\s_-]+$/, "").trim() || n;
+    fam.set(f, (fam.get(f) || 0) + 1); }
+  const families = [...fam.entries()].map(([name, n]) => ({ name, n })).sort((a, b) => b.n - a.n || a.name.localeCompare(b.name)).slice(0, 18);
+  return { props: names.length, families, matrices: names.filter(n => /matrix/i.test(n)), name: pv.getAttribute("Name") || "" };
+}
+async function addNewFiles(list) {
+  for (const f of list) { const n = f.name.toLowerCase();
+    if (n.endsWith(".lorprev") || n.endsWith(".loredit")) {
+      NEW.layout = f; NEW.err = "";
+      try { Object.assign(NEW, summarizeLayout(await f.text())); } catch (err) { NEW.err = err.message; NEW.families = []; NEW.props = 0; }
+    } else if (/\.(mp3|wav|m4a|ogg|aac|flac)$/.test(n) || (f.type || "").startsWith("audio/")) {
+      NEW.song = f; NEW.dur = 0;
+      const u = URL.createObjectURL(f), a = new Audio(); a.preload = "metadata";
+      a.onloadedmetadata = () => { NEW.dur = isFinite(a.duration) ? a.duration : 0; URL.revokeObjectURL(u); renderNew(); }; a.onerror = () => URL.revokeObjectURL(u); a.src = u;
+    } }
+  renderNew();
+}
+const mss = s => `${Math.floor(s / 60)}:${String(Math.round(s % 60)).padStart(2, "0")}`;
+function renderNew() {
+  for (const el of document.querySelectorAll(".nslot")) { const f = NEW[el.dataset.nslot], sp = el.querySelector(".nt span");
+    el.classList.toggle("filled", !!f); sp.textContent = f ? f.name + (el.dataset.nslot === "song" && NEW.dur ? ` · ${mss(NEW.dur)}` : "") : sp.dataset.empty; }
+  const ro = document.getElementById("newReadout"); ro.classList.toggle("err", !!NEW.err);
+  if (NEW.err) ro.textContent = NEW.err;
+  else if (NEW.layout && NEW.props) ro.innerHTML = `Read your layout: <b>${NEW.props} props</b>${NEW.matrices.length ? `, including <b>${esc(NEW.matrices[0])}</b>` : ""}. Pick the ones to feature below.`;
+  const box = document.getElementById("nfProps"), keep = new Set([...box.querySelectorAll(".pk[aria-pressed=true]")].map(b => b.dataset.p));
+  if (NEW.families.length) box.innerHTML = NEW.families.map(f => `<button class="pk" data-p="${esc(f.name)}" aria-pressed="${keep.has(f.name)}">${esc(f.name)}${f.n > 1 ? ` <span class="n">${f.n}</span>` : ""}</button>`).join("");
+  refreshHandoffs();
+}
+function addMoment(t = "", d = "") { const row = document.createElement("div"); row.className = "moment";
+  row.innerHTML = `<input class="txt t" placeholder="1:10" aria-label="Time" value="${esc(t)}"><input class="txt" placeholder="Everything explodes into red and gold" aria-label="What happens" value="${esc(d)}"><button class="slot-x" aria-label="Remove this moment" title="Remove">${X_ICON}</button>`;
+  document.getElementById("nfMoments").appendChild(row); }
+document.getElementById("nfAddMoment").onclick = () => { addMoment(); refreshHandoffs(); };
+document.getElementById("nfMoments").addEventListener("click", e => { const x = e.target.closest(".slot-x"); if (x) { x.parentElement.remove(); refreshHandoffs(); } });
+document.querySelector('[data-view="new"]').addEventListener("input", refreshHandoffs);
+document.querySelector('[data-view="new"]').addEventListener("click", e => { const b = e.target.closest(".pk"); if (!b) return; const group = b.parentElement;
+  if (group.id === "nfColours") { const st = b.dataset.state === "use" ? "no" : b.dataset.state === "no" ? "" : "use";
+    b.dataset.state = st; b.setAttribute("aria-pressed", String(st === "use")); b.classList.toggle("no", st === "no"); }
+  else if (group.hasAttribute("data-single")) { const on = b.getAttribute("aria-pressed") !== "true"; group.querySelectorAll(".pk").forEach(x => x.setAttribute("aria-pressed", "false")); b.setAttribute("aria-pressed", String(on)); }
+  else b.setAttribute("aria-pressed", String(b.getAttribute("aria-pressed") !== "true"));
+  refreshHandoffs(); });
+const listAnd = a => a.length < 2 ? a.join("") : a.slice(0, -1).join(", ") + " and " + a[a.length - 1];
+const songStem = () => NEW.song ? stemOf(NEW.song.name) : "the song";
+function newMessage() {
+  const val = id => document.getElementById(id).value.trim();
+  const feel = [document.querySelector("#nfFeel .pk[aria-pressed=true]")?.textContent.toLowerCase(), val("nfFeelOwn")].filter(Boolean).join(", ");
+  const use = [], no = []; document.querySelectorAll("#nfColours .pk").forEach(b => { if (b.dataset.state === "use") use.push(b.dataset.c); if (b.dataset.state === "no") no.push(b.dataset.c); });
+  const props = [...document.querySelectorAll("#nfProps .pk[aria-pressed=true]")].map(b => b.dataset.p);
+  const moments = [...document.querySelectorAll("#nfMoments .moment")].map(r => [r.children[0].value.trim(), r.children[1].value.trim()]).filter(([, d]) => d);
+  const L = ["Use the lightorama-sequencer skill to build a new show.",
+    `Attached: my layout "${NEW.layout ? NEW.layout.name : "<layout>.lorprev"}" and the song "${NEW.song ? NEW.song.name : "<song>.mp3"}"${NEW.dur ? ` (about ${mss(NEW.dur)})` : ""}.`, "", "What I want:"];
+  L.push(`- Feel: ${feel || "your choice"}`);
+  if (use.length || no.length) L.push(`- Colours: ${use.length ? listAnd(use) : "your choice"}${no.length ? `. Never ${listAnd(no)}.` : ""}`);
+  if (props.length) L.push(`- Props to feature: ${listAnd(props)}`);
+  for (const [t, d] of moments) L.push(`- Big moment${t ? ` at ${t}` : ""}: ${d}`);
+  if (val("nfMust")) L.push(`- Must-haves: ${val("nfMust")}`);
+  if (val("nfAvoid")) L.push(`- Avoid: ${val("nfAvoid")}`);
+  L.push("", "Before you plan, tell me the tempo and the sections you hear, and wait for me to say they're right.",
+    `When it's built, look at the preview yourself. Then give me "${songStem()}.loredit", the preview .html and plan.json as downloads. This is v1.`);
+  return L.join("\n");
+}
+const newCfg = () => ({ id: "new", title: `${esc(aTitle())}'s turn: build the show`, sub: "The message updates as you fill in the form.", msg: newMessage,
+  blocked: () => !NEW.layout ? "Add your layout first." : !NEW.song ? "Add the song first." : "",
+  files: () => [[NEW.layout ? NEW.layout.name : "Your layout (.lorprev)", NEW.layout ? "your layout · exported from S6's Previews panel" : "not added yet", !NEW.layout],
+    [NEW.song ? NEW.song.name : "The song", NEW.song ? "the song · usually in Documents\\Light-O-Rama\\Audio" : "not added yet", !NEW.song]],
+  expect: ["It tells you the tempo and sections it hears. Say they're right, or correct them.", "It builds and checks the show. That takes a few minutes.", "It gives you a .loredit, a preview and plan.json to download."],
+  back: "Open the .loredit it gives you here, with the song.", foot: "A new chat is best for a new show.",
+  onCopy: text => { const key = keyOf(songStem()); turns.set(key, { name: songStem(), job: "new", version: "", next: "v1", file: songStem() + ".loredit", msg: text,
+    files: [NEW.layout && NEW.layout.name, NEW.song && NEW.song.name].filter(Boolean) }); WAIT_KEY = key; },
+  next: { label: "What happens next →", fn: () => showView("wait", keyOf(songStem())) } });
+
+// ------------------------------------------------------------------ other jobs
+function fillShowList() { recentsDB.all().then(list => { document.getElementById("showList").innerHTML = list.sort((a, b) => b.opened - a.opened)
+  .map(r => `<option value="${esc((r.files.seq && r.files.seq.name) || r.version + ".loredit")}">`).join(""); }).catch(() => {}); }
+const jv = (id, d) => document.getElementById(id).value.trim() || d;
+const showFrom = id => { const v = jv(id, ""); return v ? (/\.loredit$/i.test(v) ? v : v + ".loredit") : ""; };
+const nextFile = f => { const s = stemOf(f), m = s.match(/^(.*?)[\s_-]*v(\d+)$/i); return m ? `${m[1]} v${+m[2] + 1}.loredit` : `${s} v2.loredit`; };
+const JOBS = {
+  reuse: { id: "reuse", blocked: () => !jv("jrFrom", "") ? "Say which show to start from." : !jv("jrSong", "") ? "Say which song." : "",
+    msg: () => { const song = jv("jrSong", "<new song>.mp3"), stem = stemOf(song);
+      return `Use the lightorama-sequencer skill. Start a new show from my old sequence "${showFrom("jrFrom") || "<old show>.loredit"}" with the song "${song}". Keep its props and setup, remove the old effects, and build new ones for this song.
+${jv("jrFeel", "") ? `Feel and colours: ${jv("jrFeel", "")}.\n` : ""}
+Before you plan, tell me the tempo and the sections you hear, and wait for me to say they're right. Then give me "${stem}.loredit", the preview .html and plan.json as downloads. This is v1.`; },
+    onCopy: text => { const stem = stemOf(jv("jrSong", "song")); turns.set(keyOf(stem), { name: stem, job: "reuse", version: "", next: "v1", file: stem + ".loredit", msg: text, files: [showFrom("jrFrom"), jv("jrSong", "")] }); },
+    next: { label: "What happens next →", fn: () => showView("wait", keyOf(stemOf(jv("jrSong", "song")))) } },
+  picture: { id: "picture", blocked: () => !jv("jpShow", "") ? "Say which show." : !jv("jpWhat", "") ? "Say what the picture should show." : "",
+    msg: () => { const show = showFrom("jpShow") || "<show>.loredit";
+      return `Use the lightorama-sequencer skill. Make an animated picture for my matrix${jv("jpMatrix", "") ? ` "${jv("jpMatrix", "")}"` : " (find it in my layout)"}: ${jv("jpWhat", "<what it shows>")}.
+Show me a preview image before you put it in. Then put it in "${show}"${jv("jpWhen", "") ? ` from ${jv("jpWhen", "")}` : ""}, as a new file called "${nextFile(show)}", and give it to me as a download.`; },
+    onCopy: text => { const show = showFrom("jpShow"), base = stemOf(show).replace(/[\s_-]*v\d+$/i, "");
+      turns.set(keyOf(base), { name: base, job: "picture", version: stemOf(show), next: stemOf(nextFile(show)).match(/v\d+$/)?.[0] || "", file: nextFile(show), msg: text, files: [show] }); },
+    next: { label: "What happens next →", fn: () => showView("wait", keyOf(stemOf(showFrom("jpShow")).replace(/[\s_-]*v\d+$/i, ""))) } },
+  s6: { id: "s6", blocked: () => !jv("jsShow", "") ? "Say which show." : !jv("jsWhat", "") ? "Say what S6 did." : "",
+    msg: () => { const show = showFrom("jsShow") || "<show>.loredit";
+      return `Use the lightorama-sequencer skill. I played "${stemOf(show)}" in Light-O-Rama S6 and it looked different from the preview.
+${jv("jsWhen", "") ? `Around ${jv("jsWhen", "")}: in S6, ` : "In S6, "}${jv("jsWhat", "<what S6 did>")}.
+
+The sequence is attached. Explain in plain words what S6 is doing. If it can be fixed, make "${nextFile(show)}" as a new file and give it to me as a download.`; },
+    onCopy: text => { const show = showFrom("jsShow"), base = stemOf(show).replace(/[\s_-]*v\d+$/i, "");
+      turns.set(keyOf(base), { name: base, job: "s6", version: stemOf(show), next: "", file: nextFile(show), msg: text, files: [show] }); },
+    next: { label: "What happens next →", fn: () => showView("wait", keyOf(stemOf(showFrom("jsShow")).replace(/[\s_-]*v\d+$/i, ""))) } },
+  update: { id: "update", msg: () => `Replace the lightorama-sequencer skill with the attached lightorama-sequencer.zip, the newest version. Keep the whole folder (SKILL.md, scripts, assets, references).
+Then run its self-test and tell me in one line whether everything passed.` },
+};
+document.querySelector('[data-view="jobs"]').addEventListener("input", refreshHandoffs);
+
+// ------------------------------------------------------------------ stuck in the chat
+const STUCK = [
+  { q: "It doesn't seem to know about the add-on", p: "Common in a new chat, or after an update. Paste this. If it still can't find it, attach lightorama-sequencer.zip from your Downloads folder too.",
+    m: "Use the lightorama-sequencer skill. If you can't find it, tell me, and I'll attach lightorama-sequencer.zip so you can install it again." },
+  { q: "It gave me text, but no files to download", p: "It sometimes describes the work instead of handing it over.",
+    m: "Please give me the files as downloads: the .loredit, the preview .html and plan.json (and notes-reply.json if I sent notes). I can't use them as text in the chat." },
+  { q: "It's taking a long time, or it stopped", p: "Big shows take a few minutes. If nothing has happened for ten minutes, nudge it.",
+    m: "Please carry on where you left off. First tell me in one line which step you're on." },
+  { q: "It changed things I didn't ask for", p: "Ask it to put them back. Your earlier version is safe: it always builds a new file.",
+    m: "Please undo the changes I didn't ask for. Only change what my notes say, and keep everything else as it was in the version I sent you." },
+  { q: "It says it can't open my files or run code", p: "The add-on needs an assistant that can run code. Some chats or plans can't.",
+    m: "The lightorama-sequencer skill needs to run Python on my files. Can you do that in this chat? If not, tell me in plain words what I need to turn on, or which plan or app can." },
+  { q: "A picture doesn't show on the matrix in S6", p: "The first time pictures are used, S6 may need one example. In S6, place one Picture effect by hand on the matrix, save, then paste this with that sequence attached.",
+    m: "Use the lightorama-sequencer skill. Pictures don't show on my matrix in S6. I placed one Picture effect by hand on the matrix and saved; the sequence is attached. Run learn-template on it so pictures work from now on, then fix my show." },
+];
+function renderHelp() { document.getElementById("helpList").innerHTML = STUCK.map((s, i) => `<details class="stuck"${i === 0 ? " open" : ""}><summary>${esc(s.q)}</summary>
+  <div class="body"><p>${esc(s.p)}</p><div data-ho-slot="stuck${i}"></div></div></details>`).join("");
+  STUCK.forEach((s, i) => mountMsg("stuck" + i, { id: "stuck" + i, open: true, noPeek: true, msg: () => s.m })); }
+
+// ------------------------------------------------------------------ waiting on the assistant
+let WAIT_KEY = "";
+const WAIT_STEPS = {
+  songCheck: () => ({ cls: "you", h: "You check the sections", who: "y", body: `<p>It tells you the tempo and the sections it hears. Play along in the app if you're unsure, then copy one of these into the chat:</p>
+    <div class="replies">${["Looks right. Go ahead and build it.", "Close, but one section starts at a different time: [say which, and when]. Fix that and go ahead.", "I'm not sure. Build it with what you heard, and I'll check it in the Papa Russ app."]
+      .map((r, i) => `<div class="reply-row"><span>${esc(r)}</span><button class="btn sm" data-reply="${i}">${COPY_ICON}Copy</button></div>`).join("")}</div>` }),
+};
+const WAIT_REPLIES = ["Looks right. Go ahead and build it.", "Close, but one section starts at a different time: [say which, and when]. Fix that and go ahead.", "I'm not sure. Build it with what you heard, and I'll check it in the Papa Russ app."];
+function renderWait(key) {
+  WAIT_KEY = key; const t = turns.get(key), main = document.getElementById("waitMain");
+  if (!t) { main.innerHTML = `<h2>Nothing is waiting on ${esc(aName())}</h2><p class="lede">When you copy a message for the assistant, the show waits here until you bring the result back.</p>`;
+    document.getElementById("waitCopyAgain").hidden = true; document.getElementById("waitForget").hidden = true; document.getElementById("waitOpenSent").hidden = true; return; }
+  const who = esc(t.assistant || aName()), A = `<span class="who-tag a">${who}</span>`;
+  const steps = [{ cls: "done", dot: "✓", h: "You sent the message and files", body: `<p>${esc(whenAgo(t.sent))}${t.files && t.files.length ? ` · ${t.files.map(esc).join(", ")}` : ""}</p>` }];
+  if (t.job === "new" || t.job === "reuse") steps.push({ cls: "them", h: `It listens to the song${A}`, body: "<p>About a minute.</p>" }, WAIT_STEPS.songCheck(),
+    { cls: "them", h: `It builds the show and checks it${A}`, body: "<p>A few minutes. It looks at its own preview before handing over.</p>" },
+    { cls: "them", h: `It gives you the files${A}`, body: `<p>Download them; they usually land in your Downloads folder.</p><div class="files">${[[t.file, "the sequence for S6"], ["plan.json", "keep it: fixes go faster with it"], ["… preview.html", "optional: this app plays the .loredit itself"]].map(([n, w]) => `<div class="file">${FILE_ICON}<b>${esc(n)}</b><span>${w}</span></div>`).join("")}</div>` });
+  else if (t.job === "fix") steps.push({ cls: "them", h: `It works through your ${t.notes || ""} note${t.notes === 1 ? "" : "s"}${A}`, body: "<p>It may ask about one it isn't sure of. Answer in your own words.</p>" },
+    { cls: "them", h: `It gives you ${esc(t.next || "the next version")}${A}`, body: `<div class="files">${[[t.file, "the new version"]].concat(t.notes ? [["notes-reply.json", "its answer to each note"]] : []).map(([n, w]) => `<div class="file">${FILE_ICON}<b>${esc(n)}</b><span>${w}</span></div>`).join("")}</div>` });
+  else if (t.job === "picture") steps.push({ cls: "them", h: `It draws the picture${A}`, body: "<p>It shows you a preview image first.</p>" },
+    { cls: "you", h: "You say yes, or what to change", who: "y", body: `<div class="replies">${["Looks great. Put it in.", "Close. Please make it [bigger / slower / brighter] and show me again."].map((r, i) => `<div class="reply-row"><span>${esc(r)}</span><button class="btn sm" data-reply-text="${esc(r)}">${COPY_ICON}Copy</button></div>`).join("")}</div>` },
+    { cls: "them", h: `It gives you ${esc(t.file)}${A}`, body: "<p>Open it here to see the picture in the show.</p>" });
+  else if (t.job === "s6") steps.push({ cls: "them", h: `It explains what S6 is doing${A}`, body: "<p>If it can be fixed, it makes a new version.</p>" },
+    { cls: "them", h: `It gives you ${esc(t.file)}${A}`, body: "<p>Open it here, then play it in S6 again.</p>" });
+  main.innerHTML = `<span class="turn theirs">${who}'s turn</span><h2>${esc(t.name)} is with ${who}</h2>
+    <p class="lede">Here's what happens in the chat. You can close the app: the show waits under Your shows.</p>
+    <ol class="tl">${steps.map((s, i) => `<li class="${s.cls}"><span class="dot">${s.dot || i + 1}</span><b class="h">${s.h}${s.who === "y" ? '<span class="who-tag y">You</span>' : ""}</b><div class="body">${s.body}</div></li>`).join("")}</ol>`;
+  document.getElementById("waitCopyAgain").hidden = !t.msg; document.getElementById("waitForget").hidden = false;
+  document.getElementById("waitOpenSent").hidden = !t.version; document.getElementById("waitStatus").textContent = "";
+}
+document.getElementById("waitMain").addEventListener("click", async e => { const b = e.target.closest("[data-reply],[data-reply-text]"); if (!b) return;
+  const text = b.dataset.replyText || WAIT_REPLIES[+b.dataset.reply]; const ok = await copyText(text, b.previousElementSibling);
+  toast(ok ? "Copied. Paste it into the chat." : "Copy was blocked. The text is selected: press Ctrl+C."); });
+document.getElementById("waitCopyAgain").onclick = async () => { const t = turns.get(WAIT_KEY); if (!t) return; const ok = await copyText(t.msg);
+  document.getElementById("waitStatus").textContent = ok ? "Copied the message again." : "Copy was blocked here."; };
+document.getElementById("waitForget").onclick = () => { turns.clear(WAIT_KEY); showView("home"); };
+document.getElementById("waitOpenSent").onclick = async () => { const t = turns.get(WAIT_KEY); if (!t) return;
+  const list = await recentsDB.all().catch(() => []), r = list.find(x => x.key === WAIT_KEY + "|" + t.version);
+  if (r) { Object.assign(PICKED, { seq: null, layout: null, song: null, photo: null, reply: null }, r.files); openFiles(r.files, true); } else showView("open"); };
+document.getElementById("backPick").addEventListener("change", async e => { const files = [...e.target.files]; e.target.value = ""; await bringBack(files); });
+async function bringBack(files) { showView("open"); await addFiles(files); if (PICKED.seq) openFiles({ ...PICKED }, true); }
+
+// ------------------------------------------------------------------ the way back: notes-reply.json
+// { "show": "...", "from": "v1", "to": "v2", "replies": [{ "t": 42.1, "note": "...", "status": "fixed" | "not changed" | "question", "reply": "..." }] }
+function applyReplies(showKey, data) {
+  const replies = Array.isArray(data) ? data : (data && (data.replies || data.notes)) || [];
+  if (!replies.length) return { matched: 0, total: 0 };
+  const key = "lor-notes:" + showKey; let list = []; try { list = JSON.parse(localStorage.getItem(key) || "[]"); } catch (e) { list = []; }
+  const toNum = v => typeof v === "number" ? v : (String(v || "").match(/^(\d+):(\d+(?:\.\d+)?)$/) ? +RegExp.$1 * 60 + +RegExp.$2 : parseFloat(v));
+  let matched = 0;
+  for (const r of replies) { const t = toNum(r.t != null ? r.t : r.time), txt = String(r.note || r.text || "").trim().toLowerCase();
+    let best = null, bd = Infinity;
+    for (const n of list) { if (data.from && n.version && n.version !== data.from && !String(n.version).endsWith(data.from)) continue;
+      let d = isFinite(t) ? Math.abs((Number(n.t) || 0) - t) : 50; if (txt && String(n.text).trim().toLowerCase() === txt) d -= 100; if (d < bd) { bd = d; best = n; } }
+    if (!best || bd > 1.5) continue;
+    const st = String(r.status || "fixed").toLowerCase();
+    best.reply = String(r.reply || r.answer || "").trim() || (st === "fixed" ? "Fixed." : "Not changed.");
+    best.replyStatus = st.startsWith("fix") ? "fixed" : st.startsWith("q") ? "question" : "not changed";
+    best.status = best.replyStatus === "fixed" ? "addressed" : "open"; best.replyIn = data.to || ""; best.reviewed = false; matched++; }
+  try { localStorage.setItem(key, JSON.stringify(list)); } catch (e) { /* notes stay as they were */ }
+  return { matched, total: replies.length };
+}
+function answersHTML() {
+  const list = notesStore.list.filter(n => n.reply && n.reviewed === false && n.version !== VERSION).sort((a, b) => a.t - b.t);
+  if (!list.length) return "";
+  const fixed = list.filter(n => n.replyStatus === "fixed").length;
+  return `<div class="answers"><b>${esc(aTitle())} answered ${list.length} note${list.length > 1 ? "s" : ""}</b><span>${fixed} fixed. Watch each one, then mark it.</span>
+    ${list.map(n => `<div class="answer" data-id="${esc(n.id)}"><div class="orig"><button class="when" data-t="${Number(n.t) || 0}" title="Jump to this moment">${fmt(Number(n.t) || 0)}</button>${esc(n.text)}</div>
+      <div class="reply">${n.replyStatus === "fixed" ? "" : "<b>Not changed:</b> "}${esc(n.reply)}</div>
+      <div class="acts"><button class="btn sm" data-ans="ok">${n.replyStatus === "fixed" ? "Looks fixed" : "That's fine"}</button><button class="btn sm" data-ans="bad">Still wrong</button></div></div>`).join("")}</div>`;
+}
+async function reviewAnswer(id, ok) {
+  const n = notesStore.list.find(x => x.id === id); if (!n) return;
+  const upd = Object.assign({}, n, { reviewed: true, status: ok ? "addressed" : n.status });
+  await notesStore.save(upd);
+  if (!ok) { seek(Number(n.t) || 0); openNote(); noteText.value = `Still not right: ${n.text} `; noteText.focus(); noteText.setSelectionRange(noteText.value.length, noteText.value.length); }
+}
+
+function renderViewCards() {
+  document.querySelectorAll(".handoff .av").forEach(a => { if (!a.innerHTML.trim() || a.textContent === "__BUBBLE__") a.innerHTML = BUBBLE; });
+  document.getElementById("newCard").innerHTML = handoffHTML(newCfg());
+  for (const k of ["reuse", "picture", "s6", "update"]) mountMsg(k, JOBS[k], false);
+  renderHelp(); refreshHandoffs();
+}
 
 // ------------------------------------------------------------------ the demo show: a little house, drawn here (no files needed)
 function demoShow() {
@@ -1465,7 +2237,9 @@ function demoShow() {
 // ------------------------------------------------------------------ start
 Object.defineProperty(window, "SHOW", { get: () => SHOW });
 if (SHOW) setupShow(SHOW, EMBED_BG.startsWith("__") ? "" : EMBED_BG);
-else if (!document.body.classList.contains("snap")) { document.getElementById("showTitle").textContent = "Papa Russ Light Co."; goHome(); renderSlots(); }
+else if (!document.body.classList.contains("snap")) { document.getElementById("showTitle").textContent = "Papa Russ Light Co."; goHome(); showView("home"); renderSlots(); }
+for (let i = 0; i < 1; i++) addMoment();
+renderNew(); applyAssistant();
 </script>
 </body>
 </html>

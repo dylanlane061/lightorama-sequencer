@@ -21,6 +21,12 @@ doesn't include its layout, and the song). Your files are read in the browser an
 uploaded. Leave notes on the show, then press **Send to assistant** to have the skill below
 fix them.
 
+The app also guides every trip to your assistant (ChatGPT, Claude or Codex). It never runs
+an AI itself: for setup, a new show, fixing notes, a picture on the matrix or an S6 surprise,
+it writes the message to paste, lists the files to attach, says what the assistant will ask,
+and opens the new version when you bring it back. Shows waiting on the assistant say so on
+the app's home screen.
+
 ## Download the assistant add-on (the skill)
 
 [![Download the latest version](https://img.shields.io/badge/Download-latest%20version-2ea44f?style=for-the-badge)](https://github.com/dylanlane061/lightorama-sequencer/releases/latest/download/lightorama-sequencer.zip)
