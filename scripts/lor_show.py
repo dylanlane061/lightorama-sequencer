@@ -299,6 +299,9 @@ def cmd_build(args):
     base_name = re.sub(r"[\s_-]*v\d+$", "", stem, flags=re.I) or stem     # "Song v3" -> "Song"
     show["meta"]["name"] = args.title or base_name
     show["meta"]["version"] = args.version or stem
+    show["meta"]["sequenceFile"] = Path(args.sequence).name          # named in the viewer's "Send to assistant" message
+    if args.audio:
+        show["meta"]["audioFile"] = Path(args.audio).name
     show["meta"]["showKey"] = re.sub(r"[^A-Za-z0-9_-]+", "-", base_name).strip("-").lower()[:60] or "show"
     if args.scenes:   # [{"start": s, "end": s, "name": "..."}] - labels notes and the timeline
         show["meta"]["scenes"] = [{"start": float(x["start"]), "end": float(x["end"]), "name": str(x["name"])}

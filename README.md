@@ -11,7 +11,17 @@ agent that can run Python) what it needs to build **Light-O-Rama S6** light show
 The agent never writes LOR's XML by hand. The scripts in `scripts/` do, with backups,
 and they check every file before saving it.
 
-## Download
+## Just want to watch a show? Use the app
+
+**Papa Russ's** also runs on its own, no assistant needed:
+[open it in your browser](https://dylanlane061.github.io/lightorama-sequencer/app/), or
+download `papa-russ.html` from the [latest release](https://github.com/dylanlane061/lightorama-sequencer/releases/latest)
+to use offline. Drop in any S6 sequence (`.loredit`, plus the `.lorprev` if the sequence
+doesn't include its layout, and the song). Your files are read in the browser and never
+uploaded. Leave notes on the show, then press **Send to assistant** to have the skill below
+fix them.
+
+## Download the assistant add-on (the skill)
 
 [![Download the latest version](https://img.shields.io/badge/Download-latest%20version-2ea44f?style=for-the-badge)](https://github.com/dylanlane061/lightorama-sequencer/releases/latest/download/lightorama-sequencer.zip)
 
@@ -37,6 +47,8 @@ lightorama-sequencer/
     lor_audio.py              finds beats, bars, sections and loud hits in the song
     lor_plan.py               show plan -> sequence (and an automatic first draft)
     lor_show.py               HTML preview + snapshots
+    build_app.py              makes the standalone app (docs/app/, papa-russ.html)
+    check_app_reader.py       checks the app reads shows exactly like lor_show.py
     lor_helper.py             inspect / validate / add single effects / pixel art tools
     lor_layout.py             reads the layout (where every light is)
     selftest.py               checks the setup and builds a tiny test show

@@ -1,7 +1,7 @@
 name: Release
 
 # Push a tag like v1.2.0 (or run this by hand from the Actions tab) to publish a release
-# with lightorama-sequencer.zip attached. The README's download button always points at
+# with lightorama-sequencer.zip (the skill) and papa-russ.html (the standalone app) attached. The README's download button always points at
 # the newest release's zip.
 on:
   push:
@@ -36,6 +36,10 @@ jobs:
         # One folder, lightorama-sequencer/, with everything an agent needs (no .github or .gitignore).
         run: git archive --format=zip --prefix=lightorama-sequencer/ -o lightorama-sequencer.zip HEAD
 
+      - name: Build the standalone app
+        # One offline HTML file: open it, drag a show in. Same file as the hosted docs/app/.
+        run: python scripts/build_app.py --out papa-russ.html
+
       - name: Publish the release
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -44,8 +48,8 @@ jobs:
           NOTES="release-notes/$TAG.md"          # write this file before tagging; it becomes the release text
           if [ -f "$NOTES" ]; then NOTE_ARGS=(--notes-file "$NOTES"); else NOTE_ARGS=(--generate-notes); fi
           if gh release view "$TAG" >/dev/null 2>&1; then
-            gh release upload "$TAG" lightorama-sequencer.zip --clobber
+            gh release upload "$TAG" lightorama-sequencer.zip papa-russ.html --clobber
             if [ -f "$NOTES" ]; then gh release edit "$TAG" --notes-file "$NOTES"; fi
           else
-            gh release create "$TAG" lightorama-sequencer.zip --target "$GITHUB_SHA" --title "$TAG" "${NOTE_ARGS[@]}"
+            gh release create "$TAG" lightorama-sequencer.zip papa-russ.html --target "$GITHUB_SHA" --title "$TAG" "${NOTE_ARGS[@]}"
           fi

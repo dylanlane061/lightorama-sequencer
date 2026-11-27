@@ -17,6 +17,7 @@ For a new working session, human or agent. Read this after `SKILL.md`.
 | Scripts | `scripts/` (`lor_plan.py` compiles show plans; `lor_show.py` builds the viewer) |
 | Viewer | `assets/viewer_template.html` (review notes: N key; db when published as a Claude artifact) |
 | Website | `docs/index.html`, served by GitHub Pages from `main` `/docs` |
+| Standalone app | the viewer template with no show embedded. `python scripts/build_app.py` copies it to `docs/app/index.html` (selftest fails if you forget). Its JS show reader mirrors `lor_layout.py` + `lor_show.py`'s Builder: change both, then run `check_app_reader.py` |
 | Releases | `.github/workflows/release.yml` + `release-notes/<tag>.md` |
 
 ## Releasing

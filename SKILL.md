@@ -165,6 +165,24 @@ Work through every open note. If a note conflicts with the written direction, as
 before changing anything. Rebuild the viewer with the next `--version` so new notes stay
 separate from old ones; the viewer's "All versions" filter shows the history.
 
+## Workflow 5: a message from the Papa Russ's app
+
+The viewer is also a standalone app (the hosted `docs/app/`, or `papa-russ.html` from a
+release; `scripts/build_app.py` makes it). People open any existing show in it, leave notes
+and press **Send to assistant**. You then get a message that starts "Use the
+lightorama-sequencer skill. I reviewed my show …", lists the notes as
+`[m:ss.cc] scene {tagged props}: note` and may add wishes "For the whole show". The
+`.loredit` (and maybe a `.lorprev`, a song, a notes JSON) is attached.
+
+1. The show may not be one you built: there may be no `plan.json`. Don't rebuild it from
+   scratch. Copy the sequence to a new file (`Song v2.loredit`), inspect it, and fix each
+   note there with Workflow 2's commands; keep everything the notes don't mention.
+2. If you did build it and still have its `plan.json`, edit the plan and recompile instead.
+3. Wishes without notes ("more sparkle in the chorus"): propose two or three concrete
+   changes with times and props, and make the ones the user agrees to.
+4. Validate, build the next preview with `--version` (Workflow 4), look at snapshots, and
+   hand back the new `.loredit` and preview. Say which notes are fixed and which aren't.
+
 ## What the viewer can and can't promise
 
 - **Exact:** timing, which props and rows are lit, channel effects, dumb-RGB colours,
