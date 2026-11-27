@@ -139,6 +139,32 @@ python $S/lor_helper.py add-effect show.loredit --prop "Garage Flood" --type fad
    out.gif --start ... --end ...`, or use a `"picture"` cue in a plan. Images are
    embedded in the sequence (PictureXY, 100/100 = stretched to the prop).
 
+## Workflow 4: review loop (notes left in the viewer)
+
+The viewer has a **✎ Note** button (key **N**). It pauses the show and takes a note about
+that moment. While the note is open, clicking lights on the house tags those props. Each
+note stores its time, scene, tagged props, the effects that were on screen, and the show
+version. Build with labels so notes say where they are:
+
+```bash
+python $S/lor_show.py build "Song.loredit" --audio "Song.mp3" --out preview.html --version v3 --scenes scenes.json
+#   scenes.json: [{"start": 0, "end": 14, "name": "All aboard"}, ...]   (seconds)
+```
+
+Where the notes end up:
+- **Published as a Claude artifact with the `db` capability** (`{"db": {}, "user": {}}`):
+  notes go to the artifact's shared store, collection `notes`. Next pass, read them with
+  the artifact tools (`db_query` collection `notes`, `version == "v3"`). When a note is
+  fixed, write back `status: "addressed"` and a one-line `reply`. The viewer then greys
+  the note out and shows the reply.
+- **Anywhere else** (a local file, ChatGPT, Codex): notes stay in that browser. The
+  reviewer uses **Download JSON** or **Copy as text** and gives you the file or text.
+  `python $S/lor_show.py notes notes.json --active` turns it into a work list.
+
+Work through every open note. If a note conflicts with the written direction, ask
+before changing anything. Rebuild the viewer with the next `--version` so new notes stay
+separate from old ones; the viewer's "All versions" filter shows the history.
+
 ## What the viewer can and can't promise
 
 - **Exact:** timing, which props and rows are lit, channel effects, dumb-RGB colours,

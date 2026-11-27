@@ -295,11 +295,19 @@ def cmd_build(args):
         ap = Path(args.audio)
         mime = {".mp3": "audio/mpeg", ".wav": "audio/wav", ".ogg": "audio/ogg", ".m4a": "audio/mp4"}.get(ap.suffix.lower(), "audio/mpeg")
         audio = f"data:{mime};base64," + base64.b64encode(ap.read_bytes()).decode()
-    payload = json.dumps(show, separators=(",", ":"))
+    stem = Path(args.sequence).stem
+    base_name = re.sub(r"[\s_-]*v\d+$", "", stem, flags=re.I) or stem     # "Song v3" -> "Song"
+    show["meta"]["name"] = args.title or base_name
+    show["meta"]["version"] = args.version or stem
+    show["meta"]["showKey"] = re.sub(r"[^A-Za-z0-9_-]+", "-", base_name).strip("-").lower()[:60] or "show"
+    if args.scenes:   # [{"start": s, "end": s, "name": "..."}] - labels notes and the timeline
+        show["meta"]["scenes"] = [{"start": float(x["start"]), "end": float(x["end"]), "name": str(x["name"])}
+                                  for x in json.loads(Path(args.scenes).read_text(encoding="utf-8"))]
+    payload = json.dumps(show, separators=(",", ":")).replace("<", "\\u003c")
     html = (html.replace("/*__SHOW__*/null", payload)
                 .replace("__BG__", (("data:image/jpeg;base64," if args.background else "data:image/png;base64,") + bg) if bg else "")
                 .replace("__AUDIO__", audio)
-                .replace("__TITLE__", (show["meta"]["name"] or "LOR show").replace("<", "")))
+                .replace("__TITLE__", (show["meta"]["name"] or "LOR show").replace("<", "").replace("&", "and")))
     Path(args.out).write_text(html, encoding="utf-8")
     n_lights = sum(len(p["x"]) for p in show["props"])
     n_fx = sum(len(t["fx"]) for m in show["motion"] for t in m["tracks"]) + sum(len(c["fx"]) for c in show["channels"])
@@ -474,6 +482,30 @@ def cmd_snapshots(args):
         print(f"wrote {sp}")
 
 
+def cmd_notes(args):
+    """Print review notes (the viewer's Download JSON, or a list of note objects) as a work list."""
+    data = json.loads(Path(args.file).read_text(encoding="utf-8"))
+    notes = data.get("notes", data) if isinstance(data, dict) else data
+    if args.version:
+        notes = [n for n in notes if n.get("version") == args.version]
+    if not args.all:
+        notes = [n for n in notes if n.get("status", "open") != "addressed"]
+    notes.sort(key=lambda n: float(n.get("t", 0)))
+    if not notes:
+        print("no open notes")
+        return
+    for n in notes:
+        t = float(n.get("t", 0))
+        print(f"[{int(t // 60)}:{t % 60:05.2f}] {n.get('scene', '')}  ({n.get('version', '')})")
+        print(f"   note: {n.get('text', '')}")
+        if n.get("props"):
+            print(f"   props: {', '.join(n['props'])}")
+        if n.get("active") and args.active:
+            print(f"   on screen: {'; '.join(n['active'][:12])}")
+        print()
+    print(f"{len(notes)} note(s). Fix each, then mark it addressed with a one-line reply (status/reply fields).")
+
+
 def main(argv=None):
     p = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     sub = p.add_subparsers(dest="cmd", required=True)
@@ -483,6 +515,9 @@ def main(argv=None):
     s.add_argument("--audio")
     s.add_argument("--background", help="house photo, if the preview doesn't embed one (BackgroundFile points at the owner's PC)")
     s.add_argument("--out", required=True)
+    s.add_argument("--version", help="label stored with review notes (default: the sequence file name)")
+    s.add_argument("--title", help="title shown in the viewer (default: the sequence file name without a trailing v2/v3)")
+    s.add_argument("--scenes", help='JSON list of {"start","end","name"} (seconds) to label scenes in the viewer and notes')
     s.set_defaults(fn=cmd_build)
     s = sub.add_parser("report")
     s.add_argument("sequence")
@@ -504,6 +539,12 @@ def main(argv=None):
     s.add_argument("--no-sheet", dest="sheet", action="store_false")
     s.add_argument("--chrome", help="path to a Chrome/Chromium binary")
     s.set_defaults(fn=cmd_snapshots)
+    s = sub.add_parser("notes", help="list review notes exported from the viewer")
+    s.add_argument("file")
+    s.add_argument("--version", help="only notes left on this version")
+    s.add_argument("--all", action="store_true", help="include notes already addressed")
+    s.add_argument("--active", action="store_true", help="also show the effects that were on screen")
+    s.set_defaults(fn=cmd_notes)
     a = p.parse_args(argv)
     return a.fn(a)
 

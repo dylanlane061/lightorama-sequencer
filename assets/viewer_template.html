@@ -29,6 +29,22 @@
   .tag.close { background:#183224; color:#7ee2a8; } .tag.approx { background:#332a14; color:#f3c969; } .tag.fallback { background:#3a1b1b; color:#ff8f8f; } .tag.exact { background:#14283a; color:#7cc4ff; }
   #active .row span:first-child { overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
   .muted { color:var(--dim); }
+  #noteEditor { background:#1a2030; border:1px solid var(--accent); border-radius:8px; padding:8px; margin:4px 0 10px; }
+  #noteEditor textarea { width:100%; min-height:72px; background:#0f131b; color:var(--text); border:1px solid var(--line); border-radius:6px; padding:6px; font:inherit; resize:vertical; }
+  #noteEditor .bar { display:flex; gap:6px; align-items:center; flex-wrap:wrap; margin:4px 0; }
+  #noteWhen { font-weight:600; font-variant-numeric:tabular-nums; }
+  .chip { font-size:11px; padding:1px 7px; border-radius:9px; background:#2a3242; color:var(--text); cursor:pointer; }
+  .note { padding:7px 0; border-bottom:1px dashed #1f2531; }
+  .note .head { display:flex; gap:6px; align-items:center; flex-wrap:wrap; }
+  .note .when { color:var(--accent); cursor:pointer; font-variant-numeric:tabular-nums; font-weight:600; background:none; border:none; padding:0; }
+  .note .txt { margin:3px 0; white-space:pre-wrap; }
+  .note .reply { color:#7cc4ff; margin-top:3px; white-space:pre-wrap; }
+  .note.addressed { opacity:.62; }
+  .note .del { margin-left:auto; padding:0 6px; color:var(--dim); background:none; border:none; }
+  #noteTools { display:flex; gap:6px; flex-wrap:wrap; align-items:center; margin-bottom:6px; }
+  #noteTools button, #noteTools select { padding:3px 8px; font-size:12px; }
+  #noteStatus { color:#f3c969; font-size:12px; }
+  body.noting #stage { cursor:crosshair; }
   body.snap header, body.snap aside, body.snap #scrub, body.snap #timeline { display:none; }
   body.snap main { display:block; } body.snap #stagewrap { padding:0; } body.snap #stage { border-radius:0; }
 </style>
@@ -37,7 +53,8 @@
 <header>
   <h1>__TITLE__</h1><span class="sub" id="previewName"></span>
   <button class="primary" id="play">▶ Play</button>
-  <span id="time">0:00.00 / 0:00.00</span>
+  <span id="time">0:00.00 / 0:00.00</span><span class="sub" id="scene"></span>
+  <button id="noteBtn" title="Pause and leave a note about this moment (N)">✎ Note</button>
   <select id="speed"><option value="0.25">0.25×</option><option value="0.5">0.5×</option><option value="1" selected>1×</option></select>
   <label><input type="checkbox" id="unlit" checked> unlit bulbs</label>
   <label><input type="checkbox" id="glow" checked> glow</label>
@@ -50,9 +67,22 @@
     <canvas id="timeline"></canvas>
   </div>
   <aside>
+    <h2>Review notes</h2>
+    <div id="noteEditor" hidden>
+      <div class="bar"><span id="noteWhen"></span>
+        <button id="noteBack" title="0.5 s earlier">−0.5s</button><button id="noteFwd" title="0.5 s later">+0.5s</button></div>
+      <textarea id="noteText" placeholder="What did you see, and what should change?"></textarea>
+      <div class="bar muted" id="noteTagsBar">Click lights on the house to tag props: <span id="noteTags"></span></div>
+      <div class="bar"><button class="primary" id="noteSave">Save note</button><button id="noteCancel">Cancel</button>
+        <span class="muted">Ctrl+Enter saves · Esc cancels</span></div>
+    </div>
+    <div id="noteTools"><select id="noteFilter"><option value="this">This version</option><option value="all">All versions</option></select>
+      <button id="noteCopy">Copy as text</button><button id="noteDownload">Download JSON</button></div>
+    <div id="noteStatus"></div>
+    <div id="noteList" class="muted">No notes yet. Press N or ✎ Note at any moment.</div>
     <h2>Active now</h2><div id="active" class="muted">nothing lit</div>
     <h2>Effects in this show</h2><div id="legend"></div>
-    <h2>Notes</h2><div id="notes" class="muted"></div>
+    <h2>About this preview</h2><div id="notes" class="muted"></div>
   </aside>
 </main>
 <audio id="au" preload="auto" src="__AUDIO__"></audio>
@@ -282,14 +312,15 @@ function setPlaying(on) { playing = on; playBtn.textContent = on ? "❚❚ Pause
   if (hasAudio) { on ? au.play().catch(() => {}) : au.pause(); } else { clockT = now(); clock0 = performance.now(); }
   if (on) requestAnimationFrame(loop); }
 playBtn.onclick = () => setPlaying(!playing);
-document.addEventListener("keydown", e => { if (e.code === "Space") { e.preventDefault(); setPlaying(!playing); } if (e.code === "ArrowRight") seek(now() + 2); if (e.code === "ArrowLeft") seek(now() - 2); });
+document.addEventListener("keydown", e => { if (/^(TEXTAREA|INPUT|SELECT)$/.test(e.target.tagName)) return;
+  if (e.code === "KeyN" && !e.metaKey && !e.ctrlKey) { e.preventDefault(); openNote(); return; } if (e.code === "Space") { e.preventDefault(); setPlaying(!playing); } if (e.code === "ArrowRight") seek(now() + 2); if (e.code === "ArrowLeft") seek(now() - 2); });
 document.getElementById("speed").onchange = e => { speed = +e.target.value; if (hasAudio) au.playbackRate = speed; else { clockT = now(); clock0 = performance.now(); } };
 document.getElementById("unlit").onchange = e => { opt.unlit = e.target.checked; frame(true); };
 document.getElementById("glow").onchange = e => { opt.glow = e.target.checked; frame(true); };
 document.getElementById("bgb").oninput = e => { opt.bg = e.target.value / 100; frame(true); };
 scrub.oninput = () => seek(scrub.value / 1000 * TOTAL);
 if (hasAudio) au.addEventListener("ended", () => setPlaying(false));
-function frame() { const t = now(); renderAt(t); timeEl.textContent = `${fmt(t)} / ${fmt(TOTAL)}`; scrub.value = Math.round(t / TOTAL * 1000); drawPlayhead(t); }
+function frame() { const t = now(); renderAt(t); timeEl.textContent = `${fmt(t)} / ${fmt(TOTAL)}`; sceneEl.textContent = sceneAt(t); scrub.value = Math.round(t / TOTAL * 1000); drawPlayhead(t); }
 function loop() { if (!playing) return; frame(); if (!hasAudio && now() >= TOTAL) { setPlaying(false); return; } requestAnimationFrame(loop); }
 
 const activeEl = document.getElementById("active");
@@ -318,14 +349,143 @@ function buildTimeline() {
   const mx = Math.max(1, ...bins); tctx.fillStyle = "#10131a"; tctx.fillRect(0, 0, w, h);
   tctx.fillStyle = "#3d4a63"; bins.forEach((v, i) => { const bh = (v / mx) * (h - 6); tctx.fillRect(i / bins.length * w, h - bh, Math.max(1, w / bins.length), bh); });
   (SHOW.timing[0] || { marks: [] }).marks.forEach(m => { tctx.fillStyle = "rgba(255,201,77,.35)"; tctx.fillRect(m / 100 / TOTAL * w, 0, 1, 6); });
+  tctx.font = `${10 * devicePixelRatio}px ui-sans-serif,system-ui,sans-serif`;
+  SCENES.forEach((sc, i) => { const x = sc.start / TOTAL * w; tctx.fillStyle = "rgba(231,233,238,.28)"; tctx.fillRect(x, 0, 1, h);
+    tctx.fillStyle = "rgba(231,233,238,.55)"; tctx.fillText(String(i + 1), x + 3 * devicePixelRatio, 18 * devicePixelRatio); });
   tlBase = tctx.getImageData(0, 0, w, h);
 }
-function drawPlayhead(t) { if (!tlBase) return; tctx.putImageData(tlBase, 0, 0); tctx.fillStyle = "#ffc94d"; tctx.fillRect(t / TOTAL * tl.width - 1, 0, 2, tl.height); }
+function drawPlayhead(t) { if (!tlBase) return; tctx.putImageData(tlBase, 0, 0); drawNoteMarks(); tctx.fillStyle = "#ffc94d"; tctx.fillRect(t / TOTAL * tl.width - 1, 0, 2, tl.height); }
 tl.onclick = e => { const r = tl.getBoundingClientRect(); seek((e.clientX - r.left) / r.width * TOTAL); };
+
+// ------------------------------------------------------------------ review notes
+// Pause anywhere, write what you saw, tag props by clicking lights. Notes go to the artifact's shared
+// store when the page runs as a published Claude artifact (Claude reads them on the next pass), otherwise
+// to this browser's storage; "Copy as text" / "Download JSON" carry them anywhere else.
+const SCENES = SHOW.meta.scenes || [];
+const VERSION = SHOW.meta.version || "";
+const SHOW_KEY = SHOW.meta.showKey || "show";
+const sceneEl = document.getElementById("scene");
+function sceneAt(t) { const i = SCENES.findIndex(s => t >= s.start && t < s.end); return i < 0 ? "" : `${i + 1} · ${SCENES[i].name}`; }
+const esc = v => String(v == null ? "" : v).replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+const noteListEl = document.getElementById("noteList"), noteStatusEl = document.getElementById("noteStatus");
+const setNoteStatus = m => { noteStatusEl.textContent = m; };
+const notesStore = {
+  db: null, list: [], key: "lor-notes:" + SHOW_KEY,
+  loadLocal() { try { this.list = JSON.parse(localStorage.getItem(this.key) || "[]"); } catch (e) { this.list = []; } },
+  saveLocal() { try { localStorage.setItem(this.key, JSON.stringify(this.list)); } catch (e) { setNoteStatus("This browser won't store notes; use Copy as text before closing."); } },
+  async init() {
+    this.loadLocal(); renderNotes();
+    const c = window.claude; if (!c || typeof c.use !== "function") return;
+    let db = null; try { db = await c.use("db"); } catch (e) { db = null; }
+    if (!db) return;
+    this.db = db;
+    const timer = setTimeout(() => setNoteStatus("Saved notes can't be reached yet."), 10000);
+    db.collection("notes").onSnapshot(snap => {
+      if (!snap.metadata.fromCache) { clearTimeout(timer); setNoteStatus(""); }
+      this.list = snap.docs.map(d => Object.assign({}, d.data(), { id: d.id })); renderNotes();
+    }, () => { clearTimeout(timer); this.db = null; this.loadLocal(); renderNotes(); setNoteStatus("Shared notes are unavailable; notes stay in this browser."); });
+  },
+  async save(n) {
+    if (this.db) {
+      const body = Object.assign({}, n); delete body.id;
+      try { await this.db.collection("notes").doc(n.id).set(body); return true; }
+      catch (e) { setNoteStatus(e && e.code === "invalid_argument" ? "You can read notes here but not add them." : "Couldn't save to shared notes; kept in this browser."); }
+    }
+    const i = this.list.findIndex(x => x.id === n.id); if (i >= 0) this.list[i] = n; else this.list.push(n);
+    this.saveLocal(); renderNotes(); return true;
+  },
+  async remove(id) {
+    if (this.db) { try { await this.db.collection("notes").doc(id).delete(); return; } catch (e) { setNoteStatus("Couldn't delete that note."); return; } }
+    this.list = this.list.filter(x => x.id !== id); this.saveLocal(); renderNotes();
+  },
+};
+function visibleNotes() {
+  const all = document.getElementById("noteFilter").value === "all";
+  return notesStore.list.filter(n => all || !VERSION || n.version === VERSION).sort((a, b) => a.t - b.t);
+}
+function renderNotes() {
+  const list = visibleNotes();
+  if (!list.length) { noteListEl.className = "muted"; noteListEl.textContent = "No notes yet. Press N or ✎ Note at any moment."; drawPlayhead(now()); return; }
+  noteListEl.className = "";
+  noteListEl.innerHTML = list.map(n => `<div class="note${n.status === "addressed" ? " addressed" : ""}" data-id="${esc(n.id)}">
+    <div class="head"><button class="when" data-t="${Number(n.t) || 0}">${fmt(Number(n.t) || 0)}</button>
+      ${n.scene ? `<span class="muted">${esc(n.scene)}</span>` : ""}
+      ${n.version && n.version !== VERSION ? `<span class="tag">${esc(n.version)}</span>` : ""}
+      ${n.status === "addressed" ? `<span class="tag exact">addressed</span>` : ""}
+      <button class="del" title="Delete note">✕</button></div>
+    <div class="txt">${esc(n.text)}</div>
+    ${(n.props || []).length ? `<div>${n.props.map(p => `<span class="tag">${esc(p)}</span>`).join(" ")}</div>` : ""}
+    ${n.reply ? `<div class="reply">↳ ${esc(n.reply)}</div>` : ""}</div>`).join("");
+  drawPlayhead(now());
+}
+noteListEl.addEventListener("click", e => {
+  const w = e.target.closest(".when"); if (w) { setPlaying(false); seek(+w.dataset.t); return; }
+  const d = e.target.closest(".del"); if (d) { const id = d.closest(".note").dataset.id; if (confirm("Delete this note?")) notesStore.remove(id); }
+});
+document.getElementById("noteFilter").onchange = renderNotes;
+function drawNoteMarks() {
+  if (!tlBase) return; const w = tl.width, s = devicePixelRatio;
+  for (const n of visibleNotes()) { const x = (Number(n.t) || 0) / TOTAL * w;
+    tctx.fillStyle = n.status === "addressed" ? "rgba(124,196,255,.45)" : "#7cc4ff";
+    tctx.beginPath(); tctx.moveTo(x - 5 * s, tl.height); tctx.lineTo(x + 5 * s, tl.height); tctx.lineTo(x, tl.height - 9 * s); tctx.fill(); }
+}
+function notesAsText() {
+  return [`${SHOW.meta.name}${VERSION ? " (" + VERSION + ")" : ""}: review notes`].concat(visibleNotes().map(n =>
+    `[${fmt(Number(n.t) || 0)}]${n.scene ? " " + n.scene : ""}${(n.props || []).length ? " {" + n.props.join(", ") + "}" : ""}: ${n.text}`)).join("\n");
+}
+document.getElementById("noteCopy").onclick = async () => {
+  try { await navigator.clipboard.writeText(notesAsText()); setNoteStatus("Copied."); }
+  catch (e) { const ta = document.getElementById("noteText"); setNoteStatus("Copy blocked here; select the text below and copy it."); noteListEl.innerHTML = `<textarea style="width:100%;min-height:160px">${esc(notesAsText())}</textarea>`; }
+};
+document.getElementById("noteDownload").onclick = async () => {
+  const json = JSON.stringify({ show: SHOW.meta.name, version: VERSION, notes: visibleNotes() }, null, 1), filename = `${SHOW_KEY}-notes.json`;
+  const c = window.claude;
+  if (c && typeof c.use === "function") {   // inside a published artifact, files go through the downloads capability
+    let dl = null; try { dl = await c.use("downloads"); } catch (e) { dl = null; }
+    if (dl) { try { await dl.save({ filename, data: json }); } catch (e) { setNoteStatus("Download was declined or blocked; Copy as text still works."); } return; }
+    setNoteStatus("Downloads aren't available here; use Copy as text."); return;
+  }
+  const a = document.createElement("a"); a.href = URL.createObjectURL(new Blob([json], { type: "application/json" }));
+  a.download = filename; document.body.appendChild(a); a.click(); a.remove();
+};
+// editor
+let draft = null;
+const editorEl = document.getElementById("noteEditor"), noteText = document.getElementById("noteText");
+function draftHead() { document.getElementById("noteWhen").textContent = fmt(draft.t) + (sceneAt(draft.t) ? " · " + sceneAt(draft.t) : ""); }
+function renderTags() { document.getElementById("noteTags").innerHTML = [...draft.props].map(p => `<span class="chip" data-p="${esc(p)}">${esc(p)} ✕</span>`).join(" ") || "none"; }
+function openNote() {
+  setPlaying(false); draft = { t: now(), props: new Set() }; editorEl.hidden = false; document.body.classList.add("noting");
+  noteText.value = ""; draftHead(); renderTags(); noteText.focus();
+}
+function closeNote() { draft = null; editorEl.hidden = true; document.body.classList.remove("noting"); }
+async function saveNote() {
+  const text = noteText.value.trim(); if (!draft || !text) { noteText.focus(); return; }
+  const t = Math.round(draft.t * 100) / 100;
+  const n = { id: Date.now().toString(36) + Math.random().toString(36).slice(2, 6), show: SHOW_KEY, version: VERSION, t,
+    scene: sceneAt(t), text, props: [...draft.props], active: (renderAt(t).active || []).slice(0, 30),
+    created: new Date().toISOString(), status: "open", reply: "" };
+  closeNote(); await notesStore.save(n);
+}
+document.getElementById("noteBtn").onclick = openNote;
+document.getElementById("noteSave").onclick = saveNote;
+document.getElementById("noteCancel").onclick = closeNote;
+document.getElementById("noteBack").onclick = () => { draft.t = Math.max(0, draft.t - 0.5); seek(draft.t); draftHead(); };
+document.getElementById("noteFwd").onclick = () => { draft.t = Math.min(TOTAL, draft.t + 0.5); seek(draft.t); draftHead(); };
+document.getElementById("noteTags").onclick = e => { const c = e.target.closest(".chip"); if (c) { draft.props.delete(c.dataset.p); renderTags(); } };
+noteText.addEventListener("keydown", e => { if (e.key === "Enter" && (e.ctrlKey || e.metaKey)) { e.preventDefault(); saveNote(); } if (e.key === "Escape") closeNote(); });
+stage.addEventListener("click", e => {
+  if (!draft) return; const r = stage.getBoundingClientRect();
+  const x = (e.clientX - r.left) / r.width * W, y = (e.clientY - r.top) / r.height * H;
+  let best = -1, bd = Infinity; for (let i = 0; i < N; i++) { const d = (PX[i] - x) ** 2 + (PY[i] - y) ** 2; if (d < bd) { bd = d; best = i; } }
+  if (best < 0 || bd > (W / 35) ** 2) return;
+  let pi = offs.length - 1; while (pi > 0 && offs[pi] > best) pi--;
+  const name = props[pi].name; draft.props.has(name) ? draft.props.delete(name) : draft.props.add(name); renderTags();
+});
 
 let readyDone = false;
 function maybeReady() { if (readyDone || picsPending > 0 || bgPending) return; readyDone = true;
-  legend(); buildTimeline(); seek(num(Q.get("t"), 0)); window.SHOW_READY = true; }
+  legend(); buildTimeline(); seek(num(Q.get("t"), 0)); window.SHOW_READY = true;
+  if (!document.body.classList.contains("snap")) notesStore.init(); }
 window.renderAt = renderAt; window.SHOW = SHOW;
 if (!picsPending && !bgPending) maybeReady();
 window.addEventListener("resize", () => { buildTimeline(); frame(); });
