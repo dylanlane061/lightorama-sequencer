@@ -11,6 +11,18 @@ agent that can run Python) what it needs to build **Light-O-Rama S6** light show
 The agent never writes LOR's XML by hand. The scripts in `scripts/` do, with backups,
 and they check every file before saving it.
 
+## Download
+
+[![Download the latest version](https://img.shields.io/badge/Download-latest%20version-2ea44f?style=for-the-badge)](https://github.com/dylanlane061/lightorama-sequencer/releases/latest/download/lightorama-sequencer.zip)
+
+1. Click **Download** above. You get `lightorama-sequencer.zip`, the latest version.
+2. Install that zip as a skill in your assistant (ChatGPT, Codex or Claude). Some
+   assistants want the folder instead: unzip it and you'll get a `lightorama-sequencer`
+   folder. [`ONBOARDING.md`](ONBOARDING.md) has the steps for each assistant, plus a
+   prompt to try it.
+3. **To update later:** download it again and replace the old skill or folder. Every
+   version and what changed in it is on the [Releases page](https://github.com/dylanlane061/lightorama-sequencer/releases).
+
 ## What's inside
 
 ```
@@ -87,3 +99,15 @@ lightorama-sequencer/
   Light-O-Rama.
 - Format knowledge also draws on two open-source projects: MikeAllen1's
   light-o-rama-sequence-builder and the xLights LOR importer.
+
+## Publishing a new version (for the maintainer)
+
+Push a tag and GitHub builds and attaches the zip itself:
+
+```
+git tag v1.1.0 && git push origin v1.1.0
+```
+
+Or run the **Release** workflow from the Actions tab with a tag name. It runs the
+self-test, zips the folder as `lightorama-sequencer/`, and publishes a release. The
+download button always points at the newest release.

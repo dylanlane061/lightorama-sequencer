@@ -1,0 +1,48 @@
+name: Release
+
+# Push a tag like v1.2.0 (or run this by hand from the Actions tab) to publish a release
+# with lightorama-sequencer.zip attached. The README's download button always points at
+# the newest release's zip.
+on:
+  push:
+    tags: ["v*"]
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: "Tag to release, e.g. v1.2.0 (created from the current main if it doesn't exist)"
+        required: true
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Work out the tag
+        id: tag
+        run: echo "tag=${{ github.event.inputs.tag || github.ref_name }}" >> "$GITHUB_OUTPUT"
+
+      - name: Self-test
+        run: |
+          pip install -r requirements.txt
+          python scripts/selftest.py
+
+      - name: Build the zip
+        # One folder, lightorama-sequencer/, with everything an agent needs (no .github or .gitignore).
+        run: git archive --format=zip --prefix=lightorama-sequencer/ -o lightorama-sequencer.zip HEAD
+
+      - name: Publish the release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          TAG="${{ steps.tag.outputs.tag }}"
+          if gh release view "$TAG" >/dev/null 2>&1; then
+            gh release upload "$TAG" lightorama-sequencer.zip --clobber
+          else
+            gh release create "$TAG" lightorama-sequencer.zip --target "$GITHUB_SHA" --title "$TAG" --generate-notes
+          fi

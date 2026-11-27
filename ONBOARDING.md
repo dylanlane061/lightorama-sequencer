@@ -7,6 +7,9 @@ assistant then picks it up whenever you ask for a light show, with no prompt pas
 The assistant needs to be able to run code (Python) and, ideally, use a browser so it can
 look at its own preview. ChatGPT's Work mode can do both.
 
+**Get the latest version:** [lightorama-sequencer.zip](https://github.com/dylanlane061/lightorama-sequencer/releases/latest/download/lightorama-sequencer.zip). This link always
+downloads the newest release; past versions are on the [Releases page](https://github.com/dylanlane061/lightorama-sequencer/releases).
+
 ---
 
 ## Option A (best): install it as a skill
