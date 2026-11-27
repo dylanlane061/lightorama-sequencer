@@ -1,0 +1,556 @@
+<title>Papa Russ Workshop Look</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Ultra&family=Alegreya+Sans:ital,wght@0,400;0,500;0,700;1,400&family=Special+Elite&display=swap">
+<style>
+/* Layout: wood only at the very top and around the show window. Everything you read sits on kraft paper and cream
+   sheets; features live in a painted green parts cabinet; the add-on hangs on pegboard. The show stage stays night-dark
+   because lights need darkness. One committed look, so no dark-mode variant. */
+:root{
+  color-scheme:light;
+  --kraft:#e8dcc2;      /* the bench paper everything sits on */
+  --sheet:#faf3e2;      /* work orders, cards, panels */
+  --ink:#2b1d12;        /* text */
+  --ink-soft:#6a553f;   /* secondary text */
+  --rule:#d4c29c;       /* lines on paper */
+  --wood:#6b4126; --wood-dk:#45291a;
+  --brass:#c9973f; --brass-lt:#e6c37a;
+  --berry:#a3262a; --berry-dk:#6a1517;
+  --holly:#24563c; --holly-dk:#173a28;
+  --night:#0d1320;      /* the yard at night */
+  --tape:#e9c84a;       /* tape measure timeline */
+  --f-display:"Ultra", "Rockwell Extra Bold", Georgia, serif;
+  --f-body:"Alegreya Sans", "Gill Sans", "Segoe UI", sans-serif;
+  --f-type:"Special Elite", "Courier New", monospace;
+}
+*{box-sizing:border-box}
+body{background:var(--kraft);color:var(--ink);font:17px/1.6 var(--f-body);margin:0;
+  background-image:radial-gradient(rgba(107,65,38,.07) 1px,transparent 1.2px);background-size:6px 6px}
+button{font:inherit;cursor:pointer}
+:focus-visible{outline:3px solid var(--brass);outline-offset:3px}
+.gut{padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.wrap{max-width:1140px;margin:0 auto}
+h1,h2,h3,h4{text-wrap:balance}
+
+/* ---------- review frame (between screens) ---------- */
+.review{background:var(--ink);color:var(--sheet);padding-block:28px}
+.review .wrap{display:grid;gap:6px;max-width:72ch;margin-inline:auto}
+.review h1{font:400 26px/1.2 var(--f-display);margin:0}
+.review p{margin:0;color:#d9cbb0}
+.screen-label{background:var(--ink);color:#d9cbb0;padding-block:14px;font-size:15px}
+.screen-label b{color:var(--sheet);font-weight:700;margin-right:8px}
+.screen{border-bottom:10px solid var(--ink)}
+
+/* ---------- shared parts ---------- */
+.woodbar{background:
+   repeating-linear-gradient(91deg,rgba(0,0,0,.09) 0 2px,transparent 2px 10px),
+   repeating-linear-gradient(89deg,rgba(255,215,160,.05) 0 1px,transparent 1px 27px),
+   linear-gradient(180deg,var(--wood),var(--wood-dk));
+  color:var(--sheet);position:relative;z-index:2}
+.woodbar .wrap{display:flex;align-items:center;gap:24px;min-height:64px;flex-wrap:wrap;padding-block:8px}
+.plate{display:inline-flex;align-items:center;gap:10px;color:var(--ink);background:linear-gradient(180deg,var(--brass-lt),var(--brass));
+  padding:6px 14px;border-radius:3px;box-shadow:inset 0 1px 0 rgba(255,255,255,.55),0 2px 0 rgba(0,0,0,.4);text-decoration:none}
+.plate .screw{width:6px;height:6px;border-radius:50%;background:radial-gradient(circle at 35% 35%,#a07a33,#5d4316)}
+.plate b{font:400 16px/1 var(--f-display);letter-spacing:.01em}
+.plate small{font:12px/1 var(--f-type)}
+.nav{display:flex;gap:22px;margin-left:auto;flex-wrap:wrap;align-items:center}
+.nav a{color:#f3e6cc;text-decoration:none;font-weight:500}
+.nav a:hover{text-decoration:underline;text-underline-offset:4px}
+
+.btn{display:inline-flex;align-items:center;gap:8px;font:700 16px/1 var(--f-body);padding:13px 20px;border-radius:4px;border:0;text-decoration:none;white-space:nowrap}
+.btn.red{background:var(--berry);color:#fff3e0;box-shadow:0 3px 0 var(--berry-dk)}
+.btn.red:active{transform:translateY(2px);box-shadow:0 1px 0 var(--berry-dk)}
+.btn.line{background:transparent;color:var(--ink);border:2px solid var(--ink)}
+.btn.brass{background:linear-gradient(180deg,var(--brass-lt),var(--brass));color:var(--ink);box-shadow:0 3px 0 #7d5c22}
+.btn.sm{padding:9px 14px;font-size:15px}
+.btn.on-wood{background:rgba(250,243,226,.12);color:var(--sheet);border:2px solid rgba(250,243,226,.45)}
+
+.typed{font-family:var(--f-type)}
+.tagline{display:flex;gap:10px;flex-wrap:wrap}
+.tag{font:13px/1 var(--f-type);background:var(--sheet);border:1px solid var(--rule);padding:6px 10px 6px 18px;position:relative;border-radius:2px 8px 8px 2px}
+.tag::before{content:"";position:absolute;left:6px;top:50%;width:6px;height:6px;margin-top:-3px;border-radius:50%;background:var(--kraft);box-shadow:inset 0 0 0 1px var(--rule)}
+
+/* the garland hanging under the wood bar */
+.garland{display:block;width:100%;height:46px;margin-top:-6px;position:relative;z-index:3;overflow:visible}
+
+/* the night window */
+.window{background:var(--wood-dk);padding:14px;border-radius:4px;
+  background-image:repeating-linear-gradient(90deg,rgba(0,0,0,.12) 0 2px,transparent 2px 9px),linear-gradient(180deg,var(--wood),var(--wood-dk));
+  box-shadow:0 10px 24px rgba(60,35,15,.28),inset 0 0 0 2px rgba(255,220,170,.12)}
+.window .glass{background:radial-gradient(ellipse at 50% 0%,#1a2540,var(--night) 70%);border-radius:2px;overflow:hidden;box-shadow:inset 0 0 0 2px #050810}
+.yard{display:block;width:100%;height:auto}
+.yard .chase{animation:chase 1.1s linear infinite}
+.yard .chase.rev{animation-direction:reverse}
+.yard .beat{animation:beat .9s ease-in-out infinite}
+.yard .spin{transform-box:fill-box;transform-origin:center;animation:spin 3.2s steps(6) infinite}
+@keyframes chase{to{stroke-dashoffset:-32}}
+@keyframes beat{50%{opacity:.35}}
+@keyframes spin{to{transform:rotate(60deg)}}
+@media (prefers-reduced-motion:reduce){.yard *{animation:none!important}}
+
+/* ---------- WEBSITE ---------- */
+.hero{padding-block:30px 72px}
+.hero .wrap{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.1fr);gap:48px;align-items:center}
+.hero h2{font:400 clamp(34px,4.4vw,52px)/1.04 var(--f-display);margin:0 0 18px;color:var(--ink)}
+.hero .lede{font-size:19px;max-width:42ch;margin:0 0 26px;color:#3e2d1f}
+.hero .btns{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:22px}
+.minitape{display:flex;align-items:center;gap:14px;margin-top:12px;color:var(--ink-soft);font-size:15px}
+.minitape .t{font:15px var(--f-type);color:var(--ink)}
+
+.sec{padding-block:72px}
+.sec h3{font:400 clamp(28px,3.6vw,40px)/1.08 var(--f-display);margin:0 0 12px}
+.sec .intro{max-width:60ch;margin:0 0 36px;color:#3e2d1f;font-size:18px}
+
+/* how it works: a work order with four real steps */
+.order{background:var(--sheet);border:1px solid var(--rule);box-shadow:3px 4px 0 rgba(75,45,20,.12);position:relative;
+  background-image:linear-gradient(90deg,transparent 52px,rgba(163,38,42,.35) 52px 54px,transparent 54px)}
+.order-head{display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px;padding:18px 24px 14px 72px;border-bottom:2px solid var(--ink)}
+.order-head span{font:14px var(--f-type);color:var(--ink-soft)}
+.steps{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(4,minmax(0,1fr))}
+.steps li{padding:22px 22px 26px;border-right:1px dashed var(--rule);display:grid;gap:8px;align-content:start}
+.steps li:first-child{padding-left:72px}
+.steps li:last-child{border-right:0}
+.stamp-n{width:38px;height:38px;border-radius:50%;border:2.5px solid var(--berry);color:var(--berry);display:grid;place-items:center;font:400 18px/1 var(--f-display);transform:rotate(-8deg)}
+.steps h4{margin:0;font:700 19px/1.25 var(--f-body)}
+.steps p{margin:0;color:#4a3826;font-size:16px}
+.steps q{display:block;font-style:italic;color:var(--holly);margin-top:4px}
+code{font:.9em var(--f-type);background:rgba(201,151,63,.2);padding:1px 5px;border-radius:2px}
+
+/* features: two painted parts cabinets */
+.cabinets{display:grid;grid-template-columns:1fr 1fr;gap:28px}
+.cabinet{background:var(--holly);border-radius:6px;padding:16px;box-shadow:inset 0 2px 0 rgba(255,255,255,.12),0 8px 0 var(--holly-dk),0 14px 22px rgba(30,40,20,.25)}
+.cabinet-title{display:flex;justify-content:center;margin:-4px 0 14px}
+.cabinet-title .plate b{font-size:14px}
+.drawers{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.drawer{background:linear-gradient(180deg,#2c6447,#245a3e);border-radius:3px;padding:12px 14px 16px;box-shadow:inset 0 0 0 2px var(--holly-dk),inset 0 3px 0 rgba(255,255,255,.08);color:#e9f0e4;display:grid;gap:8px;align-content:start}
+.holder{justify-self:center;background:linear-gradient(180deg,var(--brass-lt),var(--brass));padding:3px;border-radius:3px;box-shadow:0 1px 0 rgba(0,0,0,.4)}
+.holder span{display:block;background:var(--sheet);color:var(--ink);font:14px/1.2 var(--f-type);padding:5px 10px;text-align:center}
+.drawer p{margin:0;font-size:15.5px;line-height:1.5}
+.pull{justify-self:center;width:46px;height:9px;border-radius:0 0 12px 12px;border:3px solid var(--brass);border-top:0;margin-top:2px}
+
+/* what's new: clipboard */
+.news{display:grid;grid-template-columns:minmax(0,1.5fr) minmax(0,1fr);gap:40px;align-items:start}
+.clip{background:#b58a5a;border-radius:10px;padding:34px 16px 16px;position:relative;box-shadow:0 6px 16px rgba(60,35,15,.25)}
+.clip::before{content:"";position:absolute;top:-12px;left:50%;width:120px;height:36px;margin-left:-60px;border-radius:6px 6px 10px 10px;
+  background:linear-gradient(180deg,#e2e0da,#9d9a92);box-shadow:inset 0 -3px 0 rgba(0,0,0,.2),0 2px 3px rgba(0,0,0,.3)}
+.clip .page{background:var(--sheet);padding:24px 26px;font-size:16px}
+.clip .page h4{font:400 26px/1.1 var(--f-display);margin:0 0 4px;display:flex;gap:12px;align-items:center;flex-wrap:wrap}
+.latest{font:13px/1 var(--f-type);color:var(--berry);border:2px solid var(--berry);padding:4px 7px;transform:rotate(-4deg);display:inline-block}
+.clip .page h5{font:700 17px var(--f-body);margin:18px 0 6px;border-bottom:1px solid var(--rule);padding-bottom:4px}
+.clip .page ul{margin:0;padding-left:20px;display:grid;gap:4px;color:#3e2d1f}
+.side-note{display:grid;gap:14px;font-size:16px;color:#3e2d1f}
+.side-note a.u{color:var(--ink);font-weight:700;text-underline-offset:4px;text-decoration-color:var(--brass);text-decoration-thickness:2px}
+
+/* add-on: pegboard */
+.peg{background-color:#c9a878;background-image:radial-gradient(circle,#5c4026 2.6px,transparent 3px);background-size:26px 26px;background-position:13px 13px;
+  box-shadow:inset 0 6px 10px rgba(0,0,0,.15)}
+.peg .wrap{padding-block:64px}
+.peg-head{background:var(--sheet);padding:22px 26px;max-width:640px;box-shadow:3px 4px 0 rgba(60,35,15,.25)}
+.peg-head h3{margin-bottom:8px}
+.peg-head p{margin:0 0 16px;color:#3e2d1f}
+.tools{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:28px;margin-top:44px}
+.hang{position:relative;padding-top:34px}
+.hang::before{content:"";position:absolute;top:0;left:50%;width:14px;height:14px;margin-left:-7px;border-radius:50%;background:radial-gradient(circle at 40% 35%,#ddd,#777);box-shadow:0 2px 2px rgba(0,0,0,.4)}
+.hang::after{content:"";position:absolute;top:10px;left:50%;width:2px;height:30px;background:#3a2a1a;transform-origin:top;transform:rotate(0deg)}
+.mtag{background:#ead6a6;padding:30px 20px 20px;position:relative;clip-path:polygon(18% 0,82% 0,100% 12%,100% 100%,0 100%,0 12%);color:var(--ink)}
+.mtag::before{content:"";position:absolute;top:12px;left:50%;width:14px;height:14px;margin-left:-7px;border-radius:50%;background:#c9a878;box-shadow:0 0 0 4px #d8bf86}
+.mtag h4{font:400 22px/1.1 var(--f-display);margin:8px 0 8px;text-align:center}
+.mtag p{margin:0;font-size:15.5px}
+.trybox{margin-top:36px;background:var(--ink);color:var(--sheet);padding:14px 16px;display:flex;gap:14px;align-items:center;flex-wrap:wrap;border-radius:3px}
+.trybox .typed{flex:1 1 300px;min-width:0}
+.trybox b{color:var(--brass-lt);font-weight:700}
+
+/* footer */
+.foot{padding-block:48px 56px}
+.foot .wrap{display:grid;grid-template-columns:auto minmax(0,1fr);gap:28px;align-items:center}
+.seal{width:120px;height:120px;border-radius:50%;border:3px solid var(--berry);color:var(--berry);display:grid;place-items:center;text-align:center;transform:rotate(-10deg);
+  box-shadow:inset 0 0 0 5px var(--kraft),inset 0 0 0 7px var(--berry);font:400 14px/1.1 var(--f-display);padding:18px;opacity:.9}
+.seal small{display:block;font:11px/1.2 var(--f-type);margin-top:4px}
+.foot p{margin:0 0 8px;max-width:70ch;color:var(--ink-soft);font-size:15.5px}
+.foot p.ded{color:var(--ink);font-size:18px}
+
+/* ---------- APP: player ---------- */
+.app{display:grid;grid-template-columns:minmax(0,1fr) 360px;min-height:760px}
+.app .bar .wrap{max-width:none}
+.titleblock{display:grid;line-height:1.2}
+.titleblock b{font:700 18px var(--f-body)}
+.titleblock small{color:#e3d2b1;font-size:14px}
+.stage-col{padding:22px;display:grid;gap:18px;align-content:start}
+.bench{background:var(--sheet);border:1px solid var(--rule);border-radius:4px;padding:14px 16px 16px;display:grid;gap:12px;box-shadow:2px 3px 0 rgba(75,45,20,.1)}
+.transport{display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+.play{width:56px;height:56px;border-radius:50%;border:0;background:radial-gradient(circle at 40% 35%,#c33a3d,var(--berry) 60%,var(--berry-dk));
+  box-shadow:0 0 0 4px var(--brass),0 0 0 6px #7d5c22,0 4px 6px rgba(0,0,0,.3);display:grid;place-items:center}
+.play svg{width:20px;height:20px;fill:#fff3e0}
+.skip{width:38px;height:38px;border-radius:50%;border:2px solid var(--ink-soft);background:transparent;display:grid;place-items:center;color:var(--ink)}
+.clock{font:20px var(--f-type);color:var(--ink);font-variant-numeric:tabular-nums}
+.clock span{color:var(--ink-soft)}
+.where{color:var(--ink-soft);font-size:15px}
+.transport .grow{flex:1}
+/* the tape measure */
+.tape{position:relative;background:var(--tape);border-radius:3px;height:62px;box-shadow:inset 0 -3px 0 rgba(0,0,0,.12),inset 0 2px 0 rgba(255,255,255,.4);overflow:hidden;
+  background-image:
+    repeating-linear-gradient(90deg,rgba(43,29,18,.85) 0 1px,transparent 1px 10px),
+    repeating-linear-gradient(90deg,rgba(43,29,18,.9) 0 2px,transparent 2px 50px);
+  background-size:100% 10px,100% 18px;background-repeat:repeat-x;background-position:0 0,0 0}
+.tape .secs{position:absolute;inset:20px 0 0 0;display:flex}
+.tape .secs div{border-left:2px solid var(--berry);padding:4px 8px;font:600 14px/1.2 var(--f-body);color:var(--ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}
+.tape .secs div span{font:12px var(--f-type);color:var(--berry);margin-right:4px}
+.tape .head{position:absolute;top:0;bottom:0;left:31%;width:3px;background:var(--berry);box-shadow:0 0 0 1px rgba(255,255,255,.5)}
+.tape .head::before{content:"";position:absolute;top:-1px;left:-6px;border:7.5px solid transparent;border-top:10px solid var(--berry)}
+.tape .notepin{position:absolute;bottom:6px;width:12px;height:12px;border-radius:50%;background:var(--holly);box-shadow:0 0 0 2px var(--sheet)}
+
+.panel{background:var(--sheet);border-left:1px solid var(--rule);display:grid;align-content:start}
+.pbox{padding:18px 20px;border-bottom:1px solid var(--rule);display:grid;gap:12px}
+.pbox h4{margin:0;font:400 18px/1.2 var(--f-display);display:flex;justify-content:space-between;align-items:center}
+.pbox h4 .count{font:13px/1 var(--f-type);background:var(--kraft);padding:4px 8px;border-radius:2px;color:var(--ink)}
+.row2{display:flex;gap:8px;flex-wrap:wrap}
+.btn.full{width:100%;justify-content:center}
+.card{background:#fffdf7;border:1px solid #e6dcc8;padding:10px 12px 12px;position:relative;box-shadow:1px 2px 0 rgba(75,45,20,.1);
+  background-image:linear-gradient(transparent 27px,rgba(163,38,42,.45) 27px 28px,transparent 28px),repeating-linear-gradient(transparent 0 23px,rgba(70,110,160,.18) 23px 24px);background-position:0 0,0 30px}
+.card .when{font:14px var(--f-type);color:var(--berry);display:flex;justify-content:space-between}
+.card p{margin:8px 0 6px;font-size:15.5px;line-height:24px}
+.card .props{display:flex;gap:6px;flex-wrap:wrap}
+.card .props span{font:12px/1 var(--f-type);background:#ead6a6;padding:4px 7px;border-radius:2px}
+.card:nth-child(2){transform:rotate(.4deg)}
+.lit{list-style:none;margin:0;padding:0;display:grid;gap:6px;font-size:15.5px}
+.lit li{display:flex;gap:10px;align-items:center}
+.dot{width:12px;height:12px;border-radius:50%;flex:none;box-shadow:0 0 6px currentColor}
+.drawerrow{display:flex;justify-content:space-between;align-items:center;padding:14px 20px;border-bottom:1px solid var(--rule);font:400 16px var(--f-display);background:none;border-left:0;border-right:0;border-top:0;width:100%;text-align:left;color:var(--ink)}
+.drawerrow .pullsm{width:30px;height:7px;border-radius:0 0 8px 8px;border:2.5px solid var(--brass);border-top:0}
+.drawerrow em{font:13px var(--f-type);font-style:normal;color:var(--ink-soft);margin-left:8px}
+.example{font:12px var(--f-type);color:var(--ink-soft)}
+
+/* ---------- APP: open a show ---------- */
+.openscr .wrap{display:grid;grid-template-columns:minmax(0,1.3fr) minmax(0,1fr);gap:44px;padding-block:44px 64px;align-items:start}
+.openscr h2{font:400 clamp(32px,4vw,46px)/1.05 var(--f-display);margin:0 0 10px}
+.openscr .lede{margin:0 0 24px;color:#3e2d1f;max-width:48ch}
+.ticket{background:#fbf4e3;border:1px solid #d8c59d;padding:26px 22px 20px;position:relative;box-shadow:3px 4px 0 rgba(75,45,20,.14);border:2px dashed transparent}
+.ticket.drop{outline:2px dashed var(--ink-soft);outline-offset:8px}
+.ticket::before{content:"";position:absolute;top:-10px;left:50%;width:20px;height:20px;margin-left:-10px;border-radius:50%;background:radial-gradient(circle at 40% 35%,#e9c477,#9a6f2a);box-shadow:0 1px 2px rgba(0,0,0,.4)}
+.ticket h3{margin:0;font:400 22px/1.2 var(--f-display);display:flex;justify-content:space-between;align-items:baseline;flex-wrap:wrap;gap:6px}
+.ticket h3 span{font:13px var(--f-type);color:var(--ink-soft)}
+.lines{list-style:none;margin:16px 0 0;padding:0;display:grid}
+.lines li{display:grid;grid-template-columns:22px minmax(0,1fr) auto;gap:12px;align-items:center;border-bottom:1px dotted #c9b48a;padding:11px 0}
+.box{width:18px;height:18px;border:2px solid var(--ink);border-radius:2px;position:relative}
+.box.on{background:var(--holly);border-color:var(--holly)}
+.box.on::after{content:"";position:absolute;left:4px;top:0;width:5px;height:10px;border:solid #fff3e0;border-width:0 2.5px 2.5px 0;transform:rotate(45deg)}
+.lines b{font-weight:700}
+.lines small{display:block;color:var(--ink-soft);font-size:14.5px}
+.lines .ext{font:13px var(--f-type);color:var(--ink-soft);text-align:right}
+.lines .file{font:13px var(--f-type);color:var(--holly)}
+.ticket .foot2{display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin-top:18px}
+.openbtns{display:flex;gap:14px;align-items:center;flex-wrap:wrap;margin-top:26px}
+.shelf{display:grid;gap:22px}
+.shelf h3{font:400 20px/1.2 var(--f-display);margin:0 0 10px}
+.boxes{display:grid;gap:10px}
+.showbox{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:14px;align-items:center;background:#d8b98a;padding:10px 14px;border-radius:2px;box-shadow:inset 0 -4px 0 rgba(0,0,0,.08),0 2px 0 rgba(60,35,15,.2);color:var(--ink)}
+.showbox .lbl{background:var(--sheet);padding:6px 10px;font:14px/1.25 var(--f-type)}
+.showbox .lbl small{display:block;color:var(--ink-soft);font-family:var(--f-body);font-size:13.5px}
+.showbox .bulbs{display:flex;gap:4px}
+.addon{background:#ead6a6;padding:22px 20px 20px;clip-path:polygon(10% 0,90% 0,100% 10%,100% 100%,0 100%,0 10%);display:grid;gap:8px}
+.addon h3{margin:0;font:400 20px/1.2 var(--f-display)}
+.addon p{margin:0;font-size:15.5px}
+
+/* ---------- small screens ---------- */
+@media (max-width:900px){
+  .hero .wrap,.news,.openscr .wrap{grid-template-columns:1fr}
+  .cabinets{grid-template-columns:1fr}
+  .steps{grid-template-columns:1fr 1fr}
+  .steps li{border-bottom:1px dashed var(--rule)}
+  .steps li:first-child{padding-left:22px}
+  .order{background-image:none}
+  .order-head{padding-left:24px}
+  .tools{grid-template-columns:1fr}
+  .app{grid-template-columns:1fr}
+  .panel{border-left:0;border-top:1px solid var(--rule)}
+}
+@media (max-width:560px){
+  .steps{grid-template-columns:1fr}
+  .drawers{grid-template-columns:1fr}
+  .nav{display:none}
+  .foot .wrap{grid-template-columns:1fr}
+  .tape .secs div:nth-child(n+4){display:none}
+}
+</style>
+
+<section class="review gut">
+  <div class="wrap">
+    <h1>The workshop look, a little further along</h1>
+    <p>This is the toymaker's bench direction worked into the real website and the app's two main screens, using the site's real wording. Wood stays in two places: the bar along the top and the frame around the show. Everything else is paper, painted metal and brass. It's still a mockup: the lights animate, but the buttons don't do anything.</p>
+  </div>
+</section>
+
+<!-- ================= WEBSITE ================= -->
+<div class="screen-label gut"><div class="wrap"><b>Website</b>papa-russ home page</div></div>
+<div class="screen" id="website">
+  <header class="woodbar gut">
+    <div class="wrap">
+      <a class="plate" href="#website"><span class="screw"></span><b>Papa Russ</b><small>Light Co.</small><span class="screw"></span></a>
+      <nav class="nav" aria-label="Site">
+        <a href="#how">How it works</a><a href="#parts">Features</a><a href="#new">What's new</a><a href="#addon">AI assistant</a>
+        <a class="btn sm brass" href="#website">Open the app</a>
+      </nav>
+    </div>
+  </header>
+  <svg class="garland" data-garland viewBox="0 0 1200 46" preserveAspectRatio="none" aria-hidden="true"></svg>
+
+  <section class="hero gut">
+    <div class="wrap">
+      <div>
+        <h2>Watch your show before the neighbors do.</h2>
+        <p class="lede">The free Papa Russ app plays any S6 sequence right in your browser: your house, your lights, your music. Leave notes on the moments you'd change, and the AI assistant add-on fixes them, or builds a whole new show from a song.</p>
+        <div class="btns"><a class="btn red" href="#website">Open the app</a><a class="btn line" href="#website">Download for offline</a></div>
+        <div class="tagline"><span class="tag">Version 1.0.0</span><span class="tag">Free, no account</span><span class="tag">Your files stay on your computer</span></div>
+      </div>
+      <div>
+        <div class="window"><div class="glass" data-yard></div></div>
+        <div class="minitape"><span class="t">0:15 / 2:56</span><span>Jingle Bell Rock, Lane House, version 3</span></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="sec gut" id="how" style="padding-top:24px">
+    <div class="wrap">
+      <h3>You direct. The assistant does the clicking.</h3>
+      <p class="intro">Open a show you already have, or ask the assistant for a new one. Either way you watch it, say what you'd change, and get the next version back.</p>
+      <div class="order">
+        <div class="order-head"><span>Work order: one show, start to showtime</span><span>Repeat steps 2 to 4 as often as you like</span></div>
+        <ol class="steps">
+          <li><span class="stamp-n">1</span><h4>Open your show</h4><p>Drop your <code>.loredit</code> into the app, with the song. Add the <code>.lorprev</code> layout if the sequence doesn't include it.</p></li>
+          <li><span class="stamp-n">2</span><h4>Watch and leave notes</h4><p>Press N at any moment to pause and say what you saw. Click lights on the house to tag the props you mean.</p><q>Snowflakes should spin like train wheels here.</q></li>
+          <li><span class="stamp-n">3</span><h4>Send to your assistant</h4><p>One click turns your notes into a message for ChatGPT, Claude or Codex with the add-on, which fixes each one safely.</p></li>
+          <li><span class="stamp-n">4</span><h4>Open the new version</h4><p>You get a new <code>.loredit</code> for S6 and a preview. Open it in the app and repeat until it's showtime.</p></li>
+        </ol>
+      </div>
+    </div>
+  </section>
+
+  <section class="sec gut" id="parts" style="padding-top:24px">
+    <div class="wrap">
+      <h3>Made for real displays, pixels and all.</h3>
+      <p class="intro">It works with your own layout, whatever mix of pixel props and regular lights you have.</p>
+      <div class="cabinets">
+        <div class="cabinet">
+          <div class="cabinet-title"><span class="plate"><span class="screw"></span><b>In the app</b><span class="screw"></span></span></div>
+          <div class="drawers">
+            <div class="drawer"><span class="holder"><span>Plays any S6 show</span></span><p>Your sequence, over your layout, with your music. No S6 and no install: it runs in Chrome, Edge or Firefox.</p><span class="pull"></span></div>
+            <div class="drawer"><span class="holder"><span>Notes on the show</span></span><p>Pause anywhere, write what you saw and click lights to tag props. Notes stay with each version.</p><span class="pull"></span></div>
+            <div class="drawer"><span class="holder"><span>Props and solo</span></span><p>Find any prop, ring it on the house, or solo it to see only its lights while the show plays.</p><span class="pull"></span></div>
+            <div class="drawer"><span class="holder"><span>Private and offline</span></span><p>Shows are read in your browser and never uploaded. Recent shows reopen in one click.</p><span class="pull"></span></div>
+          </div>
+        </div>
+        <div class="cabinet">
+          <div class="cabinet-title"><span class="plate"><span class="screw"></span><b>With the assistant add-on</b><span class="screw"></span></span></div>
+          <div class="drawers">
+            <div class="drawer"><span class="holder"><span>Hears the music</span></span><p>Finds the beats, bars, big hits and section changes, so lights land on the music instead of near it.</p><span class="pull"></span></div>
+            <div class="drawer"><span class="holder"><span>Mega tree pixel art</span></span><p>Little animated scenes at your tree's exact size: a steam whistle, a snowman, a mug of cocoa filling up.</p><span class="pull"></span></div>
+            <div class="drawer"><span class="holder"><span>Chases that match</span></span><p>Rooflines and verticals move the same way across the house, even when they're wired in opposite directions.</p><span class="pull"></span></div>
+            <div class="drawer"><span class="holder"><span>Safe with your files</span></span><p>Every file is checked before it's saved, and a backup is kept. Your original sequence is never changed.</p><span class="pull"></span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="sec gut" id="new" style="padding-top:24px">
+    <div class="wrap news">
+      <div class="clip"><div class="page">
+        <h4>v1.0.0 <span class="latest">Latest</span></h4>
+        <div class="typed" style="font-size:14px;color:var(--ink-soft)">Released November 27, 2026</div>
+        <p style="margin:12px 0 0">The first release of the show builder.</p>
+        <h5>Build a show</h5>
+        <ul><li>Give it your S6 layout, a song and a few sentences of direction; it hands back a <code>.loredit</code> sequence for S6.</li><li>Finds the song's beats, bars, big hits and section changes.</li><li>Works with pixel props, groups and regular lights.</li></ul>
+        <h5>Preview and review</h5>
+        <ul><li>A preview of the whole show with the music, in one file that opens in any browser.</li><li>Press N to pause anywhere and leave a note; click lights to tag props.</li></ul>
+      </div></div>
+      <div class="side-note">
+        <h3 style="margin:0">Fresh from the workshop.</h3>
+        <p style="margin:0">Each version is listed on GitHub with what changed. The hosted app is always the newest version. For the offline file or the add-on, download again to update.</p>
+        <div><a class="btn red" href="#new">Download the add-on</a></div>
+        <a class="u" href="#new">Download the offline app</a>
+        <a class="u" href="#new">See every version</a>
+      </div>
+    </div>
+  </section>
+
+  <section class="peg gut" id="addon">
+    <div class="wrap">
+      <div class="peg-head">
+        <h3>Let the AI build and fix shows.</h3>
+        <p>Give it your layout, a song and a few sentences, and it builds a whole show. Or send it your notes from the app and it fixes each one. It works with ChatGPT, Claude and Codex.</p>
+        <a class="btn red" href="#addon">Download the add-on</a>
+      </div>
+      <div class="tools">
+        <div class="hang"><div class="mtag"><h4>ChatGPT</h4><p>In the desktop app, open Skills in the sidebar and add the zip. Or attach the zip in a chat and ask ChatGPT to install it as a skill.</p></div></div>
+        <div class="hang"><div class="mtag"><h4>Claude</h4><p>Unzip it and copy the <code>lightorama-sequencer</code> folder into <code>%USERPROFILE%\.claude\skills\</code>.</p></div></div>
+        <div class="hang"><div class="mtag"><h4>Codex</h4><p>Ask Codex to install the zip with its skill installer, or put the folder in your skills folder.</p></div></div>
+      </div>
+      <div class="trybox"><b>Then try</b><span class="typed">Use the lightorama-sequencer skill. Run its self-test and tell me if everything passed.</span><button class="btn sm brass" type="button" id="copyTry">Copy</button></div>
+    </div>
+  </section>
+
+  <footer class="foot gut">
+    <div class="wrap">
+      <div class="seal"><div>Papa Russ<small>Light Co.</small></div></div>
+      <div>
+        <p class="ded">Named for Russell, Papa Russ, whose light shows started all this. Built by his son Dylan.</p>
+        <p>An unofficial, free tool. It is not made, endorsed or supported by Light-O-Rama, Inc. Light-O-Rama and S6 are their trademarks.</p>
+      </div>
+    </div>
+  </footer>
+</div>
+
+<!-- ================= APP: PLAYER ================= -->
+<div class="screen-label gut"><div class="wrap"><b>App</b>watching a show (the screen you spend the most time on)</div></div>
+<div class="screen" id="player">
+  <header class="woodbar bar gut">
+    <div class="wrap" style="max-width:none">
+      <span class="plate"><span class="screw"></span><b>Papa Russ</b><small>Light Co.</small><span class="screw"></span></span>
+      <div class="titleblock"><b>Jingle Bell Rock (demo)</b><small>Demo house, demo show</small></div>
+      <div class="nav"><button class="btn sm on-wood" type="button">Open show</button></div>
+    </div>
+  </header>
+  <div class="app">
+    <div class="stage-col">
+      <div class="window"><div class="glass" data-yard></div></div>
+      <div class="bench">
+        <div class="transport">
+          <button class="play" type="button" aria-label="Play"><svg viewBox="0 0 20 20"><path d="M5 3l12 7-12 7z"/></svg></button>
+          <button class="skip" type="button" aria-label="Back one section"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path d="M8 3L1 8l7 5zM15 3L8 8l7 5z"/></svg></button>
+          <button class="skip" type="button" aria-label="Next section"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path d="M8 3l7 5-7 5zM1 3l7 5-7 5z"/></svg></button>
+          <span class="clock">0:18.40 <span>/ 1:00.00</span></span>
+          <span class="where">Section 2, Verse one</span>
+          <span class="grow"></span>
+          <button class="btn sm line" type="button">Leave a note <code style="margin-left:4px">N</code></button>
+        </div>
+        <div class="tape" role="img" aria-label="Timeline: five sections, playhead in Verse one, two notes pinned">
+          <div class="secs">
+            <div style="flex:13"><span>1</span>Lights up</div>
+            <div style="flex:27"><span>2</span>Verse one</div>
+            <div style="flex:27"><span>3</span>Snowfall</div>
+            <div style="flex:27"><span>4</span>Big finish</div>
+            <div style="flex:6"><span>5</span>Goodnight</div>
+          </div>
+          <span class="head"></span>
+          <span class="notepin" style="left:22%"></span><span class="notepin" style="left:58%"></span>
+        </div>
+      </div>
+    </div>
+    <aside class="panel">
+      <div class="pbox">
+        <h4>Review notes <span class="count">2 notes</span></h4>
+        <button class="btn red full" type="button">Send notes to assistant</button>
+        <div class="row2"><button class="btn sm line" type="button">This version</button><button class="btn sm line" type="button">Copy as text</button><button class="btn sm line" type="button">Download</button></div>
+        <div class="card"><div class="when"><span>0:13.20</span><span>Verse one</span></div><p>Snowflakes should spin like train wheels here, all three together.</p><div class="props"><span>Snowflake L</span><span>Snowflake C</span><span>Snowflake R</span></div></div>
+        <div class="card"><div class="when"><span>0:34.80</span><span>Snowfall</span></div><p>The mega tree drops out too early. Keep it going until the bell.</p><div class="props"><span>Mega tree</span></div></div>
+        <span class="example">Example notes on the demo show</span>
+      </div>
+      <div class="pbox">
+        <h4>Lit right now</h4>
+        <ul class="lit">
+          <li><span class="dot" style="color:#e0453a;background:#e0453a"></span>Roofline left, red chase</li>
+          <li><span class="dot" style="color:#f4ecd8;background:#f4ecd8;box-shadow:0 0 0 1px #c9b48a"></span>Snowflakes, spinning</li>
+          <li><span class="dot" style="color:#3fbf5f;background:#3fbf5f"></span>Bushes, on the beat</li>
+        </ul>
+      </div>
+      <button class="drawerrow" type="button"><span>Props<em>14</em></span><span class="pullsm"></span></button>
+      <button class="drawerrow" type="button"><span>Effects in this show</span><span class="pullsm"></span></button>
+      <button class="drawerrow" type="button"><span>About this preview</span><span class="pullsm"></span></button>
+    </aside>
+  </div>
+</div>
+
+<!-- ================= APP: OPEN ================= -->
+<div class="screen-label gut"><div class="wrap"><b>App</b>opening a show, with one file already dropped in</div></div>
+<div class="screen" id="open">
+  <header class="woodbar bar gut">
+    <div class="wrap" style="max-width:none">
+      <span class="plate"><span class="screw"></span><b>Papa Russ</b><small>Light Co.</small><span class="screw"></span></span>
+    </div>
+  </header>
+  <svg class="garland" data-garland viewBox="0 0 1200 46" preserveAspectRatio="none" aria-hidden="true"></svg>
+  <section class="openscr gut">
+    <div class="wrap">
+      <div>
+        <h2>Open a show</h2>
+        <p class="lede">Drop your S6 files anywhere on this page. They're read right here in your browser and never uploaded.</p>
+        <div class="ticket drop">
+          <h3>Work order <span>All at once is fine</span></h3>
+          <ul class="lines">
+            <li><span class="box on"></span><span><b>Sequence</b><small>Required</small></span><span class="file">Jingle Bell Rock.loredit</span></li>
+            <li><span class="box"></span><span><b>Song</b><small>For the music</small></span><span class="ext">.mp3 .wav .m4a</span></li>
+            <li><span class="box"></span><span><b>Layout</b><small>Only if the sequence doesn't include it</small></span><span class="ext">.lorprev</span></li>
+            <li><span class="box"></span><span><b>House photo</b><small>Optional backdrop</small></span><span class="ext">.jpg .png</span></li>
+          </ul>
+          <div class="foot2"><button class="btn sm line" type="button">Choose files</button><span style="color:var(--ink-soft);font-size:15px">or drag them onto the work order</span></div>
+        </div>
+        <div class="openbtns"><button class="btn red" type="button">Open show</button><button class="btn line" type="button">Try the demo show</button></div>
+      </div>
+      <div class="shelf">
+        <div>
+          <h3>On the shelf</h3>
+          <div class="boxes">
+            <div class="showbox"><span class="bulbs"><span class="dot" style="color:#e0453a;background:#e0453a"></span><span class="dot" style="color:#3fbf5f;background:#3fbf5f"></span></span><span class="lbl">Polar Express Medley<small>Version 4, opened yesterday</small></span><button class="btn sm brass" type="button">Reopen</button></div>
+            <div class="showbox"><span class="bulbs"><span class="dot" style="color:#ffb547;background:#ffb547"></span><span class="dot" style="color:#4f8fe0;background:#4f8fe0"></span></span><span class="lbl">Carol of the Bells<small>Version 2, opened Nov 20</small></span><button class="btn sm brass" type="button">Reopen</button></div>
+          </div>
+          <p class="example" style="margin:8px 0 0">Example shows. Your recent shows are kept only in this browser.</p>
+        </div>
+        <div class="addon">
+          <h3>Want the AI to build or improve a show?</h3>
+          <p>The Papa Russ assistant add-on works with ChatGPT, Claude and Codex. Leave notes here, then send them over with one click.</p>
+          <a class="btn sm red" href="#open" style="justify-self:start">Get the assistant add-on</a>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>
+
+<script>
+// ---- the garland: a sagging wire with C9 bulbs, lit once on load
+const BULBS = ["#e0453a","#3fbf5f","#ffb547","#4f8fe0","#f4ecd8"];
+document.querySelectorAll("[data-garland]").forEach(svg => {
+  const W = 1200, n = 14; let d = "M0 4", bulbs = "";
+  for (let i = 1; i <= n; i++) { const x = W * i / n; d += ` Q ${x - W/n/2} 34 ${x} 4`; }
+  for (let i = 0; i < n; i++) {
+    const x = W * (i + .5) / n, y = 19, c = BULBS[i % BULBS.length];
+    bulbs += `<g transform="translate(${x} ${y})"><rect x="-4" y="-2" width="8" height="7" rx="1" fill="#3a2a1a"/>
+      <path class="gb" style="animation-delay:${i*70}ms" d="M0 4 C 7 9, 7 20, 0 26 C -7 20, -7 9, 0 4z" fill="${c}" filter="url(#glow)"/></g>`;
+  }
+  svg.innerHTML = `<defs><filter id="glow" x="-1" y="-1" width="3" height="3"><feGaussianBlur stdDeviation="2.4" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter></defs>
+    <path d="${d}" fill="none" stroke="#2a1d12" stroke-width="2.5"/>${bulbs}`;
+});
+const gstyle = document.createElement("style");
+gstyle.textContent = `@media (prefers-reduced-motion:no-preference){.gb{animation:lightup .5s ease-out both}}@keyframes lightup{from{opacity:.15}}`;
+document.head.appendChild(gstyle);
+
+// ---- the yard at night: dotted strings of lights drawn with dashed strokes
+const yardSVG = () => {
+  const dots = (d, col, cls = "", gap = 16, w = 5, off = 0) =>
+    `<path class="${cls}" d="${d}" fill="none" stroke="${col}" stroke-width="${w}" stroke-linecap="round" stroke-dasharray="0 ${gap}" stroke-dashoffset="${off}" filter="url(#yg)"/>`;
+  const roofL = "M60 210 L185 110 L310 210", roofR = "M310 230 L400 160 L490 230";
+  let stars = ""; for (let i = 0; i < 40; i++) stars += `<circle cx="${(i*137)%640}" cy="${(i*53)%120}" r="${i%3?0.8:1.3}" fill="#cfe2ff" opacity="${.3+(i%5)/10}"/>`;
+  let tree = ""; for (let s = 0; s < 12; s++) { const bx = 540 + (s - 5.5) * 7; tree += dots(`M560 70 L${bx} 290`, s % 2 ? "#f4ecd8" : "#e0453a", "chase" + (s%2?" rev":""), 12, 3.4); }
+  const flake = (cx, cy) => { let p = ""; for (let a = 0; a < 3; a++) { const r = a*Math.PI/3, dx = Math.cos(r)*18, dy = Math.sin(r)*18; p += `M${cx-dx} ${cy-dy} L${cx+dx} ${cy+dy} `; }
+    return `<g class="spin">${dots(p, "#f4ecd8", "", 6, 3)}</g>`; };
+  return `<svg class="yard" viewBox="0 0 640 320" role="img" aria-label="A house outlined in lights at night: red and white chases run along the roofline, snowflakes spin, the bushes keep the beat and a mega tree glows beside it.">
+    <defs><filter id="yg" x="-20%" y="-20%" width="140%" height="140%"><feGaussianBlur stdDeviation="2" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter></defs>
+    ${stars}
+    <rect x="0" y="292" width="640" height="28" fill="#070b14"/>
+    <path d="M80 194 V290 M290 194 V290 M325 218 V290 M475 218 V290" stroke="#1b2438" stroke-width="2"/>
+    ${dots(roofL, "#e0453a", "chase", 16, 5)}${dots(roofL, "#f4ecd8", "chase", 16, 5, 8)}
+    ${dots(roofR, "#e0453a", "chase", 16, 5)}${dots(roofR, "#f4ecd8", "chase", 16, 5, 8)}
+    ${dots("M80 196 V288 M290 196 V288 M325 222 V288 M475 222 V288", "#3fbf5f", "", 14, 4)}
+    ${dots("M120 290 Q145 262 170 290 M210 290 Q235 262 260 290 M360 290 Q385 262 410 290", "#3fbf5f", "beat", 9, 4)}
+    ${flake(120, 60)}${flake(250, 46)}${flake(400, 70)}
+    ${tree}
+    ${dots("M553 64 L567 64 M560 57 L560 71", "#ffb547", "", 5, 4)}
+  </svg>`;
+};
+document.querySelectorAll("[data-yard]").forEach(el => el.innerHTML = yardSVG());
+
+// ---- copy button
+document.getElementById("copyTry").addEventListener("click", async e => {
+  const t = e.currentTarget.previousElementSibling.textContent;
+  try { await navigator.clipboard.writeText(t); e.currentTarget.textContent = "Copied"; }
+  catch { const r = document.createRange(); r.selectNodeContents(e.currentTarget.previousElementSibling); getSelection().removeAllRanges(); getSelection().addRange(r); e.currentTarget.textContent = "Selected"; }
+});
+</script>
