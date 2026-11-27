@@ -99,6 +99,19 @@ stop (snowflake wheels, a chase) while the phase stays shared across props.
 field is read as cycles x10 across the whole effect (xLights' reading; unverified in S6),
 so a long effect with a small number moves slowly.
 
+**Line props run along the string.** A Lines-* prop's effect buffer is one row in wiring
+order, so direction words follow the wiring: `left` moves toward the first pixel and
+`right` toward the last, and `up`/`down` do nothing on a line. Check where pixel 1 sits
+before choosing (for example, a roofline wired right to left needs `right` to travel
+right to left). Pictures on a line are one row too, with column 0 at the first pixel.
+
+**Train-track chase (spaced groups):** `"preset": "bars"` with colours
+`[c1, "black", c2, "black"]` and options `"<dir>,<repeats>,False,False,<cycles x10>,0"`.
+Repeats × 4 bands sets the group size. To change speed without a jump, split the cue
+into pieces that each move a whole number of group periods (cycles x10 = 10 × k /
+repeats). Each piece then starts where the last one ended. Palette order is kept, so
+black slots make the gaps.
+
 **Moving trim instead of blinking trim:** `blend_left` / `blend_right` (blended bars) keep
 a prop fully lit while colour bands travel along it. Direction follows each prop's pixel
 order, so two rooflines drawn in opposite directions need opposite presets to move the same

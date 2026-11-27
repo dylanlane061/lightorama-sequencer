@@ -147,21 +147,17 @@ def fmt_time(cs: int) -> str:
 
 
 def palette(colors: list[str] | None) -> str:
-    """Six palette slots 'AARRGGBB,<0|1>' joined by ';' (sixth always black)."""
-    slots = [[c, 0] for c in DEFAULT_SLOTS]
-    for name in (colors or [])[:5]:
+    """Six palette slots 'AARRGGBB,<0|1>' joined by ';'.
+
+    The colours fill the slots in the order given (multi-colour effects such as bars cycle
+    through the enabled slots in slot order, so the order matters). Unused slots keep LOR's
+    defaults, switched off."""
+    slots = list(DEFAULT_SLOTS) + ["FF000000"]
+    used = [0] * 6
+    for i, name in enumerate((colors or [])[:6]):
         r, g, b = parse_color(name)
-        hexv = f"FF{r:02X}{g:02X}{b:02X}"
-        for slot in slots:
-            if slot[0] == hexv and not slot[1]:
-                slot[1] = 1
-                break
-        else:
-            for slot in slots:
-                if not slot[1]:
-                    slot[0], slot[1] = hexv, 1
-                    break
-    return ";".join(f"{c},{u}" for c, u in slots) + ";FF000000,0"
+        slots[i], used[i] = f"FF{r:02X}{g:02X}{b:02X}", 1
+    return ";".join(f"{c},{u}" for c, u in zip(slots, used))
 
 
 def load_templates() -> dict:
