@@ -1659,7 +1659,11 @@ function slotFor(file) { const n = file.name.toLowerCase();
   if (n.endsWith(".json")) return "reply"; return null; }
 async function addFiles(list) {
   const odd = [];
-  for (const f of list) { const k = slotFor(f); if (k) PICKED[k] = f; else odd.push(f.name); }
+  const kinds = list.map(slotFor);
+  // a different sequence replaces the old one: drop the old show's other files unless they came along,
+  // and the earlier files saved for the new show fill the gaps when it opens
+  if (PICKED.seq && kinds.includes("seq")) for (const k of ["layout", "song", "photo", "reply"]) if (!kinds.includes(k)) PICKED[k] = null;
+  list.forEach((f, i) => { const k = kinds[i]; if (k) PICKED[k] = f; else odd.push(f.name); });
   openErr.textContent = odd.length ? `Not a show file: ${odd.join(", ")}. Use a .loredit, .lorprev, a song, a photo or notes-reply.json.` : "";
   await renderSlots();
 }
@@ -1671,6 +1675,9 @@ async function renderSlots() {
   const songEl = document.querySelector('.slot[data-slot="song"] .slot-file');
   if (PICKED.seq && !PICKED.song) { try { const head = await PICKED.seq.slice(0, 4000).text(), m = head.match(/musicFilename="([^"]*)"/);
     if (m && m[1]) songEl.textContent = `This show uses ${m[1].split(/[\\/]/).pop()}`; } catch (e) { /* only a hint */ } }
+  if (PICKED.seq) { const stem = stemOf(PICKED.seq.name), saved = await savedFilesFor(keyOf(stem.replace(/[\s_-]*v\d+$/i, "") || stem));
+    for (const k of ["song", "layout", "photo"]) if (!PICKED[k] && saved[k]) { const el = document.querySelector(`#drop .slot[data-slot="${k}"] .slot-file`);
+      el.textContent = `Will use ${saved[k].file.name} from ${saved[k].from === "the new-show form" ? "when you sent it" : saved[k].from}${k === "layout" ? ", if the sequence needs it" : ""}`; } }
 }
 document.querySelector(".slots").addEventListener("click", e => { const x = e.target.closest(".slot-x"); if (x) { PICKED[x.dataset.x] = null; renderSlots(); } });
 document.getElementById("filePick").addEventListener("change", e => { addFiles([...e.target.files]); e.target.value = ""; });
@@ -1694,9 +1701,12 @@ async function openFiles(files, remember) {
   if (!files.seq) return;
   const busy = document.getElementById("openBusy"); busy.hidden = false; openBtn.disabled = true; openErr.textContent = "";
   try {
-    const [seqText, layText] = await Promise.all([files.seq.text(), files.layout ? files.layout.text() : null]);
-    const r = await ShowReader.build(seqText, layText);
-    const stem = stemOf(files.seq.name), base = stem.replace(/[\s_-]*v\d+$/i, "") || stem, show = r.show;
+    files = Object.assign({}, files);
+    const stem = stemOf(files.seq.name), base = stem.replace(/[\s_-]*v\d+$/i, "") || stem;
+    let seqText = await files.seq.text();
+    const reused = await reuseEarlierFiles(files, base, seqText);
+    const layText = files.layout ? await files.layout.text() : null;
+    const r = await ShowReader.build(seqText, layText), show = r.show;
     show.meta.name = base; show.meta.version = stem;
     show.meta.showKey = base.replace(/[^A-Za-z0-9_-]+/g, "-").replace(/^-+|-+$/g, "").toLowerCase().slice(0, 60) || "show";
     const sec = show.timing.find(g => /^sections?$/i.test(g.name || ""));   // lor_audio.py writes a "Sections" grid
@@ -1717,6 +1727,9 @@ async function openFiles(files, remember) {
     if (!files.song && r.music) show.meta.warnings.unshift(`No song added; this show plays with a silent clock. It uses ${r.music.split(/[\\/]/).pop()}.`);
     loadShow(show, bgSrc, audioSrc, { files: Object.fromEntries(Object.entries(files).filter(([, f]) => f).map(([k, f]) => [k, f.name])), urls, music: r.music });
     if (remember) saveRecent(show, files);
+    if (reused.length) { const fromNote = `Used ${listAnd(reused)} from before, so you didn't have to pick ${reused.length > 1 ? "them" : "it"} again.`;
+      setTimeout(() => { if (!replyNote) setNoteStatus(fromNote); }, 450); }
+    recentsDB.del("files|" + show.meta.showKey).catch(() => {});
     const turn = turns.get(show.meta.showKey); if (turn && turn.version !== show.meta.version) turns.clear(show.meta.showKey);
     if (replyNote) setTimeout(() => setNoteStatus(replyNote, true), 400);
   } catch (err) {
@@ -1742,17 +1755,36 @@ const recentsDB = (() => {
     t.oncomplete = () => ok(out && out.result !== undefined ? out.result : undefined); t.onerror = () => bad(t.error); }); };
   return { all: () => tx("readonly", st => st.getAll()), put: v => tx("readwrite", st => st.put(v)), del: k => tx("readwrite", st => st.delete(k)) };
 })();
+// Earlier files for a show: its recent versions, or the layout and song kept when a new show was sent to the assistant.
+const isPending = r => r.key.startsWith("files|");
+async function savedFilesFor(showKey) {
+  let all = []; try { all = await recentsDB.all(); } catch (e) { return {}; }
+  const mine = all.filter(r => r.key === "files|" + showKey || r.key.startsWith(showKey + "|")).sort((a, b) => b.opened - a.opened), out = {};
+  for (const k of ["song", "layout", "photo"]) { const hit = mine.find(r => r.files && r.files[k]); if (hit) out[k] = { file: hit.files[k], from: hit.version || "the new-show form" }; }
+  return out;
+}
+async function reuseEarlierFiles(files, base, seqText) {   // fills the gaps in `files`; returns what it used, in words
+  const saved = await savedFilesFor(keyOf(base)), used = [];
+  if (!files.song && saved.song) { files.song = saved.song.file; used.push(`the song (${saved.song.file.name})`); }
+  if (!files.layout && saved.layout && !/<PreviewClass[\s>]/.test(seqText)) { files.layout = saved.layout.file; used.push(`the layout (${saved.layout.file.name})`); }
+  if (!files.photo && saved.photo) { files.photo = saved.photo.file; used.push("the house photo"); }
+  return used;
+}
+async function keepNewShowFiles(showKey, name, layout, song) {
+  try { const keep = {}; if (layout) keep.layout = layout; if (song) keep.song = song;
+    await recentsDB.put({ key: "files|" + showKey, name, version: "", opened: Date.now(), files: keep }); } catch (e) { /* a convenience only */ }
+}
 async function saveRecent(show, files) {
   try { const keep = {}; for (const k of ["seq", "layout", "song", "photo"]) if (files[k]) keep[k] = files[k];
     await recentsDB.put({ key: show.meta.showKey + "|" + show.meta.version, name: show.meta.name, version: show.meta.version, opened: Date.now(), files: keep });
-    const all = (await recentsDB.all()).sort((a, b) => b.opened - a.opened);
+    const all = (await recentsDB.all()).filter(x => !isPending(x)).sort((a, b) => b.opened - a.opened);
     for (const old of all.slice(8)) await recentsDB.del(old.key);
   } catch (e) { /* recents are a convenience: a private window or full disk just skips them */ }
 }
 const recentsEl = document.getElementById("recents");
 function openNoteCount(key, version) { try { return JSON.parse(localStorage.getItem("lor-notes:" + key) || "[]").filter(n => n.version === version && n.status !== "addressed").length; } catch (e) { return 0; } }
 async function renderRecents() {
-  let list = []; try { list = (await recentsDB.all()).sort((a, b) => b.opened - a.opened); } catch (e) { list = null; }
+  let list = []; try { list = (await recentsDB.all()).filter(x => !isPending(x)).sort((a, b) => b.opened - a.opened); } catch (e) { list = null; }
   const T = turns.all(), seen = new Set(), rows = [];
   for (const r of list || []) { const k = r.key.split("|")[0]; rows.push({ r, k, first: !seen.has(k) }); seen.add(k); }
   const waiting = Object.values(T).filter(t => !seen.has(t.key)).sort((a, b) => b.sent - a.sent);
@@ -2054,12 +2086,12 @@ const newCfg = () => ({ id: "new", title: `${esc(aTitle())}'s turn: build the sh
     [NEW.song ? NEW.song.name : "The song", NEW.song ? "the song · usually in Documents\\Light-O-Rama\\Audio" : "not added yet", !NEW.song]],
   expect: ["It tells you the tempo and sections it hears. Say they're right, or correct them.", "It builds and checks the show. That takes a few minutes.", "It gives you a .loredit, a preview and plan.json to download."],
   back: "Open the .loredit it gives you here, with the song.", foot: "A new chat is best for a new show.",
-  onCopy: text => { const key = keyOf(songStem()); turns.set(key, { name: songStem(), job: "new", version: "", next: "v1", file: songStem() + ".loredit", msg: text,
+  onCopy: text => { const key = keyOf(songStem()); keepNewShowFiles(key, songStem(), NEW.layout, NEW.song); turns.set(key, { name: songStem(), job: "new", version: "", next: "v1", file: songStem() + ".loredit", msg: text,
     files: [NEW.layout && NEW.layout.name, NEW.song && NEW.song.name].filter(Boolean) }); WAIT_KEY = key; },
   next: { label: "What happens next →", fn: () => showView("wait", keyOf(songStem())) } });
 
 // ------------------------------------------------------------------ other jobs
-function fillShowList() { recentsDB.all().then(list => { document.getElementById("showList").innerHTML = list.sort((a, b) => b.opened - a.opened)
+function fillShowList() { recentsDB.all().then(list => { document.getElementById("showList").innerHTML = list.filter(x => !isPending(x)).sort((a, b) => b.opened - a.opened)
   .map(r => `<option value="${esc((r.files.seq && r.files.seq.name) || r.version + ".loredit")}">`).join(""); }).catch(() => {}); }
 const jv = (id, d) => document.getElementById(id).value.trim() || d;
 const showFrom = id => { const v = jv(id, ""); return v ? (/\.loredit$/i.test(v) ? v : v + ".loredit") : ""; };
