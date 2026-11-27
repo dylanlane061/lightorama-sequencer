@@ -41,8 +41,11 @@ jobs:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           TAG="${{ steps.tag.outputs.tag }}"
+          NOTES="release-notes/$TAG.md"          # write this file before tagging; it becomes the release text
+          if [ -f "$NOTES" ]; then NOTE_ARGS=(--notes-file "$NOTES"); else NOTE_ARGS=(--generate-notes); fi
           if gh release view "$TAG" >/dev/null 2>&1; then
             gh release upload "$TAG" lightorama-sequencer.zip --clobber
+            if [ -f "$NOTES" ]; then gh release edit "$TAG" --notes-file "$NOTES"; fi
           else
-            gh release create "$TAG" lightorama-sequencer.zip --target "$GITHUB_SHA" --title "$TAG" --generate-notes
+            gh release create "$TAG" lightorama-sequencer.zip --target "$GITHUB_SHA" --title "$TAG" "${NOTE_ARGS[@]}"
           fi

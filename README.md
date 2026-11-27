@@ -102,7 +102,8 @@ lightorama-sequencer/
 
 ## Publishing a new version (for the maintainer)
 
-Push a tag and GitHub builds and attaches the zip itself:
+Write what changed in `release-notes/v1.1.0.md` (it becomes the release text that the
+website shows), then push a tag, and GitHub builds and attaches the zip itself:
 
 ```
 git tag v1.1.0 && git push origin v1.1.0
