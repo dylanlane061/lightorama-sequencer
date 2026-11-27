@@ -46,6 +46,7 @@ mp3s; snapshots also need `playwright` (see `requirements.txt` and `README.md`).
 | `lor_plan.py` | `targets` (what can be lit), `draft` (a plan from the analysis), `compile` (plan → .loredit) |
 | `lor_show.py` | `build` an HTML viewer (house photo, lights, song); `snapshots` for you to look at |
 | `lor_helper.py` | inspect, validate, and add single effects (pictures, presets, channel effects) |
+| `lor_pixelart.py` | ready-made pixel-art scenes for a mega tree or grid, timed to the song (`scenes`, `render`, `sheet`) |
 | `lor_layout.py` | read a layout; `draw` all lights over the house photo |
 
 ## Hard rules
@@ -76,6 +77,11 @@ python $S/lor_show.py build "Song.loredit" --audio "Song.mp3" --out "Song previe
 python $S/lor_show.py snapshots "Song preview.html" --every 6s --out frames   # then view frames/contact_sheet.png
 ```
 
+0. **Read `references/creative_direction.md` first** (what this user likes: purpose in
+   every movement, things moving together, the tree as the main screen, traditional
+   colours). Then write a **beat sheet** (one block per scene: time, music, story, and
+   what the tree, trim, snowflakes and other props do) and get the user's go-ahead
+   before building. Later passes change two or three things at a time.
 1. **Read the song back to the user.** After `analyze`, report the tempo and the
    section list (times, labels, energy). The analysis is an estimate, and the user can
    correct a section time or the tempo before you build on it. It was tested on a click
@@ -87,8 +93,9 @@ python $S/lor_show.py snapshots "Song preview.html" --every 6s --out frames   # 
    - Which families lead each section: the `targets` of each cue.
    - Energy: rhythm and intensity. Calm sections use `hold` and lower levels; peaks use
      `pulse` or `chase` on beats.
-   - Signature moments: a picture on the matrix, a chase left to right on a key
-     phrase, `accents` on the big hits.
+   - Signature moments: a **picture on the tree in nearly every scene**
+     (`lor_pixelart.py`, `references/pixel_art.md`), a chase on a key phrase, `accents`
+     on the big hits.
    - Respect requests like "keep the tree on the whole song" or "nothing blue" exactly.
    Full format and design tips: `references/plan_format.md`.
 3. **Compile, validate, look.** View `frames/contact_sheet.png` (each frame lists its
@@ -124,7 +131,18 @@ python $S/lor_helper.py add-effect show.loredit --prop "Garage Flood" --type fad
 - Use `--dry-run` first for anything big, and `--on-overlap replace` only when the user
   wants the old effect gone.
 
-## Workflow 3: pixel art or animation on a matrix
+## Workflow 3: pixel art or animation on a tree or matrix
+
+Read `references/pixel_art.md` first (canvas, the squeezed top, aspect, what lands).
+For a mega tree, start from a ready-made scene and time it to the song:
+
+```bash
+python $S/lor_pixelart.py scenes
+python $S/lor_pixelart.py render snowman --start 41.0 --end 51.5 --analysis song.analysis.json --size 16x75 --out art/snowman.gif
+python $S/lor_pixelart.py sheet art/snowman.gif --out look.png
+```
+
+Otherwise, draw your own:
 
 1. Find the size: `inspect --filter matrix` reports **width × height**. LOR names
    matrices rows × columns, so "RGB Matrix 20x40" is 40 wide and 20 tall.
