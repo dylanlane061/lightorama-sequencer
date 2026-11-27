@@ -122,7 +122,7 @@ way across the house. Check `lor_layout.py draw` or the viewer.
 outgoing one `[100, 0]` and the incoming one `[0, 100]`. A picture (GIF) restarts if split,
 so keep it as one effect and fade the other row around it.
 
-**Pixel art on a tree:** a Tree 180 / matrix buffer is strands × lights per strand (for
+**Pixel art on a tree** (full guide: `pixel_art.md`; ready scenes: `scripts/lor_pixelart.py`): a Tree 180 / matrix buffer is strands × lights per strand (for
 example 16×75). Draw the GIF at exactly that size, with column = strand and the top row =
 the top of the tree, and use a `"picture"` cue. The viewer shows it as the tree will.
 

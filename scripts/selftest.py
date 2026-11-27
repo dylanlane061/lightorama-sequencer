@@ -82,6 +82,9 @@ def main():
                                                     "--out", "show.html", cwd=work))
     step("lor_show storyboard (no browser)", lambda: run(HERE / "lor_show.py", "storyboard", "show.loredit",
                                                          "--out", "storyboard.png", cwd=work))
+    step("lor_pixelart scene (timed to the beats)", lambda: run(HERE / "lor_pixelart.py", "render", "bell", "--start", "2",
+                                                               "--end", "6", "--analysis", "song.analysis.json",
+                                                               "--out", "bell.gif", cwd=work))
     step("standalone app up to date", lambda: run(HERE / "build_app.py", "--check", cwd=work))
     if any(r[0].startswith("playwright") and r[1] == "PASS" for r in results):
         step("app reads shows like lor_show", lambda: run(HERE / "check_app_reader.py", "show.loredit", cwd=work), required=False)
