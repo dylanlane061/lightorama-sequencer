@@ -265,7 +265,13 @@ class Compiler:
             else:
                 preset = cue.get("preset") or "wash"
                 learned = H.load_templates().get("presets", {})
-                if cue.get("options") is not None:   # same effect as the preset, own option string
+                cycle = cue.get("options_cycle")
+                if isinstance(cycle, dict):          # per target: {"House L": [...], "House R": [...]}
+                    cycle = cycle.get(info["name"], cycle.get("*"))
+                if cycle:                            # step k uses entry k (song-wide phase): back-and-forth sways
+                    name = cue.get("effect") or (learned.get(preset, {}).get("effect") or H.PRESETS.get(preset, (preset,))[0])
+                    opts = cycle[step_i % len(cycle)]
+                elif cue.get("options") is not None:   # same effect as the preset, own option string
                     name = cue.get("effect") or (learned.get(preset, {}).get("effect") or H.PRESETS.get(preset, (preset,))[0])
                     opts = cue["options"]
                 elif preset in learned:

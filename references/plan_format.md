@@ -112,6 +112,26 @@ into pieces that each move a whole number of group periods (cycles x10 = 10 × k
 repeats). Each piece then starts where the last one ended. Palette order is kept, so
 black slots make the gaps.
 
+**Swaying train tracks (back and forth on the beat):** give a stepped bars cue an
+`"options_cycle"`: a list of option strings, or a per-target map, where step k uses entry
+k (song-wide phase). Each step must move exactly one whole period so the next step starts
+where this one ended: with `repeats` r, cycles x10 = 10 / r (r=10 → `1`, r=5 → `2`). Use
+`"rhythm": "pulse", "length": 1.0`. Pick the direction word per prop from its wiring, so
+every line moves the same physical way:
+```json
+{"targets": ["House L", "House R"], "preset": "bars", "colors": ["red", "black", "warm white", "black"],
+ "rhythm": "pulse", "every": "beat", "length": 1.0, "row": "Effects 01",
+ "options_cycle": {"House L": ["right,10,False,False,1,0", "left,10,False,False,1,0"],
+                   "House R": ["left,10,False,False,1,0", "right,10,False,False,1,0"]}}
+```
+
+**Whole-house moves (flashes with a purpose):** a flash should travel as one move, never
+as sections blinking. A *sweep* is a one-band bars effect per line (`[c, black x4]`,
+cycles `8`, reps `1`) timed to the line's share of the house width, plus short washes on
+the point props (verticals, windows, snowflakes) as the sweep reaches their x. A *burst*
+is `H_expand` with the same palette from the roof peaks. Save "all at once" for the
+two or three biggest hits.
+
 **Moving trim instead of blinking trim:** `blend_left` / `blend_right` (blended bars) keep
 a prop fully lit while colour bands travel along it. Direction follows each prop's pixel
 order, so two rooflines drawn in opposite directions need opposite presets to move the same
